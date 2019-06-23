@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "target": "es6",
+        "sourceMap": true,
+        "lib": ["es6", "dom", "dom.iterable"],
+        "jsx": "react",
+        "outDir": "dist",
+        "declaration": true,
+        "declarationDir": "src",
+        "noUnusedLocals": false,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noUnusedParameters": false,
+        "pretty": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowUnreachableCode": false,
+        "experimentalDecorators": true,
+        "downlevelIteration": true
+      },
+      "include": [
+        "src/**/*"
+      ],
+    "exclude": [
+        "out",
+        "node_modules"
+    ]
+}
