@@ -1,5 +1,6 @@
 import { Utils } from "./Utils";
 import { Enum } from "./Enum";
+import { Frequency } from "./Frequency";
 
 export type TInterval = { degree: number; onset: number; octave: number };
 export type TIntervalOffset = 0 | 2 | 4 | 5 | 7 | 9 | 11;
@@ -160,6 +161,10 @@ export class Interval {
         this.octave = octave;
         return this;
     }
+    static fromRatio(ratioIn: number) {
+        const offset = Math.round(Math.log(ratioIn) / Math.log(Frequency.SEMITONE));
+        return new Interval(offset);
+    }
     add(iIn: Interval) {
         const i = { degree: 0, onset: 0, octave: 0 };
         i.degree = Utils.floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
@@ -190,8 +195,21 @@ export class Interval {
         this.octave = i.octave;
         return this;
     }
+    octaveReverse() {
+        const i = { degree: 0, onset: 0, octave: 0 };
+        i.degree = Utils.floorMod(1 - this.degree, 7) + 1;
+        i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
+        i.octave = 1 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
+        this.degree = i.degree;
+        this.onset = i.onset;
+        this.octave = i.octave;
+        return this;
+    }
     get offset() {
         return DEGREE_TO_OFFSET[Utils.floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+    }
+    get ratio() {
+        return Frequency.SEMITONE ** this.offset;
     }
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);

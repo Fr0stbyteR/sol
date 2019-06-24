@@ -109,6 +109,40 @@ export class Chord implements Iterable<Note> {
     contains(noteIn: Note | Pitch) {
         return !!this.notes.find(note => noteIn.equals(note));
     }
+    inverseUp() {
+        if (this.intervals.length === 0) return this;
+        const interval0 = this.intervals[0];
+        this.base.add(interval0);
+        for (let i = 0; i < this.intervals.length - 1; i++) {
+            this.intervals[i] = this.intervals[i + 1].sub(interval0);
+        }
+        this.intervals[this.intervals.length - 1] = interval0.octaveReverse();
+        return this;
+    }
+    inverseDown() {
+        if (this.intervals.length === 0) return this;
+        const interval0 = this.intervals[this.intervals.length - 1].octaveReverse();
+        this.base.sub(interval0);
+        for (let i = this.intervals.length - 1; i > 0; i--) {
+            this.intervals[i] = this.intervals[i - 1].add(interval0);
+        }
+        this.intervals[0] = interval0;
+        return this;
+    }
+    inverse(inversion: number) {
+        if (this.intervals.length === 0) return this;
+        if (inversion > 0) {
+            for (let i = 0; i < inversion; i++) {
+                this.inverseUp();
+            }
+        }
+        if (inversion < 0) {
+            for (let i = 0; i > inversion; i--) {
+                this.inverseDown();
+            }
+        }
+        return this;
+    }
     getEnumChord() {
         return EnumChord.byChord(this);
     }
