@@ -1,4 +1,5 @@
 import { Utils } from "./Utils";
+import { Enum } from "./Enum";
 
 export type TInterval = { degree: number; onset: number; octave: number };
 export type TIntervalOffset = 0 | 2 | 4 | 5 | 7 | 9 | 11;
@@ -13,26 +14,31 @@ export const isIntervalArray = (x: any): x is Interval[] => {
     return x.every(el => el instanceof Interval);
 };
 type TIntervalProperty = "P" | "M" | "m" | "A" | "d";
-type TIntervalPropertyValue = "PERFECT" | "MINOR" | "MAJOR" | "AUGMENTED" | "DIMINISHED";
+type TIntervalPropertyValue = "PERFECT" | "MAJOR" | "MINOR" | "AUGMENTED" | "DIMINISHED";
 export const DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
-class EnumIntervalProperty {
+class EnumIntervalProperty extends Enum {
+    protected static indexes = ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"];
     private static abbMap: { [key: string]: TIntervalPropertyValue } = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
-    static PERFECT = new EnumIntervalProperty("P");
-    static MAJOR = new EnumIntervalProperty("M");
-    static MINOR = new EnumIntervalProperty("m");
-    static AUGMENTED = new EnumIntervalProperty("A");
-    static DIMINISHED = new EnumIntervalProperty("d");
+    static get PERFECT() { return new EnumIntervalProperty("P"); }
+    static get MAJOR() { return new EnumIntervalProperty("M"); }
+    static get MINOR() { return new EnumIntervalProperty("m"); }
+    static get AUGMENTED() { return new EnumIntervalProperty("A"); }
+    static get DIMINISHED() { return new EnumIntervalProperty("d"); }
     static byAbb(abbIn: string) {
         const name = this.abbMap[abbIn];
         if (name) return EnumIntervalProperty[name];
         throw new SyntaxError(`No such interval property with abbreviation ${abbIn}.`);
     }
-    property: TIntervalProperty;
-    constructor(propertyIn: TIntervalProperty) {
-        this.property = propertyIn;
+    abb: TIntervalProperty;
+    private constructor(abbIn: TIntervalProperty) {
+        super();
+        this.abb = abbIn;
     }
-    get value() {
-        return EnumIntervalProperty.abbMap[this.property];
+    name() {
+        return EnumIntervalProperty.abbMap[this.abb];
+    }
+    toString() {
+        return this.name();
     }
 }
 
@@ -200,7 +206,7 @@ export class Interval {
                 && this.octave === intervalIn.octave;
     }
     toString() {
-        const sOnset = this.property ? this.property.property : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
+        const sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
         const sOctave = this.octave > 0 ? ("+" + this.octave) : this.octave < 0 ? this.octave : "";
         return sOnset + this.degree + sOctave;
     }

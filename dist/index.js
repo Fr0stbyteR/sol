@@ -90,20 +90,118 @@
 /*!**********************!*\
   !*** ./src/Chord.ts ***!
   \**********************/
-/*! exports provided: isChord, Chord */
+/*! exports provided: EnumChord, isChord, Chord */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumChord", function() { return EnumChord; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChord", function() { return isChord; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Chord", function() { return Chord; });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
+/* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
+
+
+class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
+  static get MAJ() {
+    return new EnumChord("MAJ", "M3", "P5");
+  }
+
+  static get MIN() {
+    return new EnumChord("MIN", "m3", "P5");
+  }
+
+  static get AUG() {
+    return new EnumChord("AUG", "M3", "A5");
+  }
+
+  static get DIM() {
+    return new EnumChord("DIM", "m3", "d5");
+  }
+
+  static get SUS2() {
+    return new EnumChord("SUS2", "M2", "P5");
+  }
+
+  static get SUS() {
+    return new EnumChord("SUS", "P5", "P5");
+  }
+
+  static get SUS4() {
+    return new EnumChord("SUS4", "P5", "P5");
+  }
+
+  static get DOM7() {
+    return new EnumChord("DOM7", "M3", "P5", "m7");
+  }
+
+  static get MAJ7() {
+    return new EnumChord("MAJ7", "M3", "P5", "M7");
+  }
+
+  static get MINMAJ7() {
+    return new EnumChord("MINMAJ7", "m3", "P5", "M7");
+  }
+
+  static get MIN7() {
+    return new EnumChord("MIN7", "m3", "P5", "m7");
+  }
+
+  static get AUGMAJ7() {
+    return new EnumChord("AUGMAJ7", "M3", "A5", "M7");
+  }
+
+  static get AUG7() {
+    return new EnumChord("AUG7", "M3", "A5", "m7");
+  }
+
+  static get DIMMIN7() {
+    return new EnumChord("DIMMIN7", "m3", "d5", "m7");
+  }
+
+  static get DIM7() {
+    return new EnumChord("DIM7", "m3", "d5", "d7");
+  }
+
+  static get DOM7DIM5() {
+    return new EnumChord("DOM7DIM5", "M3", "d5", "m7");
+  }
+
+  constructor(nameIn) {
+    super();
+
+    _defineProperty(this, "_name", void 0);
+
+    _defineProperty(this, "intervals", void 0);
+
+    this._name = nameIn;
+
+    for (var _len = arguments.length, intervalsIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      intervalsIn[_key - 1] = arguments[_key];
+    }
+
+    this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"].fromArray(...intervalsIn);
+  }
+
+  static byChord(chordIn) {
+    return this.values().find(enumChord => {
+      return enumChord.intervals.length === chordIn.intervals.length && enumChord.intervals.every((interval, i) => interval.equals(chordIn.intervals[i]));
+    }) || null;
+  }
+
+  static byName(chordIn) {
+    return EnumChord[chordIn];
+  }
+
+}
+
+_defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
 
 var isChord = x => {
   return typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.base) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals) && typeof x.isAbsolute === "boolean";
@@ -155,8 +253,8 @@ class Chord {
 
     this.isAbsolute = true;
 
-    for (var _len = arguments.length, arrayIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      arrayIn[_key - 1] = arguments[_key];
+    for (var _len2 = arguments.length, arrayIn = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      arrayIn[_key2 - 1] = arguments[_key2];
     }
 
     if (arrayIn.find(e => e instanceof _Note__WEBPACK_IMPORTED_MODULE_1__["Note"] && !(e instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]))) this.isAbsolute = false;
@@ -185,6 +283,10 @@ class Chord {
 
   contains(noteIn) {
     return !!this.notes.find(note => noteIn.equals(note));
+  }
+
+  getEnumChord() {
+    return EnumChord.byChord(this);
   }
 
   toString() {
@@ -219,6 +321,45 @@ class Chord {
   }
 
 }
+
+/***/ }),
+
+/***/ "./src/Enum.ts":
+/*!*********************!*\
+  !*** ./src/Enum.ts ***!
+  \*********************/
+/*! exports provided: Enum */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Enum", function() { return Enum; });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class Enum {
+  static values() {
+    return this.indexes.map(key => this[key]);
+  }
+
+  static valueOf(key) {
+    return this[key];
+  }
+
+  name() {
+    throw new Error("Method not implemented");
+  }
+
+  ordinal() {
+    return this.constructor.indexes.indexOf(this.name());
+  }
+
+  toString() {
+    return this.name();
+  }
+
+}
+
+_defineProperty(Enum, "indexes", []);
 
 /***/ }),
 
@@ -265,7 +406,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEGREE_TO_OFFSET", function() { return DEGREE_TO_OFFSET; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Interval", function() { return Interval; });
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
+/* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 var isInterval = x => {
@@ -277,24 +420,52 @@ var isIntervalArray = x => {
 };
 var DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 
-class EnumIntervalProperty {
+class EnumIntervalProperty extends _Enum__WEBPACK_IMPORTED_MODULE_1__["Enum"] {
+  static get PERFECT() {
+    return new EnumIntervalProperty("P");
+  }
+
+  static get MAJOR() {
+    return new EnumIntervalProperty("M");
+  }
+
+  static get MINOR() {
+    return new EnumIntervalProperty("m");
+  }
+
+  static get AUGMENTED() {
+    return new EnumIntervalProperty("A");
+  }
+
+  static get DIMINISHED() {
+    return new EnumIntervalProperty("d");
+  }
+
   static byAbb(abbIn) {
     var name = this.abbMap[abbIn];
     if (name) return EnumIntervalProperty[name];
     throw new SyntaxError("No such interval property with abbreviation ".concat(abbIn, "."));
   }
 
-  constructor(propertyIn) {
-    _defineProperty(this, "property", void 0);
+  constructor(abbIn) {
+    super();
 
-    this.property = propertyIn;
+    _defineProperty(this, "abb", void 0);
+
+    this.abb = abbIn;
   }
 
-  get value() {
-    return EnumIntervalProperty.abbMap[this.property];
+  name() {
+    return EnumIntervalProperty.abbMap[this.abb];
+  }
+
+  toString() {
+    return this.name();
   }
 
 }
+
+_defineProperty(EnumIntervalProperty, "indexes", ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"]);
 
 _defineProperty(EnumIntervalProperty, "abbMap", {
   P: "PERFECT",
@@ -303,16 +474,6 @@ _defineProperty(EnumIntervalProperty, "abbMap", {
   A: "AUGMENTED",
   d: "DIMINISHED"
 });
-
-_defineProperty(EnumIntervalProperty, "PERFECT", new EnumIntervalProperty("P"));
-
-_defineProperty(EnumIntervalProperty, "MAJOR", new EnumIntervalProperty("M"));
-
-_defineProperty(EnumIntervalProperty, "MINOR", new EnumIntervalProperty("m"));
-
-_defineProperty(EnumIntervalProperty, "AUGMENTED", new EnumIntervalProperty("A"));
-
-_defineProperty(EnumIntervalProperty, "DIMINISHED", new EnumIntervalProperty("d"));
 
 class Interval {
   static getOffsetFromProperty(propertyIn, degreeIn) {
@@ -509,7 +670,7 @@ class Interval {
   }
 
   toString() {
-    var sOnset = this.property ? this.property.property : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
+    var sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
     var sOctave = this.octave > 0 ? "+" + this.octave : this.octave < 0 ? this.octave : "";
     return sOnset + this.degree + sOctave;
   }
@@ -543,11 +704,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Note", function() { return Note; });
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-class EnumNote {
+
+class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
   static get C() {
     return new EnumNote(0);
   }
@@ -577,6 +740,8 @@ class EnumNote {
   }
 
   constructor(offsetIn) {
+    super();
+
     _defineProperty(this, "offset", void 0);
 
     this.offset = offsetIn;
@@ -591,12 +756,12 @@ class EnumNote {
 
   static byIndex(indexIn) {
     if (typeof indexIn !== "number") return null;
-    var name = EnumNote.indexMap[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(indexIn, 7)];
+    var name = EnumNote.indexes[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(indexIn, 7)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with index ".concat(indexIn, "."));
   }
 
-  get name() {
+  name() {
     return EnumNote.offsetMap[this.offset];
   }
 
@@ -604,15 +769,17 @@ class EnumNote {
     return _Interval__WEBPACK_IMPORTED_MODULE_1__["DEGREE_TO_OFFSET"].indexOf(this.offset);
   }
 
+  ordinal() {
+    return this.index;
+  }
+
   equals(noteIn) {
     return noteIn instanceof EnumNote && noteIn.offset === this.offset;
   }
 
-  toString() {
-    return this.name;
-  }
-
 }
+
+_defineProperty(EnumNote, "indexes", ["C", "D", "E", "F", "G", "A", "B"]);
 
 _defineProperty(EnumNote, "offsetMap", {
   0: "C",
@@ -623,8 +790,6 @@ _defineProperty(EnumNote, "offsetMap", {
   9: "A",
   11: "B"
 });
-
-_defineProperty(EnumNote, "indexMap", ["C", "D", "E", "F", "G", "A", "B"]);
 
 _defineProperty(EnumNote, "c", EnumNote.C);
 
@@ -804,7 +969,7 @@ class Note {
   }
 
   toString() {
-    return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name;
+    return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name();
   }
 
   clone() {
@@ -1071,6 +1236,8 @@ console.log(c.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]("M3").reverse().toString());
 console.log(c.notes.toString());
 console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")));
+var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
+console.log(c1.getEnumChord());
 
 /***/ })
 

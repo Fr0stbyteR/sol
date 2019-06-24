@@ -1,9 +1,11 @@
 import { Utils } from "./Utils";
 import { Interval, TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
+import { Enum } from "./Enum";
 
-export class EnumNote {
+type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
+export class EnumNote extends Enum {
+    protected static indexes: TEnumNoteValue[] = ["C", "D", "E", "F", "G", "A", "B"];
     private static offsetMap: { [key: number]: TEnumNoteValue } = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
-    private static indexMap = ["C", "D", "E", "F", "G", "A", "B"] as TEnumNoteValue[];
     static get C() { return new EnumNote(0); }
     static get D() { return new EnumNote(2); }
     static get E() { return new EnumNote(4); }
@@ -20,6 +22,7 @@ export class EnumNote {
     static b = EnumNote.B;
     readonly offset: TIntervalOffset;
     private constructor(offsetIn: TIntervalOffset) {
+        super();
         this.offset = offsetIn;
     }
     static byOffset(offsetIn: number) {
@@ -30,16 +33,16 @@ export class EnumNote {
     }
     static byIndex(indexIn: number) {
         if (typeof indexIn !== "number") return null;
-        const name = EnumNote.indexMap[Utils.floorMod(indexIn, 7)];
+        const name = EnumNote.indexes[Utils.floorMod(indexIn, 7)];
         if (name) return EnumNote[name];
         throw new SyntaxError(`No such note with index ${indexIn}.`);
     }
-    get name() { return EnumNote.offsetMap[this.offset]; }
+    name() { return EnumNote.offsetMap[this.offset]; }
     get index() { return DEGREE_TO_OFFSET.indexOf(this.offset); }
+    ordinal() { return this.index; }
     equals(noteIn: object) {
         return noteIn instanceof EnumNote && noteIn.offset === this.offset;
     }
-    toString() { return this.name; }
 }
 export type TNote = { enumNote: EnumNote; alteration: number };
 export const isNote = (x: any): x is TNote | Note => {
@@ -52,7 +55,6 @@ export const isNoteArray = (x: any): x is Note[] => {
     if (!Array.isArray(x)) return false;
     return x.every(el => el instanceof Note);
 };
-type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export class Note {
     static REGEX = /^([b#]*)([a-gA-G])$/;
     enumNote: EnumNote;
@@ -182,7 +184,7 @@ export class Note {
         return arrayIn.map(e => new Note(e as any));
     }
     toString() {
-        return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name;
+        return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name();
     }
     clone() {
         return new Note(this);

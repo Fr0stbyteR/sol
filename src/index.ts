@@ -30,3 +30,5 @@ console.log(new Interval("M3").reverse().toString());
 
 console.log(c.notes.toString());
 console.log(c.contains(new Pitch("#C1")));
+const c1 = new Chord(new Pitch("C1"), new Pitch("E1"), new Pitch("G1"));
+console.log(c1.getEnumChord());
