@@ -36,6 +36,9 @@ export class EnumNote {
     }
     get name() { return EnumNote.offsetMap[this.offset]; }
     get index() { return DEGREE_TO_OFFSET.indexOf(this.offset); }
+    equals(noteIn: object) {
+        return noteIn instanceof EnumNote && noteIn.offset === this.offset;
+    }
     toString() { return this.name; }
 }
 export type TNote = { enumNote: EnumNote; alteration: number };
@@ -158,6 +161,11 @@ export class Note {
         this.alteration += i.offset - 12 * i.octave - Utils.floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
+    }
+    equals(noteIn: object) {
+        return isNote(noteIn)
+                && this.enumNote.equals(noteIn.enumNote)
+                && this.alteration === noteIn.alteration;
     }
     getInterval(noteIn: TNote) {
         if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");

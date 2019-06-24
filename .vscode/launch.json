@@ -9,23 +9,15 @@
             "request": "launch",
             "name": "Run",
             "program": "${workspaceFolder}/src/index.ts",
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/dist/*.js"
-            ],
-            "cwd": "${workspaceRoot}",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Build + Run",
+            "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/index.ts",
-            "preLaunchTask": "tsc: build - tsconfig.json",
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/dist/*.js"
-            ],
-            "cwd": "${workspaceRoot}",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
         }
     ]
 }

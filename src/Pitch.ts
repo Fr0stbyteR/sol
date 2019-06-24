@@ -112,6 +112,11 @@ export class Pitch extends Note {
         this.octave += Math.floor((this.enumNote.index - i.degree + 1) / 7) - i.octave;
         return super.sub(i);
     }
+    equals(pitchIn: object) {
+        return super.equals(pitchIn)
+                && isPitch(pitchIn)
+                && this.octave === pitchIn.octave;
+    }
     getInterval(pitchIn: TPitch) {
         if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
         const that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);

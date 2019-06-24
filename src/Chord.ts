@@ -1,29 +1,52 @@
 import { Interval, isIntervalArray } from "./Interval";
-import { Note, isNoteArray } from "./Note";
+import { Note, isNoteArray, isNote } from "./Note";
 import { Pitch, isPitchArray } from "./Pitch";
 
 export type TChord = { base: Note | Pitch; intervals: Interval[]; isAbsolute: boolean };
-
+export const isChord = (x: any): x is TChord | Chord => {
+    return typeof x === "object"
+            && isNote(x.base)
+            && isIntervalArray(x.intervals)
+            && typeof x.isAbsolute === "boolean";
+};
 export class Chord implements Iterable<Note> {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
     isAbsolute: boolean;
     /**
-     * Creates an instance of Chord from a base note and notes or intervals (strings as intervals)
-     * @param {(Note | Pitch | string)} baseIn
-     * @param {(...Note[] | Pitch[] | Interval[] | string[])} arrayIn
+     * Gives a new Chord instance (clone)
+     * @param {(Chord | TChord)} chordIn
      * @memberof Chord
      */
-    constructor(baseIn: Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
+    constructor(chordIn: Chord | TChord);
+    /**
+     * Construct chord by notes
+     * @param {(Note | Pitch | string)} base
+     * @param {(...Note[] | Pitch[])} notes
+     * @memberof Chord
+     */
+    constructor(base: Note | Pitch | string, ...notes: Note[] | Pitch[]);
+    /**
+     * Construct chord by intervals
+     * @param {Pitch} base
+     * @param {...Pitch[]} pitches
+     * @memberof Chord
+     */
+    constructor(base: Note | Pitch | string, ...intervals: Interval[] | string[]);
+    constructor(first: Chord | TChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
         this.isAbsolute = false;
-        if (typeof baseIn === "string") {
-            const isPitch = Pitch.REGEX.exec(baseIn);
-            if (isPitch) this.base = new Pitch(baseIn);
-            else this.base = new Note(baseIn);
+        if (isChord(first)) {
+            this.base = first.base;
+            this.intervals = first.intervals;
+            this.isAbsolute = first.isAbsolute;
+        } else if (typeof first === "string") {
+            const isPitch = Pitch.REGEX.exec(first);
+            if (isPitch) this.base = new Pitch(first);
+            else this.base = new Note(first);
         } else {
-            this.base = baseIn;
+            this.base = first;
         }
         this.isAbsolute = true;
         if ((arrayIn as (Pitch | Note | Interval | string)[]).find(e => e instanceof Note && !(e instanceof Pitch))) this.isAbsolute = false;
@@ -39,8 +62,20 @@ export class Chord implements Iterable<Note> {
         }
         return this;
     }
+    get size() {
+        return this.intervals.length + 1;
+    }
+    get notes() {
+        return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
+    }
+    contains(noteIn: Note | Pitch) {
+        return !!this.notes.find(note => noteIn.equals(note));
+    }
     toString() {
         return this.base.toString() + ":" + this.intervals.toString();
+    }
+    clone() {
+        return new Chord(this);
     }
 
     [Symbol.iterator](): Iterator<Note | Pitch> {

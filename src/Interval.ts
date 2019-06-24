@@ -193,6 +193,12 @@ export class Interval {
     static fromArray(...arrayIn: (string | TInterval)[]) {
         return arrayIn.map(e => new Interval(e as any));
     }
+    equals(intervalIn: object) {
+        return isInterval(intervalIn)
+                && this.degree === intervalIn.degree
+                && this.onset === intervalIn.onset
+                && this.octave === intervalIn.octave;
+    }
     toString() {
         const sOnset = this.property ? this.property.property : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
         const sOctave = this.octave > 0 ? ("+" + this.octave) : this.octave < 0 ? this.octave : "";
