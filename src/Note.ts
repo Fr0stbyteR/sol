@@ -45,8 +45,11 @@ export class EnumNote extends Enum {
         return noteIn instanceof EnumNote && noteIn.offset === this.offset;
     }
 }
-export type TNote = { enumNote: EnumNote; alteration: number };
-export const isNote = (x: any): x is TNote | Note => {
+export interface INote {
+    enumNote: EnumNote;
+    alteration: number;
+}
+export const isNote = (x: any): x is INote => {
     return x instanceof Note
         || (typeof x === "object"
         && x.enumNote instanceof EnumNote
@@ -56,7 +59,7 @@ export const isNoteArray = (x: any): x is Note[] => {
     if (!Array.isArray(x)) return false;
     return x.every(el => el instanceof Note);
 };
-export class Note {
+export class Note implements INote {
     static REGEX = /^([b#]*)([a-gA-G])$/;
     enumNote: EnumNote;
     alteration: number;
@@ -67,17 +70,17 @@ export class Note {
     constructor()
     /**
      * New note
-     * @param {(EnumNote)} noteIn
+     * @param {EnumNote} noteIn
      * @param {number} [alteration]
      * @memberof Note
      */
     constructor(noteIn: EnumNote, alteration?: number)
     /**
      * Gives a new Note instance (clone)
-     * @param {(Note | TNote | string)} noteIn
+     * @param {INote} noteIn
      * @memberof Note
      */
-    constructor(noteIn: Note | EnumNote | TNote)
+    constructor(noteIn: INote)
     /**
      * Parses note string.
      * @example
@@ -94,7 +97,7 @@ export class Note {
      * @memberof Note
      */
     constructor(offset: number, alteration?: number)
-    constructor(first?: Note | EnumNote | TNote | string | number, second?: number) {
+    constructor(first?: EnumNote | INote | string | number, second?: number) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;
         if (first instanceof EnumNote) {
@@ -110,7 +113,7 @@ export class Note {
         }
         return this;
     }
-    static fromString(nameIn: string): TNote {
+    static fromString(nameIn: string): INote {
         const matched = Note.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such note ${nameIn}.`);
         const enumNote = EnumNote[matched[2] as TEnumNoteValue];
@@ -124,7 +127,7 @@ export class Note {
         this.alteration = alteration;
         return this;
     }
-    static fromOffset(offsetIn: number, alterationIn?: number): TNote {
+    static fromOffset(offsetIn: number, alterationIn?: number): INote {
         const note = floorMod(offsetIn, 12);
         let offset = 11;
         for (let i = DEGREE_TO_OFFSET.length - 1; i >= 0; i--) {
@@ -170,7 +173,7 @@ export class Note {
             && this.enumNote.equals(noteIn.enumNote)
             && this.alteration === noteIn.alteration;
     }
-    getInterval(noteIn: TNote) {
+    getInterval(noteIn: INote) {
         if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");
         const that = noteIn instanceof Note ? noteIn : new Note(noteIn);
         const degree = that.enumNote.index - this.enumNote.index + 1;
@@ -181,7 +184,7 @@ export class Note {
     get offset() {
         return this.enumNote.offset + this.alteration;
     }
-    static fromArray(...arrayIn: (string | number | TNote)[]) {
+    static fromArray(...arrayIn: (string | number | INote)[]) {
         return arrayIn.map(e => new Note(e as any));
     }
     toString() {

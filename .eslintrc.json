@@ -41,6 +41,7 @@
         "no-continue": "off",
         "no-dupe-class-members": "off",
         "no-empty": "warn",
+        "no-lonely-if": "off",
         "no-loop-func": "off",
         "no-mixed-operators": "off",
         "no-nested-ternary": "off",
@@ -84,6 +85,7 @@
         "@typescript-eslint/camelcase": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/interface-name-prefix": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/prefer-interface": "off",
         "@typescript-eslint/no-use-before-define":"off"

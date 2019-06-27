@@ -1,8 +1,10 @@
-import { Note, EnumNote, TNote, isNote } from "./Note";
+import { Note, EnumNote, INote, isNote } from "./Note";
 import { Interval } from "./Interval";
 
-export type TPitch = { enumNote: EnumNote; alteration: number; octave: number };
-export const isPitch = (x: any): x is TPitch | Pitch => {
+export interface IPitch extends INote {
+    octave: number;
+}
+export const isPitch = (x: any): x is IPitch => {
     return x instanceof Pitch
         || (typeof x === "object"
         && x.enumNote instanceof EnumNote
@@ -13,7 +15,7 @@ export const isPitchArray = (x: any): x is Pitch[] => {
     if (!Array.isArray(x)) return false;
     return x.every(el => el instanceof Pitch);
 };
-export class Pitch extends Note {
+export class Pitch extends Note implements IPitch {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
     octave: number;
 
@@ -24,17 +26,17 @@ export class Pitch extends Note {
     constructor();
     /**
      * Gives a new Pitch instance (clone)
-     * @param {Pitch | TPitch} pitchIn
+     * @param {IPitch} pitchIn
      * @memberof Pitch
      */
-    constructor(pitchIn: Pitch | TPitch);
+    constructor(pitchIn: IPitch);
     /**
      * Add octave info to a note
-     * @param {(Note | EnumNote | TNote)} noteIn
+     * @param {EnumNote | INote} noteIn
      * @param {number} [octaveIn]
      * @memberof Pitch
      */
-    constructor(noteIn: Note | EnumNote | TNote, octaveIn?: number);
+    constructor(noteIn: EnumNote | INote, octaveIn?: number);
     /**
      * Parses pitch string.
      * @example
@@ -55,11 +57,14 @@ export class Pitch extends Note {
      * @param {number} pitchIn
      * @memberof Pitch
      */
-    constructor(first?: Pitch | Note | EnumNote | TPitch | TNote | string | number, second?: number) {
+    constructor(first?: IPitch | EnumNote | INote | string | number, second?: number) {
         if (isPitch(first)) {
             super(first);
             this.octave = first.octave;
-        } else if (first instanceof EnumNote || isNote(first)) {
+        } else if (first instanceof EnumNote) {
+            super(first);
+            this.octave = second || 0;
+        } else if (isNote(first)) {
             super(first);
             this.octave = second || 0;
         } else if (typeof first === "string") {
@@ -73,7 +78,7 @@ export class Pitch extends Note {
         }
         return this;
     }
-    static fromString(nameIn: string): TPitch {
+    static fromString(nameIn: string): IPitch {
         const matched = Pitch.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such pitch ${nameIn}.`);
         const octave = parseInt(matched[2]) || 0;
@@ -86,7 +91,7 @@ export class Pitch extends Note {
         this.octave = octave;
         return this;
     }
-    static fromOffset(offsetIn: number): TPitch {
+    static fromOffset(offsetIn: number): IPitch {
         return { ...super.fromOffset(offsetIn), octave: Math.floor(offsetIn / 12 - 1) };
     }
     protected fromOffset(offsetIn: number) {
@@ -117,7 +122,7 @@ export class Pitch extends Note {
             && isPitch(pitchIn)
             && this.octave === pitchIn.octave;
     }
-    getInterval(pitchIn: TPitch) {
+    getInterval(pitchIn: IPitch) {
         if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
         const that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
         const degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
@@ -128,7 +133,7 @@ export class Pitch extends Note {
     get offset() {
         return this.enumNote.offset + this.alteration + 12 * (this.octave + 1);
     }
-    static fromArray(...arrayIn: (string | number | TPitch)[]) {
+    static fromArray(...arrayIn: (string | number | IPitch)[]) {
         return arrayIn.map(e => new Pitch(e as any));
     }
     toString() {

@@ -2,9 +2,13 @@ import { floorMod } from "./Utils";
 import { Enum } from "./Enum";
 import { Frequency } from "./Frequency";
 
-export type TInterval = { degree: number; onset: number; octave: number };
+export interface IInterval {
+    degree: number;
+    onset: number;
+    octave: number;
+}
 export type TIntervalOffset = 0 | 2 | 4 | 5 | 7 | 9 | 11;
-export const isInterval = (x: any): x is TInterval | Interval => {
+export const isInterval = (x: any): x is IInterval => {
     return x instanceof Interval
         || (typeof x === "object"
         && typeof x.degree === "number"
@@ -45,7 +49,7 @@ class EnumIntervalProperty extends Enum {
     }
 }
 
-export class Interval {
+export class Interval implements IInterval {
     private static REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
     degree: number;
     onset: number;
@@ -88,10 +92,10 @@ export class Interval {
     constructor();
     /**
      * Gives a new Interval instance (clone)
-     * @param {(Interval | TInterval)} intervalIn
+     * @param {(IInterval)} intervalIn
      * @memberof Interval
      */
-    constructor(intervalIn: Interval | TInterval);
+    constructor(intervalIn: IInterval);
     /**
      * Parse interval string
      * @example
@@ -109,7 +113,7 @@ export class Interval {
      * @memberof Interval
      */
     constructor(degreeIn: number, onset?: number, octave?: number);
-    constructor(first?: Interval | TInterval | string | number, second?: number, third?: number) {
+    constructor(first?: IInterval | string | number, second?: number, third?: number) {
         this.degree = 0;
         this.onset = 0;
         this.octave = 0;
@@ -124,7 +128,7 @@ export class Interval {
         }
         return this;
     }
-    static fromString(nameIn: string): TInterval {
+    static fromString(nameIn: string): IInterval {
         const matched = Interval.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such interval ${nameIn}.`);
         const degree = parseInt(matched[2]);
@@ -139,7 +143,7 @@ export class Interval {
         this.octave = octave;
         return this;
     }
-    static fromOffset(offsetIn: number): TInterval {
+    static fromOffset(offsetIn: number): IInterval {
         let degree = 0;
         let onset = 0;
         const octave = Math.floor(offsetIn / 12);
@@ -216,7 +220,7 @@ export class Interval {
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);
     }
-    static fromArray(...arrayIn: (string | TInterval)[]) {
+    static fromArray(...arrayIn: (string | IInterval)[]) {
         return arrayIn.map(e => new Interval(e as any));
     }
     equals(intervalIn: object) {

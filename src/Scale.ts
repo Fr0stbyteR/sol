@@ -40,20 +40,23 @@ export class EnumScale extends Enum {
         return this._name;
     }
 }
-export type TScale = { intervals: Interval[]; degreeNames: string[] };
-export const isScale = (x: any): x is TScale | Scale => {
+export interface IScale {
+    intervals: Interval[];
+    degreeNames: string[];
+}
+export const isScale = (x: any): x is IScale => {
     return x instanceof Scale
         || (typeof x === "object"
         && isStringArray(x.degreeNames)
         && isIntervalArray(x.intervals));
 };
-export class Scale implements Iterable<Interval> {
+export class Scale implements Iterable<Interval>, IScale {
     intervals: Interval[];
     degreeNames: string[];
 
     constructor(degreesIn: string[]);
-    constructor(scaleIn: Scale | TScale);
-    constructor(first: string[] | Scale | TScale) {
+    constructor(scaleIn: IScale);
+    constructor(first: string[] | IScale) {
         if (isScale(first)) {
             this.intervals = [...first.intervals];
             this.degreeNames = [...first.degreeNames];

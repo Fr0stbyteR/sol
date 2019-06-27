@@ -44,24 +44,28 @@ export class EnumChord extends Enum {
         return this._name;
     }
 }
-export type TChord = { base: Note | Pitch; intervals: Interval[]; isAbsolute: boolean };
-export const isChord = (x: any): x is TChord | Chord => {
+export interface IChord {
+    base: Note | Pitch;
+    intervals: Interval[];
+    isAbsolute: boolean;
+}
+export const isChord = (x: any): x is IChord => {
     return x instanceof Chord
         || (typeof x === "object"
         && isNote(x.base)
         && isIntervalArray(x.intervals)
         && typeof x.isAbsolute === "boolean");
 };
-export class Chord implements Iterable<Note> {
+export class Chord implements Iterable<Note>, IChord {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
     isAbsolute: boolean;
     /**
      * Gives a new Chord instance (clone)
-     * @param {(Chord | TChord)} chordIn
+     * @param {IChord} chordIn
      * @memberof Chord
      */
-    constructor(chordIn: Chord | TChord);
+    constructor(chordIn: IChord);
     /**
      * Construct chord by notes
      * @param {(Note | Pitch | string)} base
@@ -76,7 +80,7 @@ export class Chord implements Iterable<Note> {
      * @memberof Chord
      */
     constructor(base: Note | Pitch | string, ...intervals: Interval[] | string[]);
-    constructor(first: Chord | TChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
+    constructor(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
         this.isAbsolute = false;
@@ -108,7 +112,7 @@ export class Chord implements Iterable<Note> {
     get size() {
         return this.intervals.length + 1;
     }
-    get notes() {
+    get notes(): Note[] | Pitch[] {
         return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
     }
     contains(noteIn: Note | Pitch) {
