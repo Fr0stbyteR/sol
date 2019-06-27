@@ -187,6 +187,7 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
     }
 
     this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"].fromArray(...intervalsIn);
+    return this;
   }
 
   static byChord(chordIn) {
@@ -199,12 +200,16 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
     return EnumChord[chordIn];
   }
 
+  name() {
+    return this._name;
+  }
+
 }
 
 _defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
 
 var isChord = x => {
-  return typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.base) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals) && typeof x.isAbsolute === "boolean";
+  return x instanceof Chord || typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.base) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals) && typeof x.isAbsolute === "boolean";
 };
 var _Symbol$iterator = Symbol.iterator;
 class Chord {
@@ -283,6 +288,50 @@ class Chord {
 
   contains(noteIn) {
     return !!this.notes.find(note => noteIn.equals(note));
+  }
+
+  inverseUp() {
+    if (this.intervals.length === 0) return this;
+    var interval0 = this.intervals[0];
+    this.base.add(interval0);
+
+    for (var i = 0; i < this.intervals.length - 1; i++) {
+      this.intervals[i] = this.intervals[i + 1].sub(interval0);
+    }
+
+    this.intervals[this.intervals.length - 1] = interval0.octaveReverse();
+    return this;
+  }
+
+  inverseDown() {
+    if (this.intervals.length === 0) return this;
+    var interval0 = this.intervals[this.intervals.length - 1].octaveReverse();
+    this.base.sub(interval0);
+
+    for (var i = this.intervals.length - 1; i > 0; i--) {
+      this.intervals[i] = this.intervals[i - 1].add(interval0);
+    }
+
+    this.intervals[0] = interval0;
+    return this;
+  }
+
+  inverse(inversion) {
+    if (this.intervals.length === 0) return this;
+
+    if (inversion > 0) {
+      for (var i = 0; i < inversion; i++) {
+        this.inverseUp();
+      }
+    }
+
+    if (inversion < 0) {
+      for (var _i = 0; _i > inversion; _i--) {
+        this.inverseDown();
+      }
+    }
+
+    return this;
   }
 
   getEnumChord() {
@@ -407,12 +456,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Interval", function() { return Interval; });
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
+/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
+
 var isInterval = x => {
-  return typeof x === "object" && typeof x.degree === "number" && typeof x.onset === "number" && typeof x.octave === "number";
+  return x instanceof Interval || typeof x === "object" && typeof x.degree === "number" && typeof x.onset === "number" && typeof x.octave === "number";
 };
 var isIntervalArray = x => {
   if (!Array.isArray(x)) return false;
@@ -453,6 +504,7 @@ class EnumIntervalProperty extends _Enum__WEBPACK_IMPORTED_MODULE_1__["Enum"] {
     _defineProperty(this, "abb", void 0);
 
     this.abb = abbIn;
+    return this;
   }
 
   name() {
@@ -477,7 +529,7 @@ _defineProperty(EnumIntervalProperty, "abbMap", {
 
 class Interval {
   static getOffsetFromProperty(propertyIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (propertyIn === EnumIntervalProperty.PERFECT) return 0;
@@ -494,7 +546,7 @@ class Interval {
   }
 
   static getPropertyFromOffset(onsetIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (onsetIn === 0) return EnumIntervalProperty.PERFECT;
@@ -511,7 +563,7 @@ class Interval {
   }
 
   static getOffsetFromDegree(degreeIn) {
-    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
+    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
   }
   /**
    * Returns Unison
@@ -535,7 +587,7 @@ class Interval {
     } else if (typeof first === "string") {
       this.fromString(first);
     } else if (typeof first === "number") {
-      this.degree = _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(first - 1, 7) + 1;
+      this.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(first - 1, 7) + 1;
       this.onset = second || 0;
       this.octave = Math.floor((first - 1) / 7) + (third || 0);
     }
@@ -574,11 +626,11 @@ class Interval {
     var octave = Math.floor(offsetIn / 12);
 
     for (var i = 0; i < DEGREE_TO_OFFSET.length; i++) {
-      if (DEGREE_TO_OFFSET[i] === _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(offsetIn, 12)) {
+      if (DEGREE_TO_OFFSET[i] === Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(offsetIn, 12)) {
         degree = i + 1;
         onset = 0;
         break;
-      } else if (DEGREE_TO_OFFSET[i] === _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(offsetIn, 12) + 1) {
+      } else if (DEGREE_TO_OFFSET[i] === Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(offsetIn, 12) + 1) {
         degree = i + 1;
         onset = -1;
         break;
@@ -604,13 +656,18 @@ class Interval {
     return this;
   }
 
+  static fromRatio(ratioIn) {
+    var offset = Math.round(Math.log(ratioIn) / Math.log(_Frequency__WEBPACK_IMPORTED_MODULE_2__["Frequency"].SEMITONE));
+    return new Interval(offset);
+  }
+
   add(iIn) {
     var i = {
       degree: 0,
       onset: 0,
       octave: 0
     };
-    i.degree = _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
+    i.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.degree + iIn.degree - 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
     i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
     this.degree = i.degree;
@@ -625,7 +682,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(this.degree - iIn.degree + 1 - 1, 7) + 1;
+    i.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.degree - iIn.degree + 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave - (iIn.offset - 12 * iIn.octave) - Interval.getOffsetFromDegree(this.degree - iIn.degree + 1);
     i.octave = this.octave - iIn.octave + Math.floor((this.degree - iIn.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -640,7 +697,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(1 - this.degree, 7) + 1;
+    i.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(1 - this.degree, 7) + 1;
     i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
     i.octave = 0 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -649,8 +706,27 @@ class Interval {
     return this;
   }
 
+  octaveReverse() {
+    var i = {
+      degree: 0,
+      onset: 0,
+      octave: 0
+    };
+    i.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(1 - this.degree, 7) + 1;
+    i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
+    i.octave = 1 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
+    this.degree = i.degree;
+    this.onset = i.onset;
+    this.octave = i.octave;
+    return this;
+  }
+
   get offset() {
-    return DEGREE_TO_OFFSET[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+    return DEGREE_TO_OFFSET[Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+  }
+
+  get ratio() {
+    return Math.pow(_Frequency__WEBPACK_IMPORTED_MODULE_2__["Frequency"].SEMITONE, this.offset);
   }
 
   get property() {
@@ -745,18 +821,19 @@ class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
     _defineProperty(this, "offset", void 0);
 
     this.offset = offsetIn;
+    return this;
   }
 
   static byOffset(offsetIn) {
     if (typeof offsetIn !== "number") return null;
-    var name = EnumNote.offsetMap[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(offsetIn, 12)];
+    var name = EnumNote.offsetMap[Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(offsetIn, 12)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with offset ".concat(offsetIn, "."));
   }
 
   static byIndex(indexIn) {
     if (typeof indexIn !== "number") return null;
-    var name = EnumNote.indexes[_Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(indexIn, 7)];
+    var name = EnumNote.indexes[Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(indexIn, 7)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with index ".concat(indexIn, "."));
   }
@@ -892,7 +969,7 @@ class Note {
   }
 
   static fromOffset(offsetIn, alterationIn) {
-    var note = _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(offsetIn, 12);
+    var note = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(offsetIn, 12);
     var offset = 11;
 
     for (var i = _Interval__WEBPACK_IMPORTED_MODULE_1__["DEGREE_TO_OFFSET"].length - 1; i >= 0; i--) {
@@ -928,7 +1005,7 @@ class Note {
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
-    this.alteration += i.offset - 12 * i.octave - _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(newEnumNote.offset - this.enumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(newEnumNote.offset - this.enumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
@@ -938,7 +1015,7 @@ class Note {
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
-    this.alteration += i.offset - 12 * i.octave - _Utils__WEBPACK_IMPORTED_MODULE_0__["Utils"].floorMod(this.enumNote.offset - newEnumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.enumNote.offset - newEnumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
@@ -1180,20 +1257,253 @@ _defineProperty(Pitch, "REGEX", /^([b#]*[a-gA-G])(-?\d+)?$/);
 
 /***/ }),
 
+/***/ "./src/Scale.ts":
+/*!**********************!*\
+  !*** ./src/Scale.ts ***!
+  \**********************/
+/*! exports provided: EnumScale, isScale, Scale */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumScale", function() { return EnumScale; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isScale", function() { return isScale; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Scale", function() { return Scale; });
+/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
+/* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+class EnumScale extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
+  static get MAJOR() {
+    return new EnumScale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+  }
+
+  static get MINOR() {
+    return new EnumScale("Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  static get PENTA() {
+    return new EnumScale("Penta", "P1:Gong", "M2:Shang", "M3:Jiao", "P5:Zhi", "M6:Yu");
+  }
+
+  static get IONIAN() {
+    return EnumScale.MAJOR;
+  }
+
+  static get DORIAN() {
+    return new EnumScale("Dorian", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+  }
+
+  static get PHRYGIAN() {
+    return new EnumScale("Phrygian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  static get LYDIAN() {
+    return new EnumScale("Lydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+  }
+
+  static get MIXOLYDIAN() {
+    return new EnumScale("Mixolydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+  }
+
+  static get AEOLIAN() {
+    return EnumScale.MINOR;
+  }
+
+  static get LOCRIAN() {
+    return new EnumScale("Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  static get ASCENDING_MELODIC_MINOR() {
+    return new EnumScale("Ascending Melodic Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+  }
+
+  static get PHRYGIAN_MAJ6() {
+    return new EnumScale("Phrygian M6", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+  }
+
+  static get LYDIAN_AUG() {
+    return new EnumScale("Lydian Augmented", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "A5:Dominant", "M6:Submediant", "M7:Leading");
+  }
+
+  static get LYDIAN_DOM() {
+    return new EnumScale("Lydian Dominant", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+  }
+
+  static get MIXOLYDIAN_MIN6() {
+    return new EnumScale("Mixolydian m6", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  static get LOCRIAN_MAJ2() {
+    return new EnumScale("Locrian M2", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  static get SUPER_LOCRIAN() {
+    return new EnumScale("Super Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "d4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
+  }
+
+  constructor(nameIn) {
+    super();
+
+    _defineProperty(this, "_name", void 0);
+
+    _defineProperty(this, "scale", void 0);
+
+    this._name = nameIn;
+
+    for (var _len = arguments.length, intervalsIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      intervalsIn[_key - 1] = arguments[_key];
+    }
+
+    this.scale = new Scale(intervalsIn);
+    return this;
+  }
+
+  static byName(nameIn) {
+    return EnumScale[nameIn];
+  }
+
+  name() {
+    return this._name;
+  }
+
+}
+
+_defineProperty(EnumScale, "index", ["MAJOR", "MINOR", "PENTA", "IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN", "ASCENDING_MELODIC_MINOR", "PHRYGIAN_MAJ6", "LYDIAN_AUG", "LYDIAN_DOM", "MIXOLYDIAN_MIN6", "LOCRIAN_MAJ2", "SUPER_LOCRIAN"]);
+
+var isScale = x => {
+  return x instanceof Scale || typeof x === "object" && Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["isStringArray"])(x.degreeNames) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals);
+};
+var _Symbol$iterator = Symbol.iterator;
+class Scale {
+  constructor(first) {
+    _defineProperty(this, "intervals", void 0);
+
+    _defineProperty(this, "degreeNames", void 0);
+
+    if (isScale(first)) {
+      this.intervals = [...first.intervals];
+      this.degreeNames = [...first.degreeNames];
+    } else {
+      this.intervals = [];
+      this.degreeNames = [];
+
+      for (var i = 0; i < first.length; i++) {
+        var degreeName = first[i];
+        var split = degreeName.split(":");
+
+        if (split.length === 2) {
+          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"](split[0]);
+          this.degreeNames[i] = split[1];
+        } else {
+          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"](degreeName);
+          this.degreeNames[i] = degreeName;
+        }
+      }
+    }
+
+    return this;
+  }
+
+  get size() {
+    return this.intervals.length;
+  }
+
+  addNote(noteIn) {
+    var interval;
+    var name;
+    var split = noteIn.split(":");
+
+    if (split.length === 2) {
+      interval = new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"](split[0]);
+      name = split[1];
+    } else {
+      interval = new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"](noteIn);
+      name = noteIn;
+    }
+
+    this.intervals.push(interval);
+    this.degreeNames.push(name);
+    return this;
+  }
+
+  getIntervalFromIndex(index) {
+    return this.intervals[index];
+  }
+
+  getIntervalFromDegree(degreeIn) {
+    return this.intervals.find(interval => {
+      return Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["floorMod"])(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
+    });
+  }
+
+  equals(scaleIn) {
+    return isScale(scaleIn) && this.intervals.length === scaleIn.intervals.length && this.intervals.every((interval, i) => interval.equals(scaleIn.intervals[i])) && this.degreeNames.length === scaleIn.degreeNames.length && this.degreeNames.every((name, i) => name === scaleIn.degreeNames[i]);
+  }
+
+  toString() {
+    var s = "Scale :{";
+
+    for (var i = 0; i < this.intervals.length; i++) {
+      var sI = this.intervals[i].toString();
+      var sN = this.degreeNames[i];
+      s += sI + (sN.length > 0 && sN !== sI ? ":" + sN : "");
+      if (i !== this.intervals.length - 1) s += ", ";
+    }
+
+    s += "}";
+    return s;
+  }
+
+  [_Symbol$iterator]() {
+    var o = this;
+    var i = -1;
+    return {
+      next() {
+        var value;
+        var done = true;
+
+        if (i < o.intervals.length) {
+          value = o.intervals[i];
+          i++;
+          done = false;
+        }
+
+        return {
+          value,
+          done
+        };
+      }
+
+    };
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/Utils.ts":
 /*!**********************!*\
   !*** ./src/Utils.ts ***!
   \**********************/
-/*! exports provided: Utils */
+/*! exports provided: Utils, floorMod, isStringArray */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Utils", function() { return Utils; });
-var Utils = {
-  floorMod: (x, y) => {
-    return (x % y + y) % y;
-  }
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floorMod", function() { return floorMod; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isStringArray", function() { return isStringArray; });
+var Utils = {};
+var floorMod = (x, y) => {
+  return (x % y + y) % y;
+};
+var isStringArray = x => {
+  return Array.isArray(x) && x.every(e => typeof e === "string");
 };
 
 /***/ }),
@@ -1207,25 +1517,27 @@ var Utils = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
-/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
+/* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
 /* eslint-disable no-console */
 
 
 
 
 
-new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C"));
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C")).toString());
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("#C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("G")).toString());
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("bC")).toString());
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("#C")).toString());
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("bB")).toString());
-console.log(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"]("#A")).toString());
-var n = new _Note__WEBPACK_IMPORTED_MODULE_0__["Note"](1);
+
+new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C"));
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C")).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("G")).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("bC")).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#C")).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("bB")).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#A")).toString());
+var n = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](1);
 console.log(n.toString());
 var p = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("##F0");
 console.log(p.add("A4").toString() + " " + p.offset);
@@ -1233,11 +1545,13 @@ var f = 440;
 console.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].toPitch(f).offset);
 var c = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("bC2"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1"));
 console.log(c.toString());
-console.log(new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]("M3").reverse().toString());
+console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M3").reverse().toString());
 console.log(c.notes.toString());
 console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")));
 var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
 console.log(c1.getEnumChord());
+var s = _Scale__WEBPACK_IMPORTED_MODULE_5__["EnumScale"].MINOR;
+console.log(s.scale.toString());
 
 /***/ })
 

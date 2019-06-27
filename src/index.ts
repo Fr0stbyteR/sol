@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
-import { Note } from "./Note";
 import { Interval } from "./Interval";
+import { Note } from "./Note";
 import { Pitch } from "./Pitch";
 import { Frequency } from "./Frequency";
 import { Chord } from "./Chord";
+import { EnumScale } from "./Scale";
 
 new Note("#G").getInterval(new Note("C"));
 console.log(new Note("#G").getInterval(new Note("C")).toString());
@@ -32,3 +33,6 @@ console.log(c.notes.toString());
 console.log(c.contains(new Pitch("#C1")));
 const c1 = new Chord(new Pitch("C1"), new Pitch("E1"), new Pitch("G1"));
 console.log(c1.getEnumChord());
+
+const s = EnumScale.MINOR;
+console.log(s.scale.toString());

@@ -58,6 +58,8 @@ export class Scale implements Iterable<Interval> {
             this.intervals = [...first.intervals];
             this.degreeNames = [...first.degreeNames];
         } else {
+            this.intervals = [];
+            this.degreeNames = [];
             for (let i = 0; i < first.length; i++) {
                 const degreeName = first[i];
                 const split = degreeName.split(":");
@@ -106,7 +108,15 @@ export class Scale implements Iterable<Interval> {
             && this.degreeNames.every((name, i) => name === scaleIn.degreeNames[i]);
     }
     toString() {
-        const s = "Scale :{";
+        let s = "Scale :{";
+        for (let i = 0; i < this.intervals.length; i++) {
+            const sI = this.intervals[i].toString();
+            const sN = this.degreeNames[i];
+            s += sI + (sN.length > 0 && sN !== sI ? ":" + sN : "");
+            if (i !== this.intervals.length - 1) s += ", ";
+        }
+        s += "}";
+        return s;
     }
     [Symbol.iterator](): Iterator<Interval> {
         const o = this;
