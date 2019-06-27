@@ -1,14 +1,15 @@
-import { Utils } from "./Utils";
+import { floorMod } from "./Utils";
 import { Enum } from "./Enum";
 import { Frequency } from "./Frequency";
 
 export type TInterval = { degree: number; onset: number; octave: number };
 export type TIntervalOffset = 0 | 2 | 4 | 5 | 7 | 9 | 11;
 export const isInterval = (x: any): x is TInterval | Interval => {
-    return typeof x === "object"
+    return x instanceof Interval
+        || (typeof x === "object"
         && typeof x.degree === "number"
         && typeof x.onset === "number"
-        && typeof x.octave === "number";
+        && typeof x.octave === "number");
 };
 export const isIntervalArray = (x: any): x is Interval[] => {
     if (!Array.isArray(x)) return false;
@@ -34,6 +35,7 @@ class EnumIntervalProperty extends Enum {
     private constructor(abbIn: TIntervalProperty) {
         super();
         this.abb = abbIn;
+        return this;
     }
     name() {
         return EnumIntervalProperty.abbMap[this.abb];
@@ -49,7 +51,7 @@ export class Interval {
     onset: number;
     octave: number;
     static getOffsetFromProperty(propertyIn: EnumIntervalProperty, degreeIn: number) {
-        const degree = typeof degreeIn === "number" ? Utils.floorMod(degreeIn - 1, 7) + 1 : 1;
+        const degree = typeof degreeIn === "number" ? floorMod(degreeIn - 1, 7) + 1 : 1;
         if (degree === 1 || degree === 4 || degree === 5) {
             if (propertyIn === EnumIntervalProperty.PERFECT) return 0;
             if (propertyIn === EnumIntervalProperty.AUGMENTED) return 1;
@@ -63,7 +65,7 @@ export class Interval {
         return 0;
     }
     static getPropertyFromOffset(onsetIn: number, degreeIn: number) {
-        const degree = typeof degreeIn === "number" ? Utils.floorMod(degreeIn - 1, 7) + 1 : 1;
+        const degree = typeof degreeIn === "number" ? floorMod(degreeIn - 1, 7) + 1 : 1;
         if (degree === 1 || degree === 4 || degree === 5) {
             if (onsetIn === 0) return EnumIntervalProperty.PERFECT;
             if (onsetIn === 1) return EnumIntervalProperty.AUGMENTED;
@@ -77,7 +79,7 @@ export class Interval {
         return null;
     }
     static getOffsetFromDegree(degreeIn: number) {
-        return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[Utils.floorMod(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
+        return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[floorMod(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
     }
     /**
      * Returns Unison
@@ -116,7 +118,7 @@ export class Interval {
         } else if (typeof first === "string") {
             this.fromString(first);
         } else if (typeof first === "number") {
-            this.degree = Utils.floorMod(first - 1, 7) + 1;
+            this.degree = floorMod(first - 1, 7) + 1;
             this.onset = second || 0;
             this.octave = Math.floor((first - 1) / 7) + (third || 0);
         }
@@ -142,11 +144,11 @@ export class Interval {
         let onset = 0;
         const octave = Math.floor(offsetIn / 12);
         for (let i = 0; i < DEGREE_TO_OFFSET.length; i++) {
-            if (DEGREE_TO_OFFSET[i] === Utils.floorMod(offsetIn, 12)) {
+            if (DEGREE_TO_OFFSET[i] === floorMod(offsetIn, 12)) {
                 degree = i + 1;
                 onset = 0;
                 break;
-            } else if (DEGREE_TO_OFFSET[i] === Utils.floorMod(offsetIn, 12) + 1) {
+            } else if (DEGREE_TO_OFFSET[i] === floorMod(offsetIn, 12) + 1) {
                 degree = i + 1;
                 onset = -1;
                 break;
@@ -167,7 +169,7 @@ export class Interval {
     }
     add(iIn: Interval) {
         const i = { degree: 0, onset: 0, octave: 0 };
-        i.degree = Utils.floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
+        i.degree = floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
         i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
         i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
         this.degree = i.degree;
@@ -177,7 +179,7 @@ export class Interval {
     }
     sub(iIn: Interval) {
         const i = { degree: 0, onset: 0, octave: 0 };
-        i.degree = Utils.floorMod(this.degree - iIn.degree + 1 - 1, 7) + 1;
+        i.degree = floorMod(this.degree - iIn.degree + 1 - 1, 7) + 1;
         i.onset = (this.offset - 12 * this.octave) - (iIn.offset - 12 * iIn.octave) - Interval.getOffsetFromDegree(this.degree - iIn.degree + 1);
         i.octave = this.octave - iIn.octave + Math.floor((this.degree - iIn.degree + 1 - 1) / 7);
         this.degree = i.degree;
@@ -187,7 +189,7 @@ export class Interval {
     }
     reverse() {
         const i = { degree: 0, onset: 0, octave: 0 };
-        i.degree = Utils.floorMod(1 - this.degree, 7) + 1;
+        i.degree = floorMod(1 - this.degree, 7) + 1;
         i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
         i.octave = 0 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
         this.degree = i.degree;
@@ -197,7 +199,7 @@ export class Interval {
     }
     octaveReverse() {
         const i = { degree: 0, onset: 0, octave: 0 };
-        i.degree = Utils.floorMod(1 - this.degree, 7) + 1;
+        i.degree = floorMod(1 - this.degree, 7) + 1;
         i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
         i.octave = 1 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
         this.degree = i.degree;
@@ -206,7 +208,7 @@ export class Interval {
         return this;
     }
     get offset() {
-        return DEGREE_TO_OFFSET[Utils.floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+        return DEGREE_TO_OFFSET[floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
     }
     get ratio() {
         return Frequency.SEMITONE ** this.offset;
@@ -219,9 +221,9 @@ export class Interval {
     }
     equals(intervalIn: object) {
         return isInterval(intervalIn)
-                && this.degree === intervalIn.degree
-                && this.onset === intervalIn.onset
-                && this.octave === intervalIn.octave;
+            && this.degree === intervalIn.degree
+            && this.onset === intervalIn.onset
+            && this.octave === intervalIn.octave;
     }
     toString() {
         const sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";

@@ -5,9 +5,9 @@ export type TPitch = { enumNote: EnumNote; alteration: number; octave: number };
 export const isPitch = (x: any): x is TPitch | Pitch => {
     return x instanceof Pitch
         || (typeof x === "object"
-            && x.enumNote instanceof EnumNote
-            && typeof x.alteration === "number"
-            && typeof x.octave === "number");
+        && x.enumNote instanceof EnumNote
+        && typeof x.alteration === "number"
+        && typeof x.octave === "number");
 };
 export const isPitchArray = (x: any): x is Pitch[] => {
     if (!Array.isArray(x)) return false;
@@ -114,8 +114,8 @@ export class Pitch extends Note {
     }
     equals(pitchIn: object) {
         return super.equals(pitchIn)
-                && isPitch(pitchIn)
-                && this.octave === pitchIn.octave;
+            && isPitch(pitchIn)
+            && this.octave === pitchIn.octave;
     }
     getInterval(pitchIn: TPitch) {
         if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");

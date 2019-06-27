@@ -1,9 +1,9 @@
 export class Enum {
     protected static indexes: string[] = [];
-    static values<T>(): T[] {
+    static values<T extends Enum>(): T[] {
         return this.indexes.map(key => (this as unknown as { [key: string]: T })[key]);
     }
-    static valueOf<T>(key: string): T {
+    static valueOf<T extends Enum>(key: string): T {
         return (this as unknown as { [key: string]: T })[key];
     }
     name(): string {

@@ -1,4 +1,4 @@
-import { Utils } from "./Utils";
+import { floorMod } from "./Utils";
 import { Interval, TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
 import { Enum } from "./Enum";
 
@@ -24,16 +24,17 @@ export class EnumNote extends Enum {
     private constructor(offsetIn: TIntervalOffset) {
         super();
         this.offset = offsetIn;
+        return this;
     }
     static byOffset(offsetIn: number) {
         if (typeof offsetIn !== "number") return null;
-        const name = EnumNote.offsetMap[Utils.floorMod(offsetIn, 12)];
+        const name = EnumNote.offsetMap[floorMod(offsetIn, 12)];
         if (name) return EnumNote[name];
         throw new SyntaxError(`No such note with offset ${offsetIn}.`);
     }
     static byIndex(indexIn: number) {
         if (typeof indexIn !== "number") return null;
-        const name = EnumNote.indexes[Utils.floorMod(indexIn, 7)];
+        const name = EnumNote.indexes[floorMod(indexIn, 7)];
         if (name) return EnumNote[name];
         throw new SyntaxError(`No such note with index ${indexIn}.`);
     }
@@ -48,8 +49,8 @@ export type TNote = { enumNote: EnumNote; alteration: number };
 export const isNote = (x: any): x is TNote | Note => {
     return x instanceof Note
         || (typeof x === "object"
-            && x.enumNote instanceof EnumNote
-            && typeof x.alteration === "number");
+        && x.enumNote instanceof EnumNote
+        && typeof x.alteration === "number");
 };
 export const isNoteArray = (x: any): x is Note[] => {
     if (!Array.isArray(x)) return false;
@@ -124,7 +125,7 @@ export class Note {
         return this;
     }
     static fromOffset(offsetIn: number, alterationIn?: number): TNote {
-        const note = Utils.floorMod(offsetIn, 12);
+        const note = floorMod(offsetIn, 12);
         let offset = 11;
         for (let i = DEGREE_TO_OFFSET.length - 1; i >= 0; i--) {
             const el = DEGREE_TO_OFFSET[i];
@@ -150,7 +151,7 @@ export class Note {
         if (typeof iIn === "string") i = new Interval(iIn);
         else if (iIn instanceof Interval) i = iIn;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
-        this.alteration += i.offset - 12 * i.octave - Utils.floorMod(newEnumNote.offset - this.enumNote.offset, 12);
+        this.alteration += i.offset - 12 * i.octave - floorMod(newEnumNote.offset - this.enumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
     }
@@ -160,14 +161,14 @@ export class Note {
         if (typeof iIn === "string") i = new Interval(iIn);
         else if (iIn instanceof Interval) i = iIn;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
-        this.alteration += i.offset - 12 * i.octave - Utils.floorMod(this.enumNote.offset - newEnumNote.offset, 12);
+        this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
     }
     equals(noteIn: object) {
         return isNote(noteIn)
-                && this.enumNote.equals(noteIn.enumNote)
-                && this.alteration === noteIn.alteration;
+            && this.enumNote.equals(noteIn.enumNote)
+            && this.alteration === noteIn.alteration;
     }
     getInterval(noteIn: TNote) {
         if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");

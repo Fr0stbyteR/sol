@@ -3,9 +3,9 @@ import { Note, isNoteArray, isNote } from "./Note";
 import { Pitch, isPitchArray } from "./Pitch";
 import { Enum } from "./Enum";
 
-type TEnumChordValue = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
+type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
-    protected static indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"] as TEnumChordValue[];
+    protected static indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"] as TEnumChordName[];
     static get MAJ() { return new EnumChord("MAJ", "M3", "P5"); }
     static get MIN() { return new EnumChord("MIN", "m3", "P5"); }
     static get AUG() { return new EnumChord("AUG", "M3", "A5"); }
@@ -29,23 +29,28 @@ export class EnumChord extends Enum {
         super();
         this._name = nameIn;
         this.intervals = Interval.fromArray(...intervalsIn);
+        return this;
     }
     static byChord(chordIn: Chord) {
-        return this.values<Chord>().find((enumChord) => {
+        return this.values<EnumChord>().find((enumChord) => {
             return enumChord.intervals.length === chordIn.intervals.length
-                    && enumChord.intervals.every((interval, i) => interval.equals(chordIn.intervals[i]));
+                && enumChord.intervals.every((interval, i) => interval.equals(chordIn.intervals[i]));
         }) || null;
     }
-    static byName(chordIn: TEnumChordValue) {
+    static byName(chordIn: TEnumChordName) {
         return EnumChord[chordIn];
+    }
+    name() {
+        return this._name;
     }
 }
 export type TChord = { base: Note | Pitch; intervals: Interval[]; isAbsolute: boolean };
 export const isChord = (x: any): x is TChord | Chord => {
-    return typeof x === "object"
-            && isNote(x.base)
-            && isIntervalArray(x.intervals)
-            && typeof x.isAbsolute === "boolean";
+    return x instanceof Chord
+        || (typeof x === "object"
+        && isNote(x.base)
+        && isIntervalArray(x.intervals)
+        && typeof x.isAbsolute === "boolean");
 };
 export class Chord implements Iterable<Note> {
     base: Note | Pitch;
