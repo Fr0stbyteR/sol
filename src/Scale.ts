@@ -1,46 +1,29 @@
 import { Interval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./Utils";
-import { Enum } from "./Enum";
 
-type TEnumScaleName = "MAJOR" | "MINOR" | "PENTA" | "IONIAN" | "DORIAN" | "PHRYGIAN" | "LYDIAN" | "MIXOLYDIAN" | "AEOLIAN" | "LOCRIAN" | "ASCENDING_MELODIC_MINOR" | "PHRYGIAN_MAJ6" | "LYDIAN_AUG" | "LYDIAN_DOM" | "MIXOLYDIAN_MIN6" | "LOCRIAN_MAJ2" | "SUPER_LOCRIAN";
-export class EnumScale extends Enum {
-    protected static index = ["MAJOR", "MINOR", "PENTA", "IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN", "ASCENDING_MELODIC_MINOR", "PHRYGIAN_MAJ6", "LYDIAN_AUG", "LYDIAN_DOM", "MIXOLYDIAN_MIN6", "LOCRIAN_MAJ2", "SUPER_LOCRIAN"] as TEnumScaleName[];
-    static get MAJOR() { return new EnumScale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
-    static get MINOR() { return new EnumScale("Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
-    static get PENTA() { return new EnumScale("Penta", "P1:Gong", "M2:Shang", "M3:Jiao", "P5:Zhi", "M6:Yu"); }
+export class EnumScale {
+    static get MAJOR() { return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
+    static get MINOR() { return new Scale("Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
+    static get PENTA() { return new Scale("Penta", "P1:Gong", "M2:Shang", "M3:Jiao", "P5:Zhi", "M6:Yu"); }
 
     static get IONIAN() { return EnumScale.MAJOR; }
-    static get DORIAN() { return new EnumScale("Dorian", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
-    static get PHRYGIAN() { return new EnumScale("Phrygian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
-    static get LYDIAN() { return new EnumScale("Lydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
-    static get MIXOLYDIAN() { return new EnumScale("Mixolydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
+    static get DORIAN() { return new Scale("Dorian", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
+    static get PHRYGIAN() { return new Scale("Phrygian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
+    static get LYDIAN() { return new Scale("Lydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
+    static get MIXOLYDIAN() { return new Scale("Mixolydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
     static get AEOLIAN() { return EnumScale.MINOR; }
-    static get LOCRIAN() { return new EnumScale("Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
+    static get LOCRIAN() { return new Scale("Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
 
-    static get ASCENDING_MELODIC_MINOR() { return new EnumScale("Ascending Melodic Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
-    static get PHRYGIAN_MAJ6() { return new EnumScale("Phrygian M6", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
-    static get LYDIAN_AUG() { return new EnumScale("Lydian Augmented", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "A5:Dominant", "M6:Submediant", "M7:Leading"); }
-    static get LYDIAN_DOM() { return new EnumScale("Lydian Dominant", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
-    static get MIXOLYDIAN_MIN6() { return new EnumScale("Mixolydian m6", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
-    static get LOCRIAN_MAJ2() { return new EnumScale("Locrian M2", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
-    static get SUPER_LOCRIAN() { return new EnumScale("Super Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "d4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
-
-    _name: string;
-    scale: Scale;
-    private constructor(nameIn: string, ...intervalsIn: string[]) {
-        super();
-        this._name = nameIn;
-        this.scale = new Scale(intervalsIn);
-        return this;
-    }
-    static byName(nameIn: TEnumScaleName) {
-        return EnumScale[nameIn];
-    }
-    name() {
-        return this._name;
-    }
+    static get ASCENDING_MELODIC_MINOR() { return new Scale("Ascending Melodic Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
+    static get PHRYGIAN_MAJ6() { return new Scale("Phrygian M6", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
+    static get LYDIAN_AUG() { return new Scale("Lydian Augmented", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "A5:Dominant", "M6:Submediant", "M7:Leading"); }
+    static get LYDIAN_DOM() { return new Scale("Lydian Dominant", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic"); }
+    static get MIXOLYDIAN_MIN6() { return new Scale("Mixolydian m6", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic"); }
+    static get LOCRIAN_MAJ2() { return new Scale("Locrian M2", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
+    static get SUPER_LOCRIAN() { return new Scale("Super Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "d4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic"); }
 }
 export interface IScale {
+    scaleName?: string;
     intervals: Interval[];
     degreeNames: string[];
 }
@@ -51,20 +34,22 @@ export const isScale = (x: any): x is IScale => {
         && isIntervalArray(x.intervals));
 };
 export class Scale implements Iterable<Interval>, IScale {
+    scaleName?: string;
     intervals: Interval[];
     degreeNames: string[];
 
-    constructor(degreesIn: string[]);
+    constructor(nameIn: string, ...degreesIn: string[]);
     constructor(scaleIn: IScale);
-    constructor(first: string[] | IScale) {
+    constructor(first: string | IScale, ...degreesIn: string[]) {
         if (isScale(first)) {
-            this.intervals = [...first.intervals];
+            this.intervals = first.intervals.map(i => i.clone());
             this.degreeNames = [...first.degreeNames];
         } else {
+            this.scaleName = first;
             this.intervals = [];
             this.degreeNames = [];
-            for (let i = 0; i < first.length; i++) {
-                const degreeName = first[i];
+            for (let i = 0; i < degreesIn.length; i++) {
+                const degreeName = degreesIn[i];
                 const split = degreeName.split(":");
                 if (split.length === 2) {
                     this.intervals[i] = new Interval(split[0]);
@@ -103,6 +88,9 @@ export class Scale implements Iterable<Interval>, IScale {
             return floorMod(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
         });
     }
+    get degrees() {
+        return this.intervals.map(i => i.degree);
+    }
     equals(scaleIn: object) {
         return isScale(scaleIn)
             && this.intervals.length === scaleIn.intervals.length
@@ -110,8 +98,11 @@ export class Scale implements Iterable<Interval>, IScale {
             && this.degreeNames.length === scaleIn.degreeNames.length
             && this.degreeNames.every((name, i) => name === scaleIn.degreeNames[i]);
     }
+    public getName() {
+        return this.scaleName;
+    }
     toString() {
-        let s = "Scale :{";
+        let s = this.scaleName ? `Scale "${this.scaleName}" :{` : "Scale :{";
         for (let i = 0; i < this.intervals.length; i++) {
             const sI = this.intervals[i].toString();
             const sN = this.degreeNames[i];
@@ -120,6 +111,9 @@ export class Scale implements Iterable<Interval>, IScale {
         }
         s += "}";
         return s;
+    }
+    clone() {
+        return new Scale(this);
     }
     [Symbol.iterator](): Iterator<Interval> {
         const o = this;

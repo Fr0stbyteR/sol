@@ -7,3 +7,7 @@ export const isStringArray = (x: any): x is string[] => {
     return Array.isArray(x)
         && x.every(e => typeof e === "string");
 };
+export const isNumberArray = (x: any): x is number[] => {
+    return Array.isArray(x)
+        && x.every(e => typeof e === "number");
+};

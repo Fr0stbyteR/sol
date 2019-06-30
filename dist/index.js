@@ -217,7 +217,7 @@ class Chord {
 
   /**
    * Gives a new Chord instance (clone)
-   * @param {(Chord | TChord)} chordIn
+   * @param {IChord} chordIn
    * @memberof Chord
    */
 
@@ -515,6 +515,10 @@ class EnumIntervalProperty extends _Enum__WEBPACK_IMPORTED_MODULE_1__["Enum"] {
     return this.name();
   }
 
+  equals(propertyIn) {
+    return propertyIn instanceof EnumIntervalProperty && this.abb === propertyIn.abb;
+  }
+
 }
 
 _defineProperty(EnumIntervalProperty, "indexes", ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"]);
@@ -532,14 +536,14 @@ class Interval {
     var degree = typeof degreeIn === "number" ? Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
-      if (propertyIn === EnumIntervalProperty.PERFECT) return 0;
-      if (propertyIn === EnumIntervalProperty.AUGMENTED) return 1;
-      if (propertyIn === EnumIntervalProperty.DIMINISHED) return -1;
+      if (propertyIn.equals(EnumIntervalProperty.PERFECT)) return 0;
+      if (propertyIn.equals(EnumIntervalProperty.AUGMENTED)) return 1;
+      if (propertyIn.equals(EnumIntervalProperty.DIMINISHED)) return -1;
     } else {
-      if (propertyIn === EnumIntervalProperty.MAJOR) return 0;
-      if (propertyIn === EnumIntervalProperty.MINOR) return -1;
-      if (propertyIn === EnumIntervalProperty.AUGMENTED) return 1;
-      if (propertyIn === EnumIntervalProperty.DIMINISHED) return -2;
+      if (propertyIn.equals(EnumIntervalProperty.MAJOR)) return 0;
+      if (propertyIn.equals(EnumIntervalProperty.MINOR)) return -1;
+      if (propertyIn.equals(EnumIntervalProperty.AUGMENTED)) return 1;
+      if (propertyIn.equals(EnumIntervalProperty.DIMINISHED)) return -2;
     }
 
     return 0;
@@ -897,14 +901,14 @@ class Note {
 
   /**
    * New note
-   * @param {(EnumNote)} noteIn
+   * @param {EnumNote} noteIn
    * @param {number} [alteration]
    * @memberof Note
    */
 
   /**
    * Gives a new Note instance (clone)
-   * @param {(Note | TNote | string)} noteIn
+   * @param {INote} noteIn
    * @memberof Note
    */
 
@@ -1094,13 +1098,13 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
 
   /**
    * Gives a new Pitch instance (clone)
-   * @param {Pitch | TPitch} pitchIn
+   * @param {IPitch} pitchIn
    * @memberof Pitch
    */
 
   /**
    * Add octave info to a note
-   * @param {(Note | EnumNote | TNote)} noteIn
+   * @param {EnumNote | INote} noteIn
    * @param {number} [octaveIn]
    * @memberof Pitch
    */
@@ -1132,7 +1136,13 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
       _defineProperty(this, "octave", void 0);
 
       this.octave = first.octave;
-    } else if (first instanceof _Note__WEBPACK_IMPORTED_MODULE_0__["EnumNote"] || Object(_Note__WEBPACK_IMPORTED_MODULE_0__["isNote"])(first)) {
+    } else if (first instanceof _Note__WEBPACK_IMPORTED_MODULE_0__["EnumNote"]) {
+      super(first);
+
+      _defineProperty(this, "octave", void 0);
+
+      this.octave = second || 0;
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_0__["isNote"])(first)) {
       super(first);
 
       _defineProperty(this, "octave", void 0);
@@ -1271,23 +1281,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Scale", function() { return Scale; });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
-/* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-
-class EnumScale extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
+class EnumScale {
   static get MAJOR() {
-    return new EnumScale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+    return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
   }
 
   static get MINOR() {
-    return new EnumScale("Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+    return new Scale("Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
   static get PENTA() {
-    return new EnumScale("Penta", "P1:Gong", "M2:Shang", "M3:Jiao", "P5:Zhi", "M6:Yu");
+    return new Scale("Penta", "P1:Gong", "M2:Shang", "M3:Jiao", "P5:Zhi", "M6:Yu");
   }
 
   static get IONIAN() {
@@ -1295,19 +1303,19 @@ class EnumScale extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
   }
 
   static get DORIAN() {
-    return new EnumScale("Dorian", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+    return new Scale("Dorian", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
   }
 
   static get PHRYGIAN() {
-    return new EnumScale("Phrygian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+    return new Scale("Phrygian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
   static get LYDIAN() {
-    return new EnumScale("Lydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+    return new Scale("Lydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
   }
 
   static get MIXOLYDIAN() {
-    return new EnumScale("Mixolydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+    return new Scale("Mixolydian", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
   }
 
   static get AEOLIAN() {
@@ -1315,85 +1323,60 @@ class EnumScale extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
   }
 
   static get LOCRIAN() {
-    return new EnumScale("Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
+    return new Scale("Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
   static get ASCENDING_MELODIC_MINOR() {
-    return new EnumScale("Ascending Melodic Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
+    return new Scale("Ascending Melodic Minor", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading");
   }
 
   static get PHRYGIAN_MAJ6() {
-    return new EnumScale("Phrygian M6", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+    return new Scale("Phrygian M6", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
   }
 
   static get LYDIAN_AUG() {
-    return new EnumScale("Lydian Augmented", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "A5:Dominant", "M6:Submediant", "M7:Leading");
+    return new Scale("Lydian Augmented", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "A5:Dominant", "M6:Submediant", "M7:Leading");
   }
 
   static get LYDIAN_DOM() {
-    return new EnumScale("Lydian Dominant", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
+    return new Scale("Lydian Dominant", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "A4:Subdominant", "P5:Dominant", "M6:Submediant", "m7:Subtonic");
   }
 
   static get MIXOLYDIAN_MIN6() {
-    return new EnumScale("Mixolydian m6", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
+    return new Scale("Mixolydian m6", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
   static get LOCRIAN_MAJ2() {
-    return new EnumScale("Locrian M2", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
+    return new Scale("Locrian M2", "P1:Tonic", "M2:Supertonic", "m3:Mediant", "P4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
   static get SUPER_LOCRIAN() {
-    return new EnumScale("Super Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "d4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
-  }
-
-  constructor(nameIn) {
-    super();
-
-    _defineProperty(this, "_name", void 0);
-
-    _defineProperty(this, "scale", void 0);
-
-    this._name = nameIn;
-
-    for (var _len = arguments.length, intervalsIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      intervalsIn[_key - 1] = arguments[_key];
-    }
-
-    this.scale = new Scale(intervalsIn);
-    return this;
-  }
-
-  static byName(nameIn) {
-    return EnumScale[nameIn];
-  }
-
-  name() {
-    return this._name;
+    return new Scale("Super Locrian", "P1:Tonic", "m2:Supertonic", "m3:Mediant", "d4:Subdominant", "d5:Dominant", "m6:Submediant", "m7:Subtonic");
   }
 
 }
-
-_defineProperty(EnumScale, "index", ["MAJOR", "MINOR", "PENTA", "IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN", "ASCENDING_MELODIC_MINOR", "PHRYGIAN_MAJ6", "LYDIAN_AUG", "LYDIAN_DOM", "MIXOLYDIAN_MIN6", "LOCRIAN_MAJ2", "SUPER_LOCRIAN"]);
-
 var isScale = x => {
   return x instanceof Scale || typeof x === "object" && Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["isStringArray"])(x.degreeNames) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals);
 };
 var _Symbol$iterator = Symbol.iterator;
 class Scale {
   constructor(first) {
+    _defineProperty(this, "scaleName", void 0);
+
     _defineProperty(this, "intervals", void 0);
 
     _defineProperty(this, "degreeNames", void 0);
 
     if (isScale(first)) {
-      this.intervals = [...first.intervals];
+      this.intervals = first.intervals.map(i => i.clone());
       this.degreeNames = [...first.degreeNames];
     } else {
+      this.scaleName = first;
       this.intervals = [];
       this.degreeNames = [];
 
-      for (var i = 0; i < first.length; i++) {
-        var degreeName = first[i];
+      for (var i = 0; i < (arguments.length <= 1 ? 0 : arguments.length - 1); i++) {
+        var degreeName = i + 1 < 1 || arguments.length <= i + 1 ? undefined : arguments[i + 1];
         var split = degreeName.split(":");
 
         if (split.length === 2) {
@@ -1441,12 +1424,20 @@ class Scale {
     });
   }
 
+  get degrees() {
+    return this.intervals.map(i => i.degree);
+  }
+
   equals(scaleIn) {
     return isScale(scaleIn) && this.intervals.length === scaleIn.intervals.length && this.intervals.every((interval, i) => interval.equals(scaleIn.intervals[i])) && this.degreeNames.length === scaleIn.degreeNames.length && this.degreeNames.every((name, i) => name === scaleIn.degreeNames[i]);
   }
 
+  getName() {
+    return this.scaleName;
+  }
+
   toString() {
-    var s = "Scale :{";
+    var s = this.scaleName ? "Scale \"".concat(this.scaleName, "\" :{") : "Scale :{";
 
     for (var i = 0; i < this.intervals.length; i++) {
       var sI = this.intervals[i].toString();
@@ -1457,6 +1448,10 @@ class Scale {
 
     s += "}";
     return s;
+  }
+
+  clone() {
+    return new Scale(this);
   }
 
   [_Symbol$iterator]() {
@@ -1486,24 +1481,179 @@ class Scale {
 
 /***/ }),
 
-/***/ "./src/Utils.ts":
-/*!**********************!*\
-  !*** ./src/Utils.ts ***!
-  \**********************/
-/*! exports provided: Utils, floorMod, isStringArray */
+/***/ "./src/Tonality.ts":
+/*!*************************!*\
+  !*** ./src/Tonality.ts ***!
+  \*************************/
+/*! exports provided: isTonality, Tonality */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Utils", function() { return Utils; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTonality", function() { return isTonality; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tonality", function() { return Tonality; });
+/* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
+/* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
+/* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
+/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+var isTonality = x => {
+  return x instanceof Tonality || typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.note) && Object(_Scale__WEBPACK_IMPORTED_MODULE_0__["isScale"])(x.scale);
+};
+var _Symbol$iterator = Symbol.iterator;
+class Tonality {
+  constructor(first, second) {
+    _defineProperty(this, "note", void 0);
+
+    _defineProperty(this, "scale", void 0);
+
+    if (isTonality(first)) {
+      this.note = first.note.clone();
+      this.scale = first.scale.clone();
+    } else if (typeof first === "string") {
+      try {
+        this.note = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);
+      } catch (e) {
+        throw new Error("No such tonality: ".concat(first, "."));
+      }
+
+      this.scale = first.substr(first.length - 1).match("[A-G]") ? _Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MAJOR : _Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MINOR;
+    } else {
+      this.note = first;
+      this.scale = second;
+    }
+
+    return this;
+  }
+
+  add(intervalIn) {
+    this.note.add(intervalIn);
+    return this;
+  }
+
+  sub(intervalIn) {
+    this.note.sub(intervalIn);
+    return this;
+  }
+
+  get notes() {
+    return this.scale.intervals.map(i => this.note.clone().add(i));
+  }
+
+  getNoteFromDegree(deegreeIn) {
+    return this.note.clone().add(this.scale.getIntervalFromDegree(deegreeIn));
+  }
+
+  getTriad(degreeIn) {
+    return new _Chord__WEBPACK_IMPORTED_MODULE_2__["Chord"](this.getNoteFromDegree(degreeIn), this.getNoteFromDegree(degreeIn + 2), this.getNoteFromDegree(degreeIn + 4));
+  }
+
+  getTriads() {
+    return this.scale.degrees.map(d => this.getTriad(d));
+  }
+
+  get triads() {
+    return this.getTriads();
+  }
+
+  toRelative() {
+    if (this.scale.equals(_Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MAJOR)) {
+      this.note.sub(new _Interval__WEBPACK_IMPORTED_MODULE_3__["Interval"]("m3"));
+      this.scale = _Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MINOR;
+    } else if (this.scale.equals(_Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MINOR)) {
+      this.note.add(new _Interval__WEBPACK_IMPORTED_MODULE_3__["Interval"]("m3"));
+      this.scale = _Scale__WEBPACK_IMPORTED_MODULE_0__["EnumScale"].MAJOR;
+    } else throw new Error("Relative not found.");
+
+    return this;
+  }
+
+  get relative() {
+    return this.clone().toRelative();
+  }
+
+  toNext() {
+    this.note.add(new _Interval__WEBPACK_IMPORTED_MODULE_3__["Interval"]("P5"));
+    return this;
+  }
+
+  get next() {
+    return this.clone().toNext();
+  }
+
+  toPrev() {
+    this.note.sub(new _Interval__WEBPACK_IMPORTED_MODULE_3__["Interval"]("P5"));
+    return this;
+  }
+
+  get prev() {
+    return this.clone().toPrev();
+  }
+
+  toString() {
+    return "".concat(this.note.toString(), " ").concat(this.scale.getName() || this.scale.toString());
+  }
+
+  clone() {
+    return new Tonality(this);
+  }
+
+  [_Symbol$iterator]() {
+    var o = this;
+    var i = -1;
+    return {
+      next() {
+        var value;
+        var done = true;
+
+        if (i < o.scale.size) {
+          value = o.note.clone().add(o.scale.intervals[i]);
+          i++;
+          done = false;
+        }
+
+        return {
+          value,
+          done
+        };
+      }
+
+    };
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/Utils.ts":
+/*!**********************!*\
+  !*** ./src/Utils.ts ***!
+  \**********************/
+/*! exports provided: gcd, lcm, floorMod, isStringArray, isNumberArray */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gcd", function() { return gcd; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lcm", function() { return lcm; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floorMod", function() { return floorMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isStringArray", function() { return isStringArray; });
-var Utils = {};
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumberArray", function() { return isNumberArray; });
+var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+var lcm = (a, b) => a * (b / gcd(a, b));
 var floorMod = (x, y) => {
   return (x % y + y) % y;
 };
 var isStringArray = x => {
   return Array.isArray(x) && x.every(e => typeof e === "string");
+};
+var isNumberArray = x => {
+  return Array.isArray(x) && x.every(e => typeof e === "number");
 };
 
 /***/ }),
@@ -1523,7 +1673,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
+/* harmony import */ var _Tonality__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Tonality */ "./src/Tonality.ts");
 /* eslint-disable no-console */
+
 
 
 
@@ -1551,7 +1703,10 @@ console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")))
 var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
 console.log(c1.getEnumChord());
 var s = _Scale__WEBPACK_IMPORTED_MODULE_5__["EnumScale"].MINOR;
-console.log(s.scale.toString());
+console.log(s.toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toRelative().toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toPrev().toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toNext().toString());
 
 /***/ })
 

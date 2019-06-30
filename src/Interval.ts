@@ -47,6 +47,10 @@ class EnumIntervalProperty extends Enum {
     toString() {
         return this.name();
     }
+    equals(propertyIn: object) {
+        return propertyIn instanceof EnumIntervalProperty
+            && this.abb === propertyIn.abb;
+    }
 }
 
 export class Interval implements IInterval {
@@ -57,14 +61,14 @@ export class Interval implements IInterval {
     static getOffsetFromProperty(propertyIn: EnumIntervalProperty, degreeIn: number) {
         const degree = typeof degreeIn === "number" ? floorMod(degreeIn - 1, 7) + 1 : 1;
         if (degree === 1 || degree === 4 || degree === 5) {
-            if (propertyIn === EnumIntervalProperty.PERFECT) return 0;
-            if (propertyIn === EnumIntervalProperty.AUGMENTED) return 1;
-            if (propertyIn === EnumIntervalProperty.DIMINISHED) return -1;
+            if (propertyIn.equals(EnumIntervalProperty.PERFECT)) return 0;
+            if (propertyIn.equals(EnumIntervalProperty.AUGMENTED)) return 1;
+            if (propertyIn.equals(EnumIntervalProperty.DIMINISHED)) return -1;
         } else {
-            if (propertyIn === EnumIntervalProperty.MAJOR) return 0;
-            if (propertyIn === EnumIntervalProperty.MINOR) return -1;
-            if (propertyIn === EnumIntervalProperty.AUGMENTED) return 1;
-            if (propertyIn === EnumIntervalProperty.DIMINISHED) return -2;
+            if (propertyIn.equals(EnumIntervalProperty.MAJOR)) return 0;
+            if (propertyIn.equals(EnumIntervalProperty.MINOR)) return -1;
+            if (propertyIn.equals(EnumIntervalProperty.AUGMENTED)) return 1;
+            if (propertyIn.equals(EnumIntervalProperty.DIMINISHED)) return -2;
         }
         return 0;
     }
