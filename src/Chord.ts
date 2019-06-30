@@ -31,7 +31,7 @@ export class EnumChord extends Enum {
         this.intervals = Interval.fromArray(...intervalsIn);
         return this;
     }
-    static byChord(chordIn: Chord) {
+    static byChord(chordIn: IChord) {
         return this.values<EnumChord>().find((enumChord) => {
             return enumChord.intervals.length === chordIn.intervals.length
                 && enumChord.intervals.every((interval, i) => interval.equals(chordIn.intervals[i]));
