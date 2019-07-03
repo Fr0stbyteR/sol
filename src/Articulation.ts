@@ -4,7 +4,7 @@ export interface IArticulation {
 }
 export const isArticulation = (x: any): x is IArticulation => {
     return x instanceof Articulation
-        && (typeof x === "object"
+        || (typeof x === "object"
         && typeof x.velocity === "number"
         && typeof x.length === "number");
 };
@@ -19,11 +19,19 @@ export class EnumArticulation {
     static get PIZZICATO() { return new Articulation(1, 1); }
     static get MUTED() { return new Articulation(1, 1); }
 }
-export class Articulation {
+export class Articulation implements IArticulation {
     velocity: number;
     length: number;
-    constructor(velocityIn: number, lengthIn: number) {
-        this.velocity = velocityIn;
-        this.length = lengthIn;
+    constructor(articulationIn: IArticulation);
+    constructor(velocityIn: number, lengthIn: number);
+    constructor(first: IArticulation | number, lengthIn?: number) {
+        if (isArticulation(first)) {
+            this.velocity = first.velocity;
+            this.length = first.length;
+        } else {
+            this.velocity = first;
+            this.length = lengthIn;
+        }
+        return this;
     }
 }

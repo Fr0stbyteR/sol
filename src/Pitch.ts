@@ -1,5 +1,6 @@
 import { Note, EnumNote, INote, isNote } from "./Note";
 import { Interval } from "./Interval";
+import { Frequency } from "./Frequency";
 
 export interface IPitch extends INote {
     octave: number;
@@ -17,6 +18,8 @@ export const isPitchArray = (x: any): x is Pitch[] => {
 };
 export class Pitch extends Note implements IPitch {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
+    static MINIMUM = Frequency.toPitch(20);
+    static MAXIMUM = Frequency.toPitch(20000);
     octave: number;
 
     /**

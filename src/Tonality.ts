@@ -13,7 +13,7 @@ export const isTonality = (x: any): x is ITonality => {
         && isNote(x.note)
         && isScale(x.scale));
 };
-export class Tonality implements Iterable<Note> {
+export class Tonality implements Iterable<Note>, ITonality {
     note: Note;
     scale: Scale;
     constructor(tonalityIn: Tonality);

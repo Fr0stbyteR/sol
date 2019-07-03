@@ -6,6 +6,9 @@ export class Enum {
     static valueOf<T extends Enum>(key: string): T {
         return (this as unknown as { [key: string]: T })[key];
     }
+    protected constructor() {
+        return this;
+    }
     name(): string {
         throw new Error("Method not implemented");
     }
