@@ -48,8 +48,8 @@ export class Tonality implements Iterable<Note>, ITonality {
     get notes() {
         return this.scale.intervals.map(i => this.note.clone().add(i));
     }
-    getNoteFromDegree(deegreeIn: number) {
-        return this.note.clone().add(this.scale.getIntervalFromDegree(deegreeIn));
+    getNoteFromDegree(degreeIn: number) {
+        return this.note.clone().add(this.scale.getIntervalFromDegree(degreeIn));
     }
     getTriad(degreeIn: number) {
         return new Chord(this.getNoteFromDegree(degreeIn), this.getNoteFromDegree(degreeIn + 2), this.getNoteFromDegree(degreeIn + 4));

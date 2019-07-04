@@ -41,10 +41,7 @@ export class Scale implements Iterable<Interval>, IScale {
     constructor(nameIn: string, ...degreesIn: string[]);
     constructor(scaleIn: IScale);
     constructor(first: string | IScale, ...degreesIn: string[]) {
-        if (isScale(first)) {
-            this.intervals = first.intervals.map(i => i.clone());
-            this.degreeNames = [...first.degreeNames];
-        } else {
+        if (typeof first === "string") {
             this.scaleName = first;
             this.intervals = [];
             this.degreeNames = [];
@@ -59,6 +56,10 @@ export class Scale implements Iterable<Interval>, IScale {
                     this.degreeNames[i] = degreeName;
                 }
             }
+        } else {
+            this.scaleName = first.scaleName;
+            this.intervals = first.intervals.map(i => i.clone());
+            this.degreeNames = [...first.degreeNames];
         }
         return this;
     }

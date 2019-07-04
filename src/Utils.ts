@@ -11,3 +11,46 @@ export const isNumberArray = (x: any): x is number[] => {
     return Array.isArray(x)
         && x.every(e => typeof e === "number");
 };
+export const parseRoman = (stringIn: string) => {
+    if (stringIn.length === 0) return 0;
+    let c: number;
+    if (stringIn.match(/[IVXLCDM]+/)) c = 1;
+    else if (stringIn.match(/[ivxlcdm]+/)) c = -1;
+    else throw new Error("Roman number error.");
+    const string = stringIn.toUpperCase();
+    if (!string.match(/(M{0,3})(C{1,3}|C?D|DC{1,3}|CM)?(X{1,3}|X?L|LX{1,3}|XC)?(I{1,3}|I?V|VI{1,3}|IX)?$/)) {
+        throw new Error("Roman number error.");
+    }
+    const r = ["I", "V", "X", "L", "C", "D", "M"];
+    const a = [1, 5, 10, 50, 100, 500, 1000];
+    const rIn = string.split("");
+    const aOut: number[] = [];
+    for (let i = 0; i < rIn.length; i++) {
+        for (let j = 0; j < r.length; j++) {
+            if (rIn[i] === r[j]) aOut[i] = a[j];
+        }
+    }
+    let sum = aOut[0];
+    for (let i = 0; i < rIn.length - 1; i++) {
+        if (aOut[i] >= aOut[i + 1]) {
+            sum += aOut[i + 1];
+        } else {
+            sum = sum + aOut[i + 1] - 2 * aOut[i];
+        }
+    }
+    return sum * c;
+};
+export const toRoman = (nIn: number) => {
+    if (nIn > 3999 || nIn < 1) throw new Error("Too large or Too small for Roman Number.");
+    let n = nIn;
+    const a = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    const r = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+    let rOut = "";
+    for (let i = 0; i < a.length; i++) {
+        while (n >= a[i]) {
+            rOut += r[i];
+            n -= a[i];
+        }
+    }
+    return rOut;
+};

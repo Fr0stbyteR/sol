@@ -25,10 +25,17 @@ export class EnumChord extends Enum {
 
     _name: string;
     intervals: Interval[];
-    private constructor(nameIn: string, ...intervalsIn: string[]) {
+    private constructor(nameIn: string, ...intervalsIn: string[]);
+    private constructor(chord: EnumChord);
+    private constructor(first: string | EnumChord, ...intervalsIn: string[]) {
         super();
-        this._name = nameIn;
-        this.intervals = Interval.fromArray(...intervalsIn);
+        if (typeof first === "string") {
+            this._name = first;
+            this.intervals = Interval.fromArray(...intervalsIn);
+        } else {
+            this._name = first._name;
+            this.intervals = first.intervals.map(i => i.clone());
+        }
         return this;
     }
     static byChord(chordIn: IChord) {
@@ -43,6 +50,15 @@ export class EnumChord extends Enum {
     name() {
         return this._name;
     }
+    equals(chordIn: { intervals?: any }) {
+        return "intervals" in chordIn
+            && isIntervalArray(chordIn.intervals)
+            && chordIn.intervals.length === this.intervals.length
+            && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+    }
+    clone() {
+        return new EnumChord(this);
+    }
 }
 export interface IChord {
     base: Note | Pitch;
@@ -56,6 +72,10 @@ export const isChord = (x: any): x is IChord => {
         && isIntervalArray(x.intervals)
         && typeof x.isAbsolute === "boolean");
 };
+export const isChordArray = (x: any): x is Chord[] => {
+    return Array.isArray(x)
+        && x.every(e => e instanceof Chord);
+}
 export class Chord implements Iterable<Note>, IChord {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
@@ -154,6 +174,13 @@ export class Chord implements Iterable<Note>, IChord {
     }
     getEnumChord() {
         return EnumChord.byChord(this);
+    }
+    equals(chordIn: object) {
+        return isChord(chordIn)
+            && chordIn.isAbsolute === this.isAbsolute
+            && chordIn.base.equals(this.base)
+            && chordIn.intervals.length === this.intervals.length
+            && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
     }
     toString() {
         return this.base.toString() + ":" + this.intervals.toString();

@@ -4,6 +4,7 @@ import { EnumInstrumentTag, ACOUSTIC, ELECTRONIC } from "./EnumInstrumentTag";
 
 export type TConcreteInstrument = typeof Instrument & (new (name: string) => Instrument);
 export class EnumInstrument {
+    static map: { [key: string]: TConcreteInstrument } = {};
     static BASS_DRUM = BassDrum;
     static SUB_BASS_DRUM = EnumInstrument.getClass("Sub Bass Drum", BassDrum);
     static ACOUSTIC_BASS_DRUM = EnumInstrument.getClass("Acoustic Bass Drum", BassDrum, ACOUSTIC);
@@ -61,9 +62,13 @@ export class EnumInstrument {
     static MUTE_TRIANGLE = EnumInstrument.getClass("", null);
     static OPEN_TRIANGLE = EnumInstrument.getClass("", null);
     static getClass(nameIn: string, instrumentIn: TConcreteInstrument, ...tagsIn: EnumInstrumentTag[]): TConcreteInstrument {
-        return class extends instrumentIn {
+        this.map[nameIn] = class extends instrumentIn {
             static NAME = nameIn;
             static TAGS = [...instrumentIn.TAGS, ...tagsIn || []];
         };
+        return this.map[nameIn];
+    }
+    static byName(nameIn: string) {
+        return this.map[nameIn];
     }
 }
