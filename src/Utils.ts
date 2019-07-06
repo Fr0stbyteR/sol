@@ -41,8 +41,8 @@ export const parseRoman = (stringIn: string) => {
     return sum * c;
 };
 export const toRoman = (nIn: number) => {
-    if (nIn > 3999 || nIn < 1) throw new Error("Too large or Too small for Roman Number.");
-    let n = nIn;
+    let n = Math.round(Math.abs(nIn));
+    if (n > 3999 || n === 0) throw new Error("Too large or Too small for Roman Number.");
     const a = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
     const r = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
     let rOut = "";
@@ -52,5 +52,5 @@ export const toRoman = (nIn: number) => {
             n -= a[i];
         }
     }
-    return rOut;
+    return nIn > 0 ? rOut : rOut.toLowerCase();
 };

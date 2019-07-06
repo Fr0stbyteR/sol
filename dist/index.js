@@ -1478,6 +1478,109 @@ class Scale {
 
 /***/ }),
 
+/***/ "./src/TonalChord.ts":
+/*!***************************!*\
+  !*** ./src/TonalChord.ts ***!
+  \***************************/
+/*! exports provided: isTonalChord, isTonalChordArray, TonalChord */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTonalChord", function() { return isTonalChord; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTonalChordArray", function() { return isTonalChordArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TonalChord", function() { return TonalChord; });
+/* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
+/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+var isTonalChord = x => {
+  return x instanceof TonalChord || typeof x.alteration === "number" && typeof x.degree === "number" && x.chord instanceof _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"];
+};
+var isTonalChordArray = x => {
+  return Array.isArray(x) && x.every(e => e instanceof TonalChord);
+};
+class TonalChord {
+  constructor(first) {
+    _defineProperty(this, "alteration", void 0);
+
+    _defineProperty(this, "degree", void 0);
+
+    _defineProperty(this, "chord", void 0);
+
+    if (typeof first === "string") {
+      var matched = TonalChord.REGEX1.exec(first);
+
+      if (matched) {
+        var s = matched[1];
+        this.alteration = s === "#" ? 1 : s === "b" ? -1 : 0;
+        s = matched[2];
+        var p = Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["parseRoman"])(s);
+        if (p !== 0 && p > 7 && p < -7) throw new Error("Roman number too large for degree.");
+        this.degree = Math.abs(p);
+        s = matched[3];
+        this.chord = s.length === 0 ? p > 0 ? _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MAJ : _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MIN : s === "+" ? _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].AUG : _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].DIM;
+      } else {
+        matched = TonalChord.REGEX2.exec(first);
+
+        if (matched) {
+          var _s = matched[1];
+          this.alteration = _s === "#" ? 1 : _s === "b" ? -1 : 0;
+          _s = matched[2];
+          this.degree = +_s;
+          _s = matched[3];
+          this.chord = _s.length === 0 ? null : _s === "M" ? _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MAJ : _s === "m" ? _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MAJ : _s === "+" ? _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].AUG : _Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].DIM;
+        } else throw new Error("Input string error: " + first);
+      }
+    } else {
+      this.alteration = first.alteration;
+      this.degree = first.degree;
+      this.chord = first.chord.clone();
+    }
+
+    return this;
+  }
+
+  getChord(tonalityIn) {
+    var chord;
+    if (this.chord) chord = new _Chord__WEBPACK_IMPORTED_MODULE_0__["Chord"](tonalityIn.getNoteFromDegree(this.degree));else chord = tonalityIn.getTriad(this.degree);
+    if (this.alteration === 1) chord.base.add(new _Interval__WEBPACK_IMPORTED_MODULE_2__["Interval"]("A1"));else if (this.alteration === -1) chord.base.sub(new _Interval__WEBPACK_IMPORTED_MODULE_2__["Interval"]("A1"));
+    return chord;
+  }
+
+  equals(chordIn) {
+    return isTonalChord(chordIn) && chordIn.alteration === this.alteration && chordIn.degree === this.degree && chordIn.chord.equals(this.chord);
+  }
+
+  toString() {
+    var s = "";
+    if (this.alteration === 1) s = "#";else if (this.alteration === -1) s = "b";
+    if (!this.chord) return s + this.degree;
+    s += Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["toRoman"])(this.degree * (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MIN) ? -1 : 1));
+
+    if (!this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MAJ) && !this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].MIN)) {
+      if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].AUG)) s += "+";else if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__["EnumChord"].AUG)) s += "-";else s += this.chord.name().toLowerCase();
+    }
+
+    return s;
+  }
+
+  clone() {
+    return new TonalChord(this);
+  }
+
+}
+
+_defineProperty(TonalChord, "REGEX1", /^([#b]?)(I{1,3}|i{1,3}|I?V|i?v|VI{1,2}|vi{1,2})(\+|-?)$/);
+
+_defineProperty(TonalChord, "REGEX2", /^([#b]?)([1-7])(M|m|\+|-?)$/);
+
+/***/ }),
+
 /***/ "./src/Tonality.ts":
 /*!*************************!*\
   !*** ./src/Tonality.ts ***!
@@ -1688,8 +1791,8 @@ var parseRoman = stringIn => {
   return sum * c;
 };
 var toRoman = nIn => {
-  if (nIn > 3999 || nIn < 1) throw new Error("Too large or Too small for Roman Number.");
-  var n = nIn;
+  var n = Math.round(Math.abs(nIn));
+  if (n > 3999 || n === 0) throw new Error("Too large or Too small for Roman Number.");
   var a = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
   var r = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
   var rOut = "";
@@ -1701,64 +1804,125 @@ var toRoman = nIn => {
     }
   }
 
-  return rOut;
+  return nIn > 0 ? rOut : rOut.toLowerCase();
 };
 
 /***/ }),
 
-/***/ "./src/genre/ChordProgressionGenre.ts":
-/*!********************************************!*\
-  !*** ./src/genre/ChordProgressionGenre.ts ***!
-  \********************************************/
-/*! exports provided: isChordProgressionGenre, ChordProgressionGenre */
+/***/ "./src/genre/ChordProgression.ts":
+/*!***************************************!*\
+  !*** ./src/genre/ChordProgression.ts ***!
+  \***************************************/
+/*! exports provided: isChordProgression, ChordProgression */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChordProgressionGenre", function() { return isChordProgressionGenre; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordProgressionGenre", function() { return ChordProgressionGenre; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChordProgression", function() { return isChordProgression; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordProgression", function() { return ChordProgression; });
+/* harmony import */ var _TonalChord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../TonalChord */ "./src/TonalChord.ts");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Utils */ "./src/Utils.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var keys = ["II", "III", "bVI", "bVII", "I7", "II7", "VI", "i"];
-var isChordProgressionGenre = x => {
-  return x instanceof ChordProgressionGenre || typeof x === "object" && keys.every(k => typeof x[k] === "undefined" || typeof x[k] === "boolean");
+
+
+var isChordProgression = x => {
+  return x instanceof ChordProgression || typeof x === "object" && Object(_TonalChord__WEBPACK_IMPORTED_MODULE_0__["isTonalChord"])(x.chord);
 };
-class ChordProgressionGenre {
-  constructor(genreIn) {
-    _defineProperty(this, "II", void 0);
+var _Symbol$iterator = Symbol.iterator;
+class ChordProgression {
+  constructor(cp) {
+    _defineProperty(this, "chords", void 0);
 
-    _defineProperty(this, "III", void 0);
-
-    _defineProperty(this, "bVI", void 0);
-
-    _defineProperty(this, "bVII", void 0);
-
-    _defineProperty(this, "I7", void 0);
-
-    _defineProperty(this, "II7", void 0);
-
-    _defineProperty(this, "VI", void 0);
-
-    _defineProperty(this, "i", void 0);
-
-    var genre = genreIn || {};
-    keys.forEach(k => this[k] = !!genre[k]);
-    return this;
+    if (typeof cp === "string") {
+      var chords = cp.split(/\s+/);
+      this.fromStringArray(chords);
+    } else if (Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["isStringArray"])(cp)) {
+      this.fromStringArray(cp);
+    } else if (Object(_TonalChord__WEBPACK_IMPORTED_MODULE_0__["isTonalChordArray"])(cp)) {
+      this.chords = cp.map(c => c.clone());
+    } else {
+      this.chords = cp.chords.map(c => c.clone());
+    }
   }
 
-  and(genreIn) {
-    keys.forEach(k => this[k] = this[k] && genreIn[k]);
+  getChords(tonalityIn) {
+    return this.chords.map(c => c.getChord(tonalityIn));
   }
 
-  or(genreIn) {
-    keys.forEach(k => this[k] = this[k] || genreIn[k]);
+  fromStringArray(chords) {
+    if (chords.length < 2) throw new Error("Input string not enough long.");
+    this.chords = chords.map(s => new _TonalChord__WEBPACK_IMPORTED_MODULE_0__["TonalChord"](s));
+  }
+
+  toString() {
+    return "ChordProgression: {".concat(this.chords.map(tc => tc.toString()).join(" "), "}");
   }
 
   clone() {
-    return new ChordProgressionGenre(this);
+    return new ChordProgression(this);
+  }
+
+  [_Symbol$iterator]() {
+    var o = this;
+    var i = -1;
+    return {
+      next() {
+        var value;
+        var done = true;
+
+        if (i < o.chords.length) {
+          value = o.chords[i];
+          i++;
+          done = false;
+        }
+
+        return {
+          value,
+          done
+        };
+      }
+
+    };
   }
 
 }
+
+/***/ }),
+
+/***/ "./src/genre/EnumChordProgression.ts":
+/*!*******************************************!*\
+  !*** ./src/genre/EnumChordProgression.ts ***!
+  \*******************************************/
+/*! exports provided: EnumChordProgression */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumChordProgression", function() { return EnumChordProgression; });
+/* harmony import */ var _ChordProgression__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChordProgression */ "./src/genre/ChordProgression.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+class EnumChordProgression {}
+
+_defineProperty(EnumChordProgression, "PERFECT", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V I"));
+
+_defineProperty(EnumChordProgression, "REV_ANDAL", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("bVI bVII I"));
+
+_defineProperty(EnumChordProgression, "CANON", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi iii IV I"));
+
+_defineProperty(EnumChordProgression, "POP1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V iii vi"));
+
+_defineProperty(EnumChordProgression, "POP2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I vi IV V"));
+
+_defineProperty(EnumChordProgression, "POP3", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi IV"));
+
+_defineProperty(EnumChordProgression, "EPIC1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi IV I V"));
+
+_defineProperty(EnumChordProgression, "EPIC2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi I V ii"));
+
+_defineProperty(EnumChordProgression, "EDM1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV I vi V"));
 
 /***/ }),
 
@@ -1777,7 +1941,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
 /* harmony import */ var _Tonality__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Tonality */ "./src/Tonality.ts");
-/* harmony import */ var _genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./genre/ChordProgressionGenre */ "./src/genre/ChordProgressionGenre.ts");
+/* harmony import */ var _genre_EnumChordProgression__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./genre/EnumChordProgression */ "./src/genre/EnumChordProgression.ts");
 /* eslint-disable no-console */
 
 
@@ -1786,13 +1950,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({}));
-console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({
-  II: true
-}));
-console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({
-  E: true
-}));
 new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C"));
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C")).toString());
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("G")).toString());
@@ -1818,6 +1975,7 @@ console.log(s.toString());
 console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toRelative().toString());
 console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toPrev().toString());
 console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toNext().toString());
+console.log(_genre_EnumChordProgression__WEBPACK_IMPORTED_MODULE_6__["EnumChordProgression"].EPIC1.toString());
 
 /***/ })
 

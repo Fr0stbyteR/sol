@@ -5,11 +5,7 @@ import { Pitch } from "./Pitch";
 import { Chord } from "./Chord";
 import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
-import { isChordProgressionGenre } from "./genre/ChordProgressionGenre";
-
-console.log(isChordProgressionGenre({}));
-console.log(isChordProgressionGenre({ II: true }));
-console.log(isChordProgressionGenre({ E: true }));
+import { EnumChordProgression } from "./genre/EnumChordProgression";
 
 new Note("#G").getInterval(new Note("C"));
 console.log(new Note("#G").getInterval(new Note("C")).toString());
@@ -44,3 +40,5 @@ console.log(s.toString());
 console.log(new Tonality("C").toRelative().toString());
 console.log(new Tonality("C").toPrev().toString());
 console.log(new Tonality("C").toNext().toString());
+
+console.log(EnumChordProgression.EPIC1.toString());

@@ -31,10 +31,12 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
     getChords(tonalityIn: Tonality) {
         return this.chords.map(c => c.getChord(tonalityIn));
     }
-
     fromStringArray(chords: string[]) {
         if (chords.length < 2) throw new Error("Input string not enough long.");
         this.chords = chords.map(s => new TonalChord(s));
+    }
+    toString() {
+        return `ChordProgression: {${this.chords.map(tc => tc.toString()).join(" ")}}`;
     }
     clone() {
         return new ChordProgression(this);
