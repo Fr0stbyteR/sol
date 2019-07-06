@@ -2,10 +2,14 @@
 import { Interval } from "./Interval";
 import { Note } from "./Note";
 import { Pitch } from "./Pitch";
-import { Frequency } from "./Frequency";
 import { Chord } from "./Chord";
 import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
+import { isChordProgressionGenre } from "./genre/ChordProgressionGenre";
+
+console.log(isChordProgressionGenre({}));
+console.log(isChordProgressionGenre({ II: true }));
+console.log(isChordProgressionGenre({ E: true }));
 
 new Note("#G").getInterval(new Note("C"));
 console.log(new Note("#G").getInterval(new Note("C")).toString());
@@ -22,7 +26,7 @@ const p = new Pitch("##F0");
 console.log(p.add("A4").toString() + " " + p.offset);
 
 const f = 440;
-console.log(Frequency.toPitch(f).offset);
+console.log(Pitch.fromFrequency(f).offset);
 
 const c = new Chord(new Pitch("C1"), new Pitch("bC2"), new Pitch("#C1"));
 

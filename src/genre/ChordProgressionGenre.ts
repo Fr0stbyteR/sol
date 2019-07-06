@@ -8,16 +8,20 @@ export interface IChordProgressionGenre {
     VI?: boolean;
     i?: boolean;
 }
+const keys: (keyof IChordProgressionGenre)[] = [
+    "II",
+    "III",
+    "bVI",
+    "bVII",
+    "I7",
+    "II7",
+    "VI",
+    "i"
+];
 export const isChordProgressionGenre = (x: any): x is IChordProgressionGenre => {
     return x instanceof ChordProgressionGenre
         || (typeof x === "object"
-        && (typeof x.III === "undefined" || typeof x.III === "boolean")
-        && (typeof x.bVI === "undefined" || typeof x.bVI === "boolean")
-        && (typeof x.bVII === "undefined" || typeof x.bVII === "boolean")
-        && (typeof x.I7 === "undefined" || typeof x.I7 === "boolean")
-        && (typeof x.II7 === "undefined" || typeof x.II7 === "boolean")
-        && (typeof x.VI === "undefined" || typeof x.VI === "boolean")
-        && (typeof x.i === "undefined" || typeof x.i === "boolean"));
+        && keys.every(k => typeof x[k] === "undefined" || typeof x[k] === "boolean"));
 };
 export class ChordProgressionGenre implements IChordProgressionGenre {
     II?: boolean;
@@ -30,15 +34,14 @@ export class ChordProgressionGenre implements IChordProgressionGenre {
     i?: boolean;
     constructor(genreIn?: IChordProgressionGenre) {
         const genre = genreIn || {};
-        this.II = !!genre.II;
-        this.III = !!genre.III;
-        this.bVI = !!genre.bVI;
-        this.bVII = !!genre.bVII;
-        this.I7 = !!genre.I7;
-        this.II7 = !!genre.II7;
-        this.VI = !!genre.VI;
-        this.i = !!genre.i;
+        keys.forEach(k => this[k] = !!genre[k]);
         return this;
+    }
+    and(genreIn: IChordProgressionGenre) {
+        keys.forEach(k => this[k] = this[k] && genreIn[k]);
+    }
+    or(genreIn: IChordProgressionGenre) {
+        keys.forEach(k => this[k] = this[k] || genreIn[k]);
     }
     clone() {
         return new ChordProgressionGenre(this);

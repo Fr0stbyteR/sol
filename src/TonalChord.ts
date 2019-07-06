@@ -17,7 +17,7 @@ export const isTonalChord = (x: any): x is ITonalChord => {
 export const isTonalChordArray = (x: any): x is TonalChord[] => {
     return Array.isArray(x)
         && x.every(e => e instanceof TonalChord);
-}
+};
 export class TonalChord implements ITonalChord {
     static REGEX1 = /^([#b]?)(I{1,3}|i{1,3}|I?V|i?v|VI{1,2}|vi{1,2})(\+|-?)$/;
     static REGEX2 = /^([#b]?)([1-7])(M|m|\+|-?)$/;

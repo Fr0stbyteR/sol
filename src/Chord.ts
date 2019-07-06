@@ -75,7 +75,7 @@ export const isChord = (x: any): x is IChord => {
 export const isChordArray = (x: any): x is Chord[] => {
     return Array.isArray(x)
         && x.every(e => e instanceof Chord);
-}
+};
 export class Chord implements Iterable<Note>, IChord {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base

@@ -90,13 +90,14 @@
 /*!**********************!*\
   !*** ./src/Chord.ts ***!
   \**********************/
-/*! exports provided: EnumChord, isChord, Chord */
+/*! exports provided: EnumChord, isChord, isChordArray, Chord */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumChord", function() { return EnumChord; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChord", function() { return isChord; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChordArray", function() { return isChordArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Chord", function() { return Chord; });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
@@ -173,20 +174,26 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
     return new EnumChord("DOM7DIM5", "M3", "d5", "m7");
   }
 
-  constructor(nameIn) {
+  constructor(first) {
     super();
 
     _defineProperty(this, "_name", void 0);
 
     _defineProperty(this, "intervals", void 0);
 
-    this._name = nameIn;
+    if (typeof first === "string") {
+      this._name = first;
 
-    for (var _len = arguments.length, intervalsIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      intervalsIn[_key - 1] = arguments[_key];
+      for (var _len = arguments.length, intervalsIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        intervalsIn[_key - 1] = arguments[_key];
+      }
+
+      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"].fromArray(...intervalsIn);
+    } else {
+      this._name = first._name;
+      this.intervals = first.intervals.map(i => i.clone());
     }
 
-    this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"].fromArray(...intervalsIn);
     return this;
   }
 
@@ -204,12 +211,23 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
     return this._name;
   }
 
+  equals(chordIn) {
+    return "intervals" in chordIn && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(chordIn.intervals) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+  }
+
+  clone() {
+    return new EnumChord(this);
+  }
+
 }
 
 _defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
 
 var isChord = x => {
   return x instanceof Chord || typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.base) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals) && typeof x.isAbsolute === "boolean";
+};
+var isChordArray = x => {
+  return Array.isArray(x) && x.every(e => e instanceof Chord);
 };
 var _Symbol$iterator = Symbol.iterator;
 class Chord {
@@ -338,6 +356,10 @@ class Chord {
     return EnumChord.byChord(this);
   }
 
+  equals(chordIn) {
+    return isChord(chordIn) && chordIn.isAbsolute === this.isAbsolute && chordIn.base.equals(this.base) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+  }
+
   toString() {
     return this.base.toString() + ":" + this.intervals.toString();
   }
@@ -394,6 +416,10 @@ class Enum {
     return this[key];
   }
 
+  constructor() {
+    return this;
+  }
+
   name() {
     throw new Error("Method not implemented");
   }
@@ -422,16 +448,9 @@ _defineProperty(Enum, "indexes", []);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frequency", function() { return Frequency; });
-/* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-
-class Frequency {
-  static toPitch(f) {
-    return new _Pitch__WEBPACK_IMPORTED_MODULE_0__["Pitch"](69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));
-  }
-
-}
+class Frequency {}
 
 _defineProperty(Frequency, "A440", 440);
 
@@ -1077,9 +1096,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Pitch", function() { return Pitch; });
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -1091,38 +1112,9 @@ var isPitchArray = x => {
   return x.every(el => el instanceof Pitch);
 };
 class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
-  /**
-   * Returns C0
-   * @memberof Pitch
-   */
-
-  /**
-   * Gives a new Pitch instance (clone)
-   * @param {IPitch} pitchIn
-   * @memberof Pitch
-   */
-
-  /**
-   * Add octave info to a note
-   * @param {EnumNote | INote} noteIn
-   * @param {number} [octaveIn]
-   * @memberof Pitch
-   */
-
-  /**
-   * Parses pitch string.
-   * @example
-   * new Pitch("##E5");
-   * @throws {SyntaxError} when parse failed
-   * @param {string} pitchIn
-   * @memberof Note
-   */
-
-  /**
-   * Creates an instance of Pitch with index
-   * @param {number} pitchIn
-   * @memberof Pitch
-   */
+  static fromFrequency(f) {
+    return new Pitch(69 + 12 * (Math.log(f / _Frequency__WEBPACK_IMPORTED_MODULE_2__["Frequency"].A440) / Math.log(2)));
+  }
 
   /**
    * Creates an instance of Pitch with index
@@ -1265,6 +1257,10 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
 
 _defineProperty(Pitch, "REGEX", /^([b#]*[a-gA-G])(-?\d+)?$/);
 
+_defineProperty(Pitch, "MINIMUM", Pitch.fromFrequency(20));
+
+_defineProperty(Pitch, "MAXIMUM", Pitch.fromFrequency(20000));
+
 /***/ }),
 
 /***/ "./src/Scale.ts":
@@ -1367,10 +1363,7 @@ class Scale {
 
     _defineProperty(this, "degreeNames", void 0);
 
-    if (isScale(first)) {
-      this.intervals = first.intervals.map(i => i.clone());
-      this.degreeNames = [...first.degreeNames];
-    } else {
+    if (typeof first === "string") {
       this.scaleName = first;
       this.intervals = [];
       this.degreeNames = [];
@@ -1387,6 +1380,10 @@ class Scale {
           this.degreeNames[i] = degreeName;
         }
       }
+    } else {
+      this.scaleName = first.scaleName;
+      this.intervals = first.intervals.map(i => i.clone());
+      this.degreeNames = [...first.degreeNames];
     }
 
     return this;
@@ -1545,8 +1542,8 @@ class Tonality {
     return this.scale.intervals.map(i => this.note.clone().add(i));
   }
 
-  getNoteFromDegree(deegreeIn) {
-    return this.note.clone().add(this.scale.getIntervalFromDegree(deegreeIn));
+  getNoteFromDegree(degreeIn) {
+    return this.note.clone().add(this.scale.getIntervalFromDegree(degreeIn));
   }
 
   getTriad(degreeIn) {
@@ -1634,7 +1631,7 @@ class Tonality {
 /*!**********************!*\
   !*** ./src/Utils.ts ***!
   \**********************/
-/*! exports provided: gcd, lcm, floorMod, isStringArray, isNumberArray */
+/*! exports provided: gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1644,6 +1641,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floorMod", function() { return floorMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isStringArray", function() { return isStringArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumberArray", function() { return isNumberArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseRoman", function() { return parseRoman; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toRoman", function() { return toRoman; });
 var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
 var lcm = (a, b) => a * (b / gcd(a, b));
 var floorMod = (x, y) => {
@@ -1655,6 +1654,111 @@ var isStringArray = x => {
 var isNumberArray = x => {
   return Array.isArray(x) && x.every(e => typeof e === "number");
 };
+var parseRoman = stringIn => {
+  if (stringIn.length === 0) return 0;
+  var c;
+  if (stringIn.match(/[IVXLCDM]+/)) c = 1;else if (stringIn.match(/[ivxlcdm]+/)) c = -1;else throw new Error("Roman number error.");
+  var string = stringIn.toUpperCase();
+
+  if (!string.match(/(M{0,3})(C{1,3}|C?D|DC{1,3}|CM)?(X{1,3}|X?L|LX{1,3}|XC)?(I{1,3}|I?V|VI{1,3}|IX)?$/)) {
+    throw new Error("Roman number error.");
+  }
+
+  var r = ["I", "V", "X", "L", "C", "D", "M"];
+  var a = [1, 5, 10, 50, 100, 500, 1000];
+  var rIn = string.split("");
+  var aOut = [];
+
+  for (var i = 0; i < rIn.length; i++) {
+    for (var j = 0; j < r.length; j++) {
+      if (rIn[i] === r[j]) aOut[i] = a[j];
+    }
+  }
+
+  var sum = aOut[0];
+
+  for (var _i = 0; _i < rIn.length - 1; _i++) {
+    if (aOut[_i] >= aOut[_i + 1]) {
+      sum += aOut[_i + 1];
+    } else {
+      sum = sum + aOut[_i + 1] - 2 * aOut[_i];
+    }
+  }
+
+  return sum * c;
+};
+var toRoman = nIn => {
+  if (nIn > 3999 || nIn < 1) throw new Error("Too large or Too small for Roman Number.");
+  var n = nIn;
+  var a = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+  var r = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+  var rOut = "";
+
+  for (var i = 0; i < a.length; i++) {
+    while (n >= a[i]) {
+      rOut += r[i];
+      n -= a[i];
+    }
+  }
+
+  return rOut;
+};
+
+/***/ }),
+
+/***/ "./src/genre/ChordProgressionGenre.ts":
+/*!********************************************!*\
+  !*** ./src/genre/ChordProgressionGenre.ts ***!
+  \********************************************/
+/*! exports provided: isChordProgressionGenre, ChordProgressionGenre */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isChordProgressionGenre", function() { return isChordProgressionGenre; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordProgressionGenre", function() { return ChordProgressionGenre; });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var keys = ["II", "III", "bVI", "bVII", "I7", "II7", "VI", "i"];
+var isChordProgressionGenre = x => {
+  return x instanceof ChordProgressionGenre || typeof x === "object" && keys.every(k => typeof x[k] === "undefined" || typeof x[k] === "boolean");
+};
+class ChordProgressionGenre {
+  constructor(genreIn) {
+    _defineProperty(this, "II", void 0);
+
+    _defineProperty(this, "III", void 0);
+
+    _defineProperty(this, "bVI", void 0);
+
+    _defineProperty(this, "bVII", void 0);
+
+    _defineProperty(this, "I7", void 0);
+
+    _defineProperty(this, "II7", void 0);
+
+    _defineProperty(this, "VI", void 0);
+
+    _defineProperty(this, "i", void 0);
+
+    var genre = genreIn || {};
+    keys.forEach(k => this[k] = !!genre[k]);
+    return this;
+  }
+
+  and(genreIn) {
+    keys.forEach(k => this[k] = this[k] && genreIn[k]);
+  }
+
+  or(genreIn) {
+    keys.forEach(k => this[k] = this[k] || genreIn[k]);
+  }
+
+  clone() {
+    return new ChordProgressionGenre(this);
+  }
+
+}
 
 /***/ }),
 
@@ -1670,10 +1774,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
-/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
-/* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
-/* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
-/* harmony import */ var _Tonality__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Tonality */ "./src/Tonality.ts");
+/* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
+/* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
+/* harmony import */ var _Tonality__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Tonality */ "./src/Tonality.ts");
+/* harmony import */ var _genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./genre/ChordProgressionGenre */ "./src/genre/ChordProgressionGenre.ts");
 /* eslint-disable no-console */
 
 
@@ -1682,6 +1786,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({}));
+console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({
+  II: true
+}));
+console.log(Object(_genre_ChordProgressionGenre__WEBPACK_IMPORTED_MODULE_6__["isChordProgressionGenre"])({
+  E: true
+}));
 new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C"));
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C")).toString());
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("G")).toString());
@@ -1694,19 +1805,19 @@ console.log(n.toString());
 var p = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("##F0");
 console.log(p.add("A4").toString() + " " + p.offset);
 var f = 440;
-console.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].toPitch(f).offset);
-var c = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("bC2"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1"));
+console.log(_Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].fromFrequency(f).offset);
+var c = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("bC2"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1"));
 console.log(c.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M3").reverse().toString());
 console.log(c.notes.toString());
 console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")));
-var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
+var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
 console.log(c1.getEnumChord());
-var s = _Scale__WEBPACK_IMPORTED_MODULE_5__["EnumScale"].MINOR;
+var s = _Scale__WEBPACK_IMPORTED_MODULE_4__["EnumScale"].MINOR;
 console.log(s.toString());
-console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toRelative().toString());
-console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toPrev().toString());
-console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_6__["Tonality"]("C").toNext().toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toRelative().toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toPrev().toString());
+console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toNext().toString());
 
 /***/ })
 

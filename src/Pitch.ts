@@ -18,8 +18,11 @@ export const isPitchArray = (x: any): x is Pitch[] => {
 };
 export class Pitch extends Note implements IPitch {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
-    static MINIMUM = Frequency.toPitch(20);
-    static MAXIMUM = Frequency.toPitch(20000);
+    static fromFrequency(f: number) {
+        return new Pitch(69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));
+    }
+    static MINIMUM = Pitch.fromFrequency(20);
+    static MAXIMUM = Pitch.fromFrequency(20000);
     octave: number;
 
     /**
