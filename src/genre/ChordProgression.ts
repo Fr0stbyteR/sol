@@ -27,6 +27,7 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
         } else {
             this.chords = cp.chords.map(c => c.clone());
         }
+        return this;
     }
     getChords(tonalityIn: Tonality) {
         return this.chords.map(c => c.getChord(tonalityIn));

@@ -26,5 +26,6 @@ export class Genre implements IGenre {
     getForm: () => Form;
     constructor(optionsIn: IGenre) {
         Object.assign(this, optionsIn);
+        return this;
     }
 }

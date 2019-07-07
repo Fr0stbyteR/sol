@@ -13,8 +13,8 @@ export const isPitch = (x: any): x is IPitch => {
         && typeof x.octave === "number");
 };
 export const isPitchArray = (x: any): x is Pitch[] => {
-    if (!Array.isArray(x)) return false;
-    return x.every(el => el instanceof Pitch);
+    return Array.isArray(x)
+        && x.every(el => el instanceof Pitch);
 };
 export class Pitch extends Note implements IPitch {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;

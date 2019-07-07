@@ -56,8 +56,8 @@ export const isNote = (x: any): x is INote => {
         && typeof x.alteration === "number");
 };
 export const isNoteArray = (x: any): x is Note[] => {
-    if (!Array.isArray(x)) return false;
-    return x.every(el => el instanceof Note);
+    return Array.isArray(x)
+        && x.every(el => el instanceof Note);
 };
 export class Note implements INote {
     static REGEX = /^([b#]*)([a-gA-G])$/;

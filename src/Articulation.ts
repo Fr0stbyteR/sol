@@ -34,4 +34,7 @@ export class Articulation implements IArticulation {
         }
         return this;
     }
+    clone() {
+        return new Articulation(this);
+    }
 }

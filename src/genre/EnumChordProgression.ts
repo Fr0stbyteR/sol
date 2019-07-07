@@ -10,4 +10,5 @@ export class EnumChordProgression {
     static EPIC1 = new ChordProgression("vi IV I V");
     static EPIC2 = new ChordProgression("vi I V ii");
     static EDM1 = new ChordProgression("IV I vi V");
+    static EDM2 = new ChordProgression("IV V vi I");
 }

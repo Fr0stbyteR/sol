@@ -16,8 +16,8 @@ export const isInterval = (x: any): x is IInterval => {
         && typeof x.octave === "number");
 };
 export const isIntervalArray = (x: any): x is Interval[] => {
-    if (!Array.isArray(x)) return false;
-    return x.every(el => el instanceof Interval);
+    return Array.isArray(x)
+        && x.every(el => el instanceof Interval);
 };
 type TIntervalProperty = "P" | "M" | "m" | "A" | "d";
 type TIntervalPropertyValue = "PERFECT" | "MAJOR" | "MINOR" | "AUGMENTED" | "DIMINISHED";
