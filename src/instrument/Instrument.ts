@@ -1,9 +1,12 @@
 import { EnumInstrumentTag, isEnumInstrumentTagArray } from "./EnumInstrumentTag";
 import { Pitch, isPitch } from "../Pitch";
+import { Param } from "../Param";
 
 export interface IInstrument {
     name: string;
+    params: { [key: string]: Param };
 }
+export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument) => Instrument);
 export const isInstrument = (x: any): x is Instrument => {
     return x instanceof Instrument
         || (typeof x === "object"
@@ -22,9 +25,21 @@ export abstract class Instrument implements IInstrument {
     static MIN_PITCH?: Pitch;
     static MAX_PITCH?: Pitch;
     name: string; // instrument instance name
+    params: { [key: string]: Param };
 
-    constructor(name: string) {
-        this.name = name;
+    constructor(optionsIn: IInstrument) {
+        this.name = optionsIn.name;
+        this.params = {};
+        for (const key in optionsIn.params) {
+            this.params[key] = optionsIn.params[key].clone();
+        }
+        return this;
+    }
+    getParamValue(path: string) {
+        return this.params[path] ? this.params[path].value : null;
+    }
+    setParamValue(path: string, value: number) {
+        if (this.params[path]) this.params[value].value = value;
     }
     hasTag(...tagsIn: EnumInstrumentTag[]) {
         return tagsIn.every(tag => this.tags.indexOf(tag) !== -1);

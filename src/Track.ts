@@ -1,8 +1,7 @@
-import { TConcreteInstrument } from "./instrument/EnumInstrument";
 import { TrackNote, isTrackNoteArray } from "./TrackNote";
 import { Effect, isEffectArray } from "./effect/Effect";
 import { Automation, isAutomationArray } from "./effect/Automation";
-import { isInstrument } from "./instrument/Instrument";
+import { isTypeofInstrument, TConcreteInstrument } from "./instrument/Instrument";
 
 export interface ITrack {
     name: string;
@@ -14,8 +13,9 @@ export interface ITrack {
 }
 export const isTrack = (x: any): x is ITrack => {
     return x instanceof Track
-        || (typeof x.name === "string"
-        && (typeof x.instrument === "undefined" || isInstrument(x.instrument))
+        || (typeof x === "object"
+        && typeof x.name === "string"
+        && (typeof x.instrument === "undefined" || isTypeofInstrument(x.instrument))
         && isTrackNoteArray(x.notes)
         && isEffectArray(x.effects)
         && isAutomationArray(x.automations)

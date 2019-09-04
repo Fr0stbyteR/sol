@@ -1,4 +1,4 @@
-import { Param, isParam } from "./Param";
+import { Param, isParam } from "../Param";
 import { isNumberArray } from "../Utils";
 
 export interface IEffect {

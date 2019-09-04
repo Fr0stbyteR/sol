@@ -1,8 +1,7 @@
 import { BassDrum } from "./BassDrum";
-import { Instrument } from "./Instrument";
+import { TConcreteInstrument } from "./Instrument";
 import { EnumInstrumentTag, ACOUSTIC, ELECTRONIC } from "./EnumInstrumentTag";
 
-export type TConcreteInstrument = typeof Instrument & (new (name: string) => Instrument);
 export class EnumInstrument {
     static map: { [key: string]: TConcreteInstrument } = {};
     static BASS_DRUM = BassDrum;
