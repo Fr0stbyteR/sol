@@ -1,17 +1,17 @@
 import { Param, isParam } from "../Param";
-import { isNumberArray } from "../Utils";
+import { isStringArray } from "../Utils";
 
 export interface IEffect {
     name: string;
-    sideChain: number[];
-    send: number[];
+    sideChain: string[];
+    send: string[];
     params: { [path: string]: Param };
 }
 export const isEffect = (x: any): x is IEffect => {
     return x instanceof Effect
         || (typeof x.name === "string"
-        && isNumberArray(x.sideChain)
-        && isNumberArray(x.send)
+        && isStringArray(x.sideChain)
+        && isStringArray(x.send)
         && Object.keys(x.params).every(k => isParam(x.params[k])));
 };
 export const isEffectArray = (x: any): x is Effect[] => {
@@ -20,8 +20,8 @@ export const isEffectArray = (x: any): x is Effect[] => {
 };
 export class Effect implements IEffect {
     name: string;
-    sideChain: number[];
-    send: number[];
+    sideChain: string[];
+    send: string[];
     params: { [key: string]: Param };
     constructor(optionsIn: IEffect) {
         this.sideChain = [...optionsIn.sideChain];

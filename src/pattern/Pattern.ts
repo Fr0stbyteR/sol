@@ -1,4 +1,4 @@
-import { Segment, isSegmentArray } from "../Segment";
+import { Segment, isSegmentArray } from "../track/Segment";
 
 export interface IPattern {
     segments: Segment[];

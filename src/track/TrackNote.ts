@@ -1,7 +1,7 @@
-import { Pitch, isPitch } from "./Pitch";
-import { Velocity, isVelocity } from "./Velocity";
-import { Duration, isDuration } from "./Duration";
-import { Articulation, isArticulation } from "./Articulation";
+import { Pitch, isPitch } from "../Pitch";
+import { Velocity, isVelocity } from "../Velocity";
+import { Duration, isDuration } from "../Duration";
+import { Articulation, isArticulation } from "../Articulation";
 
 export interface ITrackNote {
     duration: Duration;

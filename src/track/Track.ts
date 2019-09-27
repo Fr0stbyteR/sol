@@ -1,7 +1,7 @@
 import { TrackNote, isTrackNoteArray } from "./TrackNote";
-import { Effect, isEffectArray } from "./effect/Effect";
-import { Automation, isAutomationArray } from "./effect/Automation";
-import { isTypeofInstrument, TConcreteInstrument } from "./instrument/Instrument";
+import { Effect, isEffectArray } from "../effect/Effect";
+import { Automation, isAutomationArray } from "../effect/Automation";
+import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
 
 export interface ITrack {
     name: string;

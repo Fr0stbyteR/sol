@@ -1,7 +1,7 @@
-import { isTypeofInstrument, TConcreteInstrument } from "./instrument/Instrument";
+import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
 import { TrackNote, isTrackNoteArray } from "./TrackNote";
-import { Automation, isAutomationArray } from "./effect/Automation";
-import { Duration, isDuration } from "./Duration";
+import { Automation, isAutomationArray } from "../effect/Automation";
+import { Duration, isDuration } from "../Duration";
 
 export interface ISegment {
     instrument?: TConcreteInstrument;
@@ -12,7 +12,7 @@ export interface ISegment {
 export const isSegment = (x: any): x is ISegment => {
     return x instanceof Segment
         || (typeof x === "object"
-        && isTypeofInstrument(x.instrument)
+        && (typeof x.instrument === "undefined" || isTypeofInstrument(x.instrument))
         && isTrackNoteArray(x.notes)
         && isAutomationArray(x.automations)
         && isDuration(x.duration));
