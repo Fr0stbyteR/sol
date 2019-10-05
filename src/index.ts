@@ -7,6 +7,7 @@ import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
 import { EnumChordProgression } from "./genre/EnumChordProgression";
 
+console.log(new Pitch("C8").offset);
 new Note("#G").getInterval(new Note("C"));
 console.log(new Note("#G").getInterval(new Note("C")).toString());
 console.log(new Note("#C").getInterval(new Note("G")).toString());

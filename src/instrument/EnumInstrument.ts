@@ -1,4 +1,4 @@
-import { BassDrum } from "./BassDrum";
+import { BassDrum } from "./percussion/BassDrum";
 import { TConcreteInstrument } from "./Instrument";
 import { EnumInstrumentTag, ACOUSTIC, ELECTRONIC } from "./EnumInstrumentTag";
 

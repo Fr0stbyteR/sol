@@ -103,6 +103,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
+var _Symbol$iterator;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -229,7 +231,7 @@ var isChord = x => {
 var isChordArray = x => {
   return Array.isArray(x) && x.every(e => e instanceof Chord);
 };
-var _Symbol$iterator = Symbol.iterator;
+_Symbol$iterator = Symbol.iterator;
 class Chord {
   // Intervals from base
 
@@ -485,8 +487,7 @@ var isInterval = x => {
   return x instanceof Interval || typeof x === "object" && typeof x.degree === "number" && typeof x.onset === "number" && typeof x.octave === "number";
 };
 var isIntervalArray = x => {
-  if (!Array.isArray(x)) return false;
-  return x.every(el => el instanceof Interval);
+  return Array.isArray(x) && x.every(el => el instanceof Interval);
 };
 var DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 
@@ -909,8 +910,7 @@ var isNote = x => {
   return x instanceof Note || typeof x === "object" && x.enumNote instanceof EnumNote && typeof x.alteration === "number";
 };
 var isNoteArray = x => {
-  if (!Array.isArray(x)) return false;
-  return x.every(el => el instanceof Note);
+  return Array.isArray(x) && x.every(el => el instanceof Note);
 };
 class Note {
   /**
@@ -1097,7 +1097,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -1108,8 +1110,7 @@ var isPitch = x => {
   return x instanceof Pitch || typeof x === "object" && x.enumNote instanceof _Note__WEBPACK_IMPORTED_MODULE_0__["EnumNote"] && typeof x.alteration === "number" && typeof x.octave === "number";
 };
 var isPitchArray = x => {
-  if (!Array.isArray(x)) return false;
-  return x.every(el => el instanceof Pitch);
+  return Array.isArray(x) && x.every(el => el instanceof Pitch);
 };
 class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
   static fromFrequency(f) {
@@ -1277,6 +1278,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Scale", function() { return Scale; });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
+var _Symbol$iterator;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -1354,7 +1357,7 @@ class EnumScale {
 var isScale = x => {
   return x instanceof Scale || typeof x === "object" && Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["isStringArray"])(x.degreeNames) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals);
 };
-var _Symbol$iterator = Symbol.iterator;
+_Symbol$iterator = Symbol.iterator;
 class Scale {
   constructor(first) {
     _defineProperty(this, "scaleName", void 0);
@@ -1596,6 +1599,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+var _Symbol$iterator;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -1605,7 +1610,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var isTonality = x => {
   return x instanceof Tonality || typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.note) && Object(_Scale__WEBPACK_IMPORTED_MODULE_0__["isScale"])(x.scale);
 };
-var _Symbol$iterator = Symbol.iterator;
+_Symbol$iterator = Symbol.iterator;
 class Tonality {
   constructor(first, second) {
     _defineProperty(this, "note", void 0);
@@ -1822,6 +1827,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordProgression", function() { return ChordProgression; });
 /* harmony import */ var _TonalChord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../TonalChord */ "./src/TonalChord.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Utils */ "./src/Utils.ts");
+var _Symbol$iterator;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -1829,7 +1836,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var isChordProgression = x => {
   return x instanceof ChordProgression || typeof x === "object" && Object(_TonalChord__WEBPACK_IMPORTED_MODULE_0__["isTonalChord"])(x.chord);
 };
-var _Symbol$iterator = Symbol.iterator;
+_Symbol$iterator = Symbol.iterator;
 class ChordProgression {
   constructor(cp) {
     _defineProperty(this, "chords", void 0);
@@ -1844,6 +1851,8 @@ class ChordProgression {
     } else {
       this.chords = cp.chords.map(c => c.clone());
     }
+
+    return this;
   }
 
   getChords(tonalityIn) {
@@ -1924,6 +1933,8 @@ _defineProperty(EnumChordProgression, "EPIC2", new _ChordProgression__WEBPACK_IM
 
 _defineProperty(EnumChordProgression, "EDM1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV I vi V"));
 
+_defineProperty(EnumChordProgression, "EDM2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V vi I"));
+
 /***/ }),
 
 /***/ "./src/index.ts":
@@ -1950,6 +1961,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+console.log(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C8").offset);
 new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C"));
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#G").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C")).toString());
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("#C").getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("G")).toString());
