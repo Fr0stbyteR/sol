@@ -33,6 +33,12 @@ export class Segment implements ISegment {
         this.duration = optionsIn.duration.clone();
         return this;
     }
+    get noteDurations() {
+        return this.notes.map(note => note.duration);
+    }
+    get noteOffsets() {
+        return this.notes.map(note => note.offset);
+    }
     clone() {
         return new Segment(this);
     }

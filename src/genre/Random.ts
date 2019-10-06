@@ -2,8 +2,8 @@ import * as seedrandom from "seedrandom";
 
 export class Random {
     private prng: seedrandom.prng;
-    constructor(seedIn: string) {
-        this.prng = seedrandom(seedIn);
+    constructor(seedIn?: string) {
+        this.prng = seedrandom(seedIn || "");
         return this;
     }
     quick() {
@@ -17,5 +17,8 @@ export class Random {
     }
     state() {
         return this.prng.state();
+    }
+    randint(minimum: number, maximum: number) {
+        return Math.floor(this.quick() * (maximum - minimum + 1)) + minimum;
     }
 }

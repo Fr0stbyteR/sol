@@ -6,6 +6,7 @@ import { Chord } from "./Chord";
 import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
 import { EnumChordProgression } from "./genre/EnumChordProgression";
+import { Random } from "./genre/Random";
 
 console.log(new Pitch("C8").offset);
 new Note("#G").getInterval(new Note("C"));
@@ -43,3 +44,5 @@ console.log(new Tonality("C").toPrev().toString());
 console.log(new Tonality("C").toNext().toString());
 
 console.log(EnumChordProgression.EPIC1.toString());
+
+console.log(new Random("1").randint(0, 100));
