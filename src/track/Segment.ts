@@ -2,6 +2,7 @@ import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrumen
 import { TrackNote, isTrackNoteArray } from "./TrackNote";
 import { Automation, isAutomationArray } from "../effect/Automation";
 import { Duration, isDuration } from "../Duration";
+import { Pitch } from "../Pitch";
 
 export interface ISegment {
     instrument?: TConcreteInstrument;
@@ -33,11 +34,32 @@ export class Segment implements ISegment {
         this.duration = optionsIn.duration.clone();
         return this;
     }
+    get pitches() {
+        return this.notes.map(note => note.pitch);
+    }
+    set pitches(pitchesIn: Pitch[]) {
+        pitchesIn.forEach((e, i) => {
+            const trackNote = this.notes[i];
+            if (trackNote) trackNote.pitch = e.clone();
+        });
+    }
     get noteDurations() {
         return this.notes.map(note => note.duration);
     }
+    set noteDurations(durationsIn: Duration[]) {
+        durationsIn.forEach((e, i) => {
+            const trackNote = this.notes[i];
+            if (trackNote) trackNote.duration = e.clone();
+        });
+    }
     get noteOffsets() {
         return this.notes.map(note => note.offset);
+    }
+    set noteOffsets(offsetsIn: Duration[]) {
+        offsetsIn.forEach((e, i) => {
+            const trackNote = this.notes[i];
+            if (trackNote) trackNote.offset = e.clone();
+        });
     }
     clone() {
         return new Segment(this);

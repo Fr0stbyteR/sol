@@ -8,7 +8,7 @@ import { TrackChord } from "../../track/TrackChord";
 import { TrackNote } from "../../track/TrackNote";
 import { Random } from "../Random";
 
-export interface IGeneratorConstraints {
+export interface IGeneratorParameters {
     durationRange?: [Duration, Duration];
     pitchRange?: [Pitch, Pitch];
     noteDurationRange?: [Duration, Duration];
@@ -20,5 +20,5 @@ export interface IGeneratorConstraints {
     rhythm: TrackNote[];
 }
 export abstract class Generator {
-    use: (randomIn: Random, constraintsIn?: IGeneratorConstraints) => Segment = () => undefined;
+    use: (randomIn: Random, constraintsIn?: IGeneratorParameters) => Segment = () => undefined;
 }

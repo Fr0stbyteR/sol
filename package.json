@@ -7,8 +7,7 @@
   "scripts": {
     "build": "webpack --mode development",
     "dist": "npm run build && webpack --mode production",
-    "debug": "node ./dist/index.js",
-    "dts": "tsc -p tsconfig.dts.json"
+    "debug": "node ./dist/index.js"
   },
   "keywords": [
     "music"
