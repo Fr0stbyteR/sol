@@ -7,6 +7,10 @@ import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
 import { EnumChordProgression } from "./genre/EnumChordProgression";
 import { Random } from "./genre/Random";
+import { TrackNote } from "./track/TrackNote";
+import { Duration } from "./Duration";
+import { Segment } from "./track/Segment";
+import { HClipper } from "./genre/modifier/HClipper";
 
 console.log(new Pitch("C8").offset);
 new Note("#G").getInterval(new Note("C"));
@@ -46,3 +50,12 @@ console.log(new Tonality("C").toNext().toString());
 console.log(EnumChordProgression.EPIC1.toString());
 
 console.log(new Random("1").randint(0, 100));
+
+const tn1 = new TrackNote({ pitch: new Pitch("C1"), duration: new Duration(1, 4), offset: new Duration(0, 4) });
+const tn2 = new TrackNote({ pitch: new Pitch("D1"), duration: new Duration(1, 4), offset: new Duration(1, 4) });
+const tn3 = new TrackNote({ pitch: new Pitch("E1"), duration: new Duration(1, 4), offset: new Duration(2, 4) });
+const seg = new Segment({ notes: [tn2, tn3, tn1], automations: [], duration: new Duration(1, 1) });
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+HClipper.use(null, seg, { duration: new Duration(5, 8), mode: "preserve" });
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+console.log(seg.duration.toString());

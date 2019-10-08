@@ -37,4 +37,7 @@ export class Articulation implements IArticulation {
     clone() {
         return new Articulation(this);
     }
+    toString() {
+        return `Art: [Vel: ${this.velocity} Len: ${this.length}]`;
+    }
 }

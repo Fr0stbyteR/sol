@@ -38,4 +38,7 @@ export class Velocity implements IVelocity {
     clone() {
         return new Velocity(this);
     }
+    toString() {
+        return `Vel: ${this.velocity}`;
+    }
 }

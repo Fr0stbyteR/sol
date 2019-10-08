@@ -32,12 +32,15 @@ export class TrackNote implements ITrackNote {
     constructor(optionsIn: ITrackNote) {
         this.duration = optionsIn.duration.clone();
         this.offset = optionsIn.offset.clone();
-        this.pitch = optionsIn.pitch.clone();
-        this.velocity = optionsIn.velocity.clone();
-        this.articulation = optionsIn.articulation.clone();
+        if (optionsIn.pitch) this.pitch = optionsIn.pitch.clone();
+        if (optionsIn.velocity) this.velocity = optionsIn.velocity.clone();
+        if (optionsIn.articulation) this.articulation = optionsIn.articulation.clone();
         return this;
     }
     clone() {
         return new TrackNote(this);
+    }
+    toString() {
+        return `${this.offset} -> ${this.pitch ? this.pitch.toString() : "*"} ${this.duration}`;
     }
 }

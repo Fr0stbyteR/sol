@@ -3,7 +3,7 @@ import { Random } from "../Random";
 import { Segment } from "../../track/Segment";
 
 export class HStretcher extends Modifier {
-    use = (randomIn: Random, segmentIn: Segment, factor: number) => {
+    static use = (randomIn: Random, segmentIn: Segment, factor: number) => {
         if (factor === 0) throw RangeError("Segment Strecher factor cannot be 0.");
         else if (factor > 0) {
             segmentIn.duration.mul(factor);

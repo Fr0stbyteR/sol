@@ -1185,6 +1185,90 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./src/Articulation.ts":
+/*!*****************************!*\
+  !*** ./src/Articulation.ts ***!
+  \*****************************/
+/*! exports provided: isArticulation, EnumArticulation, Articulation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArticulation", function() { return isArticulation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumArticulation", function() { return EnumArticulation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Articulation", function() { return Articulation; });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var isArticulation = x => {
+  return x instanceof Articulation || typeof x === "object" && typeof x.velocity === "number" && typeof x.length === "number";
+};
+class EnumArticulation {
+  static get STACCATISSIMO() {
+    return new Articulation(1, 0.25);
+  }
+
+  static get STACCATO() {
+    return new Articulation(1, 0.4);
+  }
+
+  static get MEZZO_STACCATO() {
+    return new Articulation(1, 0.75);
+  }
+
+  static get LEGATO() {
+    return new Articulation(1, 0.95);
+  }
+
+  static get TENUTO() {
+    return new Articulation(1, 1);
+  }
+
+  static get SOSTENUTO() {
+    return new Articulation(1, 1.2);
+  }
+
+  static get MARCATO() {
+    return new Articulation(1.5, 1);
+  }
+
+  static get PIZZICATO() {
+    return new Articulation(1, 1);
+  }
+
+  static get MUTED() {
+    return new Articulation(1, 1);
+  }
+
+}
+class Articulation {
+  constructor(first, lengthIn) {
+    _defineProperty(this, "velocity", void 0);
+
+    _defineProperty(this, "length", void 0);
+
+    if (isArticulation(first)) {
+      this.velocity = first.velocity;
+      this.length = first.length;
+    } else {
+      this.velocity = first;
+      this.length = lengthIn;
+    }
+
+    return this;
+  }
+
+  clone() {
+    return new Articulation(this);
+  }
+
+  toString() {
+    return "Art: [Vel: ".concat(this.velocity, " Len: ").concat(this.length, "]");
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/Chord.ts":
 /*!**********************!*\
   !*** ./src/Chord.ts ***!
@@ -1490,6 +1574,159 @@ class Chord {
       }
 
     };
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/Duration.ts":
+/*!*************************!*\
+  !*** ./src/Duration.ts ***!
+  \*************************/
+/*! exports provided: isDuration, Duration */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDuration", function() { return isDuration; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Duration", function() { return Duration; });
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var isDuration = x => {
+  return x instanceof Duration || (typeof x.isAbsolute === "boolean" && x.isAbsolute ? typeof x.seconds === "number" : typeof x.numerator === "number" && typeof x.denominator === "number");
+};
+class Duration {
+  // Absolute duration is represented by seconds.
+  // Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
+  // Absolute duration if in abs mode.
+  constructor(first, second) {
+    _defineProperty(this, "isAbsolute", void 0);
+
+    _defineProperty(this, "numerator", void 0);
+
+    _defineProperty(this, "denominator", void 0);
+
+    _defineProperty(this, "seconds", void 0);
+
+    if (isDuration(first)) {
+      this.isAbsolute = first.isAbsolute;
+      this.numerator = first.numerator;
+      this.denominator = first.denominator;
+      this.seconds = first.seconds;
+      this.simplify().check();
+    } else if (typeof second === "number") {
+      this.isAbsolute = false;
+      this.numerator = first;
+      this.denominator = second;
+      this.simplify().check();
+    } else {
+      this.isAbsolute = true;
+      this.seconds = first;
+      this.check();
+    }
+
+    return this;
+  }
+
+  get value() {
+    return this.isAbsolute ? this.seconds : this.numerator / this.denominator;
+  }
+
+  getBeats(first) {
+    if (typeof first === "undefined") {
+      if (this.isAbsolute) throw new Error("Absolute duration needs BPM to calculate.");
+      return this.value * 4;
+    }
+
+    if (typeof first === "number") {
+      // bpmIn
+      return this.value * 4 * first / 60;
+    } // timeCodeIn
+
+
+    return this.value * 4 * first.getAbsoluteDuration();
+  }
+
+  toAbsolute(first) {
+    if (this.isAbsolute) return this;
+    if (typeof first === "number") this.seconds = this.getBeats() * first / 60;else this.seconds = first.getAbsoluteDuration(this.getBeats());
+    this.isAbsolute = true;
+    return this;
+  }
+
+  add(durationIn) {
+    if (this.denominator === durationIn.denominator) this.numerator += durationIn.numerator;else {
+      this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
+      this.denominator *= durationIn.denominator;
+    }
+    this.simplify().check();
+    return this;
+  }
+
+  sub(durationIn) {
+    if (this.denominator === durationIn.denominator) this.numerator -= durationIn.numerator;else {
+      this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
+      this.denominator *= durationIn.denominator;
+    }
+    this.simplify().check();
+    return this;
+  }
+
+  mul(f) {
+    this.numerator *= f;
+    this.simplify().check();
+    return this;
+  }
+
+  div(f) {
+    this.numerator /= f;
+    this.simplify().check();
+    return this;
+  }
+
+  simplify() {
+    var _gcd = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["gcd"])(this.numerator, this.denominator);
+
+    if (_gcd > 1) {
+      this.denominator /= _gcd;
+      this.numerator /= _gcd;
+    }
+
+    return this;
+  }
+
+  check() {
+    if (this.isAbsolute) {
+      if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+    } else {
+      if (this.seconds < 0) throw new Error("Duration should have positive value.");
+    }
+
+    return this;
+  }
+
+  clone() {
+    return new Duration(this);
+  }
+
+  compareTo(that) {
+    return Duration.compare(this, that);
+  }
+
+  static compare(x, y) {
+    if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
+    return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
+  }
+
+  equals(durationIn) {
+    return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+  }
+
+  toString() {
+    return this.isAbsolute ? this.seconds + "s" : this.getBeats() + " beats";
   }
 
 }
@@ -2913,6 +3150,203 @@ var toRoman = nIn => {
 
 /***/ }),
 
+/***/ "./src/Velocity.ts":
+/*!*************************!*\
+  !*** ./src/Velocity.ts ***!
+  \*************************/
+/*! exports provided: isVelocity, EnumVelocity, Velocity */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isVelocity", function() { return isVelocity; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumVelocity", function() { return EnumVelocity; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Velocity", function() { return Velocity; });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var isVelocity = x => {
+  return x instanceof Velocity || typeof x === "object" && typeof x.velocity === "number";
+};
+class EnumVelocity {
+  static get SILENT() {
+    return new Velocity(0);
+  }
+
+  static get PPP() {
+    return new Velocity(10);
+  }
+
+  static get PP() {
+    return new Velocity(25);
+  }
+
+  static get PIANISSIMO() {
+    return new Velocity(25);
+  }
+
+  static get P() {
+    return new Velocity(50);
+  }
+
+  static get MP() {
+    return new Velocity(60);
+  }
+
+  static get MEZZO_PIANO() {
+    return new Velocity(60);
+  }
+
+  static get MF() {
+    return new Velocity(70);
+  }
+
+  static get MEZZO_FORTE() {
+    return new Velocity(70);
+  }
+
+  static get F() {
+    return new Velocity(85);
+  }
+
+  static get FORTE() {
+    return new Velocity(85);
+  }
+
+  static get FF() {
+    return new Velocity(100);
+  }
+
+  static get FORTISSIMO() {
+    return new Velocity(100);
+  }
+
+  static get FFF() {
+    return new Velocity(120);
+  }
+
+}
+class Velocity {
+  constructor(velocityIn) {
+    _defineProperty(this, "velocity", void 0);
+
+    if (typeof velocityIn === "number") this.velocity = velocityIn;else this.velocity = velocityIn.velocity;
+    return this;
+  }
+
+  normalize() {
+    return this.velocity / 128;
+  }
+
+  clone() {
+    return new Velocity(this);
+  }
+
+  toString() {
+    return "Vel: ".concat(this.velocity);
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/effect/Automation.ts":
+/*!**********************************!*\
+  !*** ./src/effect/Automation.ts ***!
+  \**********************************/
+/*! exports provided: isAutomation, isAutomationArray, Automation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAutomation", function() { return isAutomation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAutomationArray", function() { return isAutomationArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Automation", function() { return Automation; });
+/* harmony import */ var _AutomationPoint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutomationPoint */ "./src/effect/AutomationPoint.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var isAutomation = x => {
+  return x instanceof Automation || typeof x.path === "string" && Object(_AutomationPoint__WEBPACK_IMPORTED_MODULE_0__["isAutomationPointArray"])(x.points);
+};
+var isAutomationArray = x => {
+  return Array.isArray(x) && x.every(e => e instanceof Automation);
+};
+class Automation {
+  constructor(first, points) {
+    _defineProperty(this, "path", void 0);
+
+    _defineProperty(this, "points", void 0);
+
+    if (typeof first === "string") {
+      this.path = first;
+      this.points = points ? points.map(e => e.clone()) : [];
+    } else {
+      this.path = first.path;
+      this.points = first.points.map(e => e.clone());
+    }
+
+    return this;
+  }
+
+  clone() {
+    return new Automation(this);
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/effect/AutomationPoint.ts":
+/*!***************************************!*\
+  !*** ./src/effect/AutomationPoint.ts ***!
+  \***************************************/
+/*! exports provided: isAutomationPoint, isAutomationPointArray, AutomationPoint */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAutomationPoint", function() { return isAutomationPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAutomationPointArray", function() { return isAutomationPointArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AutomationPoint", function() { return AutomationPoint; });
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var isAutomationPoint = x => {
+  return x instanceof AutomationPoint || typeof x.value === "number" && Object(_Duration__WEBPACK_IMPORTED_MODULE_0__["isDuration"])(x.offset) && typeof x.exponent === "number";
+};
+var isAutomationPointArray = x => {
+  return Array.isArray(x) && x.every(e => e instanceof AutomationPoint);
+};
+class AutomationPoint {
+  constructor(first, offset, exponent) {
+    _defineProperty(this, "value", void 0);
+
+    _defineProperty(this, "offset", void 0);
+
+    _defineProperty(this, "exponent", void 0);
+
+    if (typeof first === "number") {
+      this.value = first;
+      this.offset = offset.clone();
+      this.exponent = exponent || 0;
+    } else {
+      this.value = first.value;
+      this.offset = first.offset;
+      this.exponent = first.exponent;
+    }
+
+    return this;
+  }
+
+  clone() {
+    return new AutomationPoint(this);
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/genre/ChordProgression.ts":
 /*!***************************************!*\
   !*** ./src/genre/ChordProgression.ts ***!
@@ -3085,6 +3519,72 @@ class Random {
 
 /***/ }),
 
+/***/ "./src/genre/modifier/HClipper.ts":
+/*!****************************************!*\
+  !*** ./src/genre/modifier/HClipper.ts ***!
+  \****************************************/
+/*! exports provided: HClipper */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipper", function() { return HClipper; });
+/* harmony import */ var _Modifier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modifier */ "./src/genre/modifier/Modifier.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Duration */ "./src/Duration.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+class HClipper extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
+
+_defineProperty(HClipper, "use", (randomIn, segmentIn, params) => {
+  var mode = params.mode,
+      duration = params.duration;
+  var maxNoteEnd = new _Duration__WEBPACK_IMPORTED_MODULE_1__["Duration"](0, 4);
+  segmentIn.notes.forEach((note, i) => {
+    if (note.offset.compareTo(duration) >= 0) {
+      segmentIn.notes[i] = null;
+    } else {
+      var noteEnd = note.offset.clone().add(note.duration);
+      if (noteEnd.compareTo(maxNoteEnd) > 0) maxNoteEnd = noteEnd;
+
+      if (noteEnd.compareTo(duration) > 0) {
+        if (mode === "clip") note.duration = noteEnd.sub(duration);else if (mode === "remove") segmentIn.notes[i] = null;
+      }
+    }
+  });
+  segmentIn.notes = segmentIn.notes.filter(e => e);
+  segmentIn.duration = mode === "preserve" ? maxNoteEnd : duration;
+  return segmentIn;
+});
+
+/***/ }),
+
+/***/ "./src/genre/modifier/Modifier.ts":
+/*!****************************************!*\
+  !*** ./src/genre/modifier/Modifier.ts ***!
+  \****************************************/
+/*! exports provided: Modifier */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modifier", function() { return Modifier; });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+/**
+ * Describe a processor that modifies a segment, return itself modified.
+ *
+ * @export
+ * @abstract
+ * @class Modifier
+ */
+class Modifier {}
+
+_defineProperty(Modifier, "use", void 0);
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -3102,7 +3602,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tonality__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Tonality */ "./src/Tonality.ts");
 /* harmony import */ var _genre_EnumChordProgression__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./genre/EnumChordProgression */ "./src/genre/EnumChordProgression.ts");
 /* harmony import */ var _genre_Random__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./genre/Random */ "./src/genre/Random.ts");
+/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Duration */ "./src/Duration.ts");
+/* harmony import */ var _track_Segment__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./track/Segment */ "./src/track/Segment.ts");
+/* harmony import */ var _genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./genre/modifier/HClipper */ "./src/genre/modifier/HClipper.ts");
 /* eslint-disable no-console */
+
+
+
+
 
 
 
@@ -3139,6 +3647,381 @@ console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toPrev()
 console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toNext().toString());
 console.log(_genre_EnumChordProgression__WEBPACK_IMPORTED_MODULE_6__["EnumChordProgression"].EPIC1.toString());
 console.log(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("1").randint(0, 100));
+var tn1 = new _track_TrackNote__WEBPACK_IMPORTED_MODULE_8__["TrackNote"]({
+  pitch: new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"),
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4),
+  offset: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](0, 4)
+});
+var tn2 = new _track_TrackNote__WEBPACK_IMPORTED_MODULE_8__["TrackNote"]({
+  pitch: new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("D1"),
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4),
+  offset: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4)
+});
+var tn3 = new _track_TrackNote__WEBPACK_IMPORTED_MODULE_8__["TrackNote"]({
+  pitch: new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"),
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4),
+  offset: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](2, 4)
+});
+var seg = new _track_Segment__WEBPACK_IMPORTED_MODULE_10__["Segment"]({
+  notes: [tn2, tn3, tn1],
+  automations: [],
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 1)
+});
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+_genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipper"].use(null, seg, {
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](5, 8),
+  mode: "preserve"
+});
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+console.log(seg.duration);
+
+/***/ }),
+
+/***/ "./src/instrument/EnumInstrumentTag.ts":
+/*!*********************************************!*\
+  !*** ./src/instrument/EnumInstrumentTag.ts ***!
+  \*********************************************/
+/*! exports provided: isEnumInstrumentTagArray, EnumInstrumentTag, LEAD, PAD, KICK, SNARE, TOM, HAT, RIDE, STICK, CLAP, TAMBOURINE, CYMBAL, VOCAL, SFX, BASS, STRING, PLUCKED, BOWED, BRASS, WOODWIND, SYNTH, GUITAR, KEYBOARD, ORGAN, DRUM, UNPITCHED, ACOUSTIC, ELECTRONIC, PITCHED, HAS_RANGE, PERCUSSION, VOICE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEnumInstrumentTagArray", function() { return isEnumInstrumentTagArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumInstrumentTag", function() { return EnumInstrumentTag; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LEAD", function() { return LEAD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PAD", function() { return PAD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KICK", function() { return KICK; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SNARE", function() { return SNARE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TOM", function() { return TOM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HAT", function() { return HAT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RIDE", function() { return RIDE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STICK", function() { return STICK; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLAP", function() { return CLAP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TAMBOURINE", function() { return TAMBOURINE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CYMBAL", function() { return CYMBAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VOCAL", function() { return VOCAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SFX", function() { return SFX; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BASS", function() { return BASS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STRING", function() { return STRING; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PLUCKED", function() { return PLUCKED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BOWED", function() { return BOWED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BRASS", function() { return BRASS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WOODWIND", function() { return WOODWIND; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SYNTH", function() { return SYNTH; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GUITAR", function() { return GUITAR; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KEYBOARD", function() { return KEYBOARD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ORGAN", function() { return ORGAN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DRUM", function() { return DRUM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UNPITCHED", function() { return UNPITCHED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ACOUSTIC", function() { return ACOUSTIC; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ELECTRONIC", function() { return ELECTRONIC; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PITCHED", function() { return PITCHED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HAS_RANGE", function() { return HAS_RANGE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PERCUSSION", function() { return PERCUSSION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VOICE", function() { return VOICE; });
+var isEnumInstrumentTagArray = x => {
+  return Array.isArray(x) && x.every(e => typeof e === "number");
+};
+var EnumInstrumentTag;
+
+(function (EnumInstrumentTag) {
+  EnumInstrumentTag[EnumInstrumentTag["LEAD"] = 0] = "LEAD";
+  EnumInstrumentTag[EnumInstrumentTag["PAD"] = 1] = "PAD";
+  EnumInstrumentTag[EnumInstrumentTag["KICK"] = 2] = "KICK";
+  EnumInstrumentTag[EnumInstrumentTag["SNARE"] = 3] = "SNARE";
+  EnumInstrumentTag[EnumInstrumentTag["TOM"] = 4] = "TOM";
+  EnumInstrumentTag[EnumInstrumentTag["HAT"] = 5] = "HAT";
+  EnumInstrumentTag[EnumInstrumentTag["RIDE"] = 6] = "RIDE";
+  EnumInstrumentTag[EnumInstrumentTag["STICK"] = 7] = "STICK";
+  EnumInstrumentTag[EnumInstrumentTag["CLAP"] = 8] = "CLAP";
+  EnumInstrumentTag[EnumInstrumentTag["TAMBOURINE"] = 9] = "TAMBOURINE";
+  EnumInstrumentTag[EnumInstrumentTag["CYMBAL"] = 10] = "CYMBAL";
+  EnumInstrumentTag[EnumInstrumentTag["VOCAL"] = 11] = "VOCAL";
+  EnumInstrumentTag[EnumInstrumentTag["SFX"] = 12] = "SFX";
+  EnumInstrumentTag[EnumInstrumentTag["BASS"] = 13] = "BASS";
+  EnumInstrumentTag[EnumInstrumentTag["STRING"] = 14] = "STRING";
+  EnumInstrumentTag[EnumInstrumentTag["PLUCKED"] = 15] = "PLUCKED";
+  EnumInstrumentTag[EnumInstrumentTag["BOWED"] = 16] = "BOWED";
+  EnumInstrumentTag[EnumInstrumentTag["BRASS"] = 17] = "BRASS";
+  EnumInstrumentTag[EnumInstrumentTag["WOODWIND"] = 18] = "WOODWIND";
+  EnumInstrumentTag[EnumInstrumentTag["SYNTH"] = 19] = "SYNTH";
+  EnumInstrumentTag[EnumInstrumentTag["GUITAR"] = 20] = "GUITAR";
+  EnumInstrumentTag[EnumInstrumentTag["KEYBOARD"] = 21] = "KEYBOARD";
+  EnumInstrumentTag[EnumInstrumentTag["ORGAN"] = 22] = "ORGAN";
+  EnumInstrumentTag[EnumInstrumentTag["DRUM"] = 23] = "DRUM";
+  EnumInstrumentTag[EnumInstrumentTag["UNPITCHED"] = 24] = "UNPITCHED";
+  EnumInstrumentTag[EnumInstrumentTag["ACOUSTIC"] = 25] = "ACOUSTIC";
+  EnumInstrumentTag[EnumInstrumentTag["ELECTRONIC"] = 26] = "ELECTRONIC";
+  EnumInstrumentTag[EnumInstrumentTag["PITCHED"] = 27] = "PITCHED";
+  EnumInstrumentTag[EnumInstrumentTag["HAS_RANGE"] = 28] = "HAS_RANGE";
+  EnumInstrumentTag[EnumInstrumentTag["PERCUSSION"] = 29] = "PERCUSSION";
+  EnumInstrumentTag[EnumInstrumentTag["VOICE"] = 30] = "VOICE";
+})(EnumInstrumentTag || (EnumInstrumentTag = {}));
+
+var LEAD = EnumInstrumentTag.LEAD,
+    PAD = EnumInstrumentTag.PAD,
+    KICK = EnumInstrumentTag.KICK,
+    SNARE = EnumInstrumentTag.SNARE,
+    TOM = EnumInstrumentTag.TOM,
+    HAT = EnumInstrumentTag.HAT,
+    RIDE = EnumInstrumentTag.RIDE,
+    STICK = EnumInstrumentTag.STICK,
+    CLAP = EnumInstrumentTag.CLAP,
+    TAMBOURINE = EnumInstrumentTag.TAMBOURINE,
+    CYMBAL = EnumInstrumentTag.CYMBAL,
+    VOCAL = EnumInstrumentTag.VOCAL,
+    SFX = EnumInstrumentTag.SFX,
+    BASS = EnumInstrumentTag.BASS,
+    STRING = EnumInstrumentTag.STRING,
+    PLUCKED = EnumInstrumentTag.PLUCKED,
+    BOWED = EnumInstrumentTag.BOWED,
+    BRASS = EnumInstrumentTag.BRASS,
+    WOODWIND = EnumInstrumentTag.WOODWIND,
+    SYNTH = EnumInstrumentTag.SYNTH,
+    GUITAR = EnumInstrumentTag.GUITAR,
+    KEYBOARD = EnumInstrumentTag.KEYBOARD,
+    ORGAN = EnumInstrumentTag.ORGAN,
+    DRUM = EnumInstrumentTag.DRUM,
+    UNPITCHED = EnumInstrumentTag.UNPITCHED,
+    ACOUSTIC = EnumInstrumentTag.ACOUSTIC,
+    ELECTRONIC = EnumInstrumentTag.ELECTRONIC,
+    PITCHED = EnumInstrumentTag.PITCHED,
+    HAS_RANGE = EnumInstrumentTag.HAS_RANGE,
+    PERCUSSION = EnumInstrumentTag.PERCUSSION,
+    VOICE = EnumInstrumentTag.VOICE;
+
+
+/***/ }),
+
+/***/ "./src/instrument/Instrument.ts":
+/*!**************************************!*\
+  !*** ./src/instrument/Instrument.ts ***!
+  \**************************************/
+/*! exports provided: isInstrument, isTypeofInstrument, Instrument */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isInstrument", function() { return isInstrument; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTypeofInstrument", function() { return isTypeofInstrument; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Instrument", function() { return Instrument; });
+/* harmony import */ var _EnumInstrumentTag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EnumInstrumentTag */ "./src/instrument/EnumInstrumentTag.ts");
+/* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Pitch */ "./src/Pitch.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+var isInstrument = x => {
+  return x instanceof Instrument || typeof x === "object" && typeof x.name === "string";
+};
+var isTypeofInstrument = x => {
+  return typeof x === "object" && Object(_EnumInstrumentTag__WEBPACK_IMPORTED_MODULE_0__["isEnumInstrumentTagArray"])(x.TAGS) && typeof x.NAME === "string" && (typeof x.MIN_PITCH === "undefined" || Object(_Pitch__WEBPACK_IMPORTED_MODULE_1__["isPitch"])(x.MIN_PITCH)) && (typeof x.MAX_PITCH === "undefined" || Object(_Pitch__WEBPACK_IMPORTED_MODULE_1__["isPitch"])(x.MAX_PITCH));
+};
+class Instrument {
+  // instrument name
+  // instrument instance name
+  constructor(optionsIn) {
+    _defineProperty(this, "name", void 0);
+
+    _defineProperty(this, "params", void 0);
+
+    this.name = optionsIn.name;
+    this.params = {};
+
+    for (var _key in optionsIn.params) {
+      this.params[_key] = optionsIn.params[_key].clone();
+    }
+
+    return this;
+  }
+
+  getParamValue(path) {
+    return this.params[path] ? this.params[path].value : null;
+  }
+
+  setParamValue(path, value) {
+    if (this.params[path]) this.params[value].value = value;
+  }
+
+  hasTag() {
+    for (var _len = arguments.length, tagsIn = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
+      tagsIn[_key2] = arguments[_key2];
+    }
+
+    return tagsIn.every(tag => this.tags.indexOf(tag) !== -1);
+  }
+
+  get tags() {
+    return this.constructor.TAGS;
+  }
+
+  get minPitch() {
+    return this.constructor.MIN_PITCH;
+  }
+
+  get maxPitch() {
+    return this.constructor.MAX_PITCH;
+  }
+
+  toString() {
+    return this.constructor.name;
+  }
+
+}
+
+_defineProperty(Instrument, "NAME", void 0);
+
+_defineProperty(Instrument, "TAGS", void 0);
+
+_defineProperty(Instrument, "MIN_PITCH", void 0);
+
+_defineProperty(Instrument, "MAX_PITCH", void 0);
+
+/***/ }),
+
+/***/ "./src/track/Segment.ts":
+/*!******************************!*\
+  !*** ./src/track/Segment.ts ***!
+  \******************************/
+/*! exports provided: isSegment, isSegmentArray, Segment */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSegment", function() { return isSegment; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSegmentArray", function() { return isSegmentArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Segment", function() { return Segment; });
+/* harmony import */ var _instrument_Instrument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../instrument/Instrument */ "./src/instrument/Instrument.ts");
+/* harmony import */ var _TrackNote__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TrackNote */ "./src/track/TrackNote.ts");
+/* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+var isSegment = x => {
+  return x instanceof Segment || typeof x === "object" && (typeof x.instrument === "undefined" || Object(_instrument_Instrument__WEBPACK_IMPORTED_MODULE_0__["isTypeofInstrument"])(x.instrument)) && Object(_TrackNote__WEBPACK_IMPORTED_MODULE_1__["isTrackNoteArray"])(x.notes) && Object(_effect_Automation__WEBPACK_IMPORTED_MODULE_2__["isAutomationArray"])(x.automations) && Object(_Duration__WEBPACK_IMPORTED_MODULE_3__["isDuration"])(x.duration);
+};
+var isSegmentArray = x => {
+  return Array.isArray(x) && x.every(e => e instanceof Segment);
+};
+class Segment {
+  constructor(optionsIn) {
+    _defineProperty(this, "instrument", void 0);
+
+    _defineProperty(this, "notes", void 0);
+
+    _defineProperty(this, "automations", void 0);
+
+    _defineProperty(this, "duration", void 0);
+
+    this.instrument = optionsIn.instrument;
+    this.notes = optionsIn.notes.map(e => e.clone());
+    this.automations = optionsIn.automations.map(e => e.clone());
+    this.duration = optionsIn.duration.clone();
+    return this;
+  }
+
+  get pitches() {
+    return this.notes.map(note => note.pitch);
+  }
+
+  set pitches(pitchesIn) {
+    pitchesIn.forEach((e, i) => {
+      var trackNote = this.notes[i];
+      if (trackNote) trackNote.pitch = e.clone();
+    });
+  }
+
+  get noteDurations() {
+    return this.notes.map(note => note.duration);
+  }
+
+  set noteDurations(durationsIn) {
+    durationsIn.forEach((e, i) => {
+      var trackNote = this.notes[i];
+      if (trackNote) trackNote.duration = e.clone();
+    });
+  }
+
+  get noteOffsets() {
+    return this.notes.map(note => note.offset);
+  }
+
+  set noteOffsets(offsetsIn) {
+    offsetsIn.forEach((e, i) => {
+      var trackNote = this.notes[i];
+      if (trackNote) trackNote.offset = e.clone();
+    });
+  }
+
+  clone() {
+    return new Segment(this);
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/track/TrackNote.ts":
+/*!********************************!*\
+  !*** ./src/track/TrackNote.ts ***!
+  \********************************/
+/*! exports provided: isTrackNote, isTrackNoteArray, TrackNote */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTrackNote", function() { return isTrackNote; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTrackNoteArray", function() { return isTrackNoteArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TrackNote", function() { return TrackNote; });
+/* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Pitch */ "./src/Pitch.ts");
+/* harmony import */ var _Velocity__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Velocity */ "./src/Velocity.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
+/* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Articulation */ "./src/Articulation.ts");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+var isTrackNote = x => {
+  return x instanceof TrackNote || typeof x === "object" && Object(_Duration__WEBPACK_IMPORTED_MODULE_2__["isDuration"])(x.duration) && Object(_Duration__WEBPACK_IMPORTED_MODULE_2__["isDuration"])(x.offset) && (typeof x.pitch === "undefined" || Object(_Pitch__WEBPACK_IMPORTED_MODULE_0__["isPitch"])(x.pitch)) && (typeof x.velocity === "undefined" || Object(_Velocity__WEBPACK_IMPORTED_MODULE_1__["isVelocity"])(x.velocity)) && (typeof x.articulation === "undefined" || Object(_Articulation__WEBPACK_IMPORTED_MODULE_3__["isArticulation"])(x.articulation));
+};
+var isTrackNoteArray = x => {
+  return Array.isArray(x) && x.every(el => el instanceof TrackNote);
+};
+class TrackNote {
+  constructor(optionsIn) {
+    _defineProperty(this, "duration", void 0);
+
+    _defineProperty(this, "offset", void 0);
+
+    _defineProperty(this, "pitch", void 0);
+
+    _defineProperty(this, "velocity", void 0);
+
+    _defineProperty(this, "articulation", void 0);
+
+    this.duration = optionsIn.duration.clone();
+    this.offset = optionsIn.offset.clone();
+    if (optionsIn.pitch) this.pitch = optionsIn.pitch.clone();
+    if (optionsIn.velocity) this.velocity = optionsIn.velocity.clone();
+    if (optionsIn.articulation) this.articulation = optionsIn.articulation.clone();
+    return this;
+  }
+
+  clone() {
+    return new TrackNote(this);
+  }
+
+  toString() {
+    return "".concat(this.offset, " -> ").concat(this.pitch ? this.pitch.toString() : "*", " ").concat(this.duration);
+  }
+
+}
 
 /***/ }),
 

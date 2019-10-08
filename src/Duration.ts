@@ -114,9 +114,9 @@ export class Duration implements IDuration {
 
     private check() {
         if (this.isAbsolute) {
-            if (this.numerator <= 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+            if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
         } else {
-            if (this.seconds <= 0) throw new Error("Duration should have positive value.");
+            if (this.seconds < 0) throw new Error("Duration should have positive value.");
         }
         return this;
     }
