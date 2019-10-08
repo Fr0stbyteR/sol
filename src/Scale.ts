@@ -103,7 +103,7 @@ export class Scale implements Iterable<Interval>, IScale {
         return this.scaleName;
     }
     toString() {
-        let s = this.scaleName ? `Scale "${this.scaleName}" :{` : "Scale :{";
+        let s = this.scaleName ? `Scale "${this.scaleName}": {` : "Scale :{";
         for (let i = 0; i < this.intervals.length; i++) {
             const sI = this.intervals[i].toString();
             const sN = this.degreeNames[i];

@@ -2773,7 +2773,7 @@ class Scale {
   }
 
   toString() {
-    var s = this.scaleName ? "Scale \"".concat(this.scaleName, "\" :{") : "Scale :{";
+    var s = this.scaleName ? "Scale \"".concat(this.scaleName, "\": {") : "Scale :{";
 
     for (var i = 0; i < this.intervals.length; i++) {
       var sI = this.intervals[i].toString();
@@ -3523,38 +3523,73 @@ class Random {
 /*!****************************************!*\
   !*** ./src/genre/modifier/HClipper.ts ***!
   \****************************************/
-/*! exports provided: HClipper */
+/*! exports provided: HClipperRight, HClipperLeft */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipper", function() { return HClipper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipperRight", function() { return HClipperRight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipperLeft", function() { return HClipperLeft; });
 /* harmony import */ var _Modifier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modifier */ "./src/genre/modifier/Modifier.ts");
-/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Duration */ "./src/Duration.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+class HClipperRight extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
 
-class HClipper extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
-
-_defineProperty(HClipper, "use", (randomIn, segmentIn, params) => {
+_defineProperty(HClipperRight, "use", (randomIn, segmentIn, params) => {
   var mode = params.mode,
       duration = params.duration;
-  var maxNoteEnd = new _Duration__WEBPACK_IMPORTED_MODULE_1__["Duration"](0, 4);
+  var end = duration.clone();
   segmentIn.notes.forEach((note, i) => {
     if (note.offset.compareTo(duration) >= 0) {
       segmentIn.notes[i] = null;
     } else {
       var noteEnd = note.offset.clone().add(note.duration);
-      if (noteEnd.compareTo(maxNoteEnd) > 0) maxNoteEnd = noteEnd;
 
-      if (noteEnd.compareTo(duration) > 0) {
-        if (mode === "clip") note.duration = noteEnd.sub(duration);else if (mode === "remove") segmentIn.notes[i] = null;
+      if (mode === "preserve") {
+        if (noteEnd.compareTo(end) > 0) end = noteEnd;
+      } else {
+        if (noteEnd.compareTo(duration) > 0) {
+          if (mode === "clip") note.duration = noteEnd.sub(duration);else if (mode === "remove") segmentIn.notes[i] = null;
+        }
       }
     }
   });
   segmentIn.notes = segmentIn.notes.filter(e => e);
-  segmentIn.duration = mode === "preserve" ? maxNoteEnd : duration;
+  segmentIn.duration = end;
+  return segmentIn;
+});
+
+class HClipperLeft extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
+
+_defineProperty(HClipperLeft, "use", (randomIn, segmentIn, params) => {
+  var mode = params.mode,
+      duration = params.duration;
+  var start = duration.clone();
+  segmentIn.notes.forEach((note, i) => {
+    var noteEnd = note.offset.clone().add(note.duration);
+
+    if (noteEnd.compareTo(duration) <= 0) {
+      segmentIn.notes[i] = null;
+    } else {
+      if (mode === "preserve") {
+        if (note.offset.compareTo(start) < 0) start = note.offset;
+      } else {
+        if (note.offset.compareTo(duration) < 0) {
+          if (mode === "clip") {
+            var oldDuration = note.duration;
+            note.duration = noteEnd.sub(duration);
+            note.offset.add(oldDuration.sub(note.duration));
+          } else if (mode === "remove") {
+            segmentIn.notes[i] = null;
+          }
+        }
+      }
+    }
+  });
+  segmentIn.notes = segmentIn.notes.filter(e => e);
+  segmentIn.duration.sub(start);
+  segmentIn.notes.forEach(note => note.offset.sub(start));
   return segmentIn;
 });
 
@@ -3668,12 +3703,12 @@ var seg = new _track_Segment__WEBPACK_IMPORTED_MODULE_10__["Segment"]({
   duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 1)
 });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
-_genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipper"].use(null, seg, {
-  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](5, 8),
-  mode: "preserve"
+_genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipperLeft"].use(null, seg, {
+  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 8),
+  mode: "clip"
 });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
-console.log(seg.duration);
+console.log(seg.duration.toString());
 
 /***/ }),
 
