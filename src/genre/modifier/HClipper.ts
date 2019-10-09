@@ -5,7 +5,7 @@ import { Duration } from "../../Duration";
 
 interface HSidedClipperParams {
     duration: Duration;
-    mode: "preserve" | "clip" | "remove"; // mode for last notes, preserve or clip their length or remove them
+    mode: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
 }
 export class HClipperRight extends Modifier {
     static use = (randomIn: Random, segmentIn: Segment, params: HSidedClipperParams) => {
@@ -58,6 +58,21 @@ export class HClipperLeft extends Modifier {
         segmentIn.notes = segmentIn.notes.filter(e => e);
         segmentIn.duration.sub(start);
         segmentIn.notes.forEach(note => note.offset.sub(start));
+        return segmentIn;
+    }
+}
+interface HClipperParams {
+    start: Duration;
+    end: Duration;
+    mode: "preserve" | "clip" | "remove";
+}
+export class HClipper extends Modifier {
+    static use = (randomIn: Random, segmentIn: Segment, params: HClipperParams) => {
+        const { mode } = params;
+        let { start, end } = params;
+        if (start.compareTo(end) > 0) [start, end] = [end, start];
+        if (end.compareTo(segmentIn.duration) !== 0) HClipperRight.use(null, segmentIn, { mode, duration: end });
+        if (start.compareTo(new Duration(0, 4)) !== 0) HClipperLeft.use(null, segmentIn, { mode, duration: start });
         return segmentIn;
     }
 }

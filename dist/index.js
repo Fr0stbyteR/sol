@@ -3523,15 +3523,18 @@ class Random {
 /*!****************************************!*\
   !*** ./src/genre/modifier/HClipper.ts ***!
   \****************************************/
-/*! exports provided: HClipperRight, HClipperLeft */
+/*! exports provided: HClipperRight, HClipperLeft, HClipper */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipperRight", function() { return HClipperRight; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipperLeft", function() { return HClipperLeft; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipper", function() { return HClipper; });
 /* harmony import */ var _Modifier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modifier */ "./src/genre/modifier/Modifier.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Duration */ "./src/Duration.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 class HClipperRight extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
@@ -3590,6 +3593,30 @@ _defineProperty(HClipperLeft, "use", (randomIn, segmentIn, params) => {
   segmentIn.notes = segmentIn.notes.filter(e => e);
   segmentIn.duration.sub(start);
   segmentIn.notes.forEach(note => note.offset.sub(start));
+  return segmentIn;
+});
+
+class HClipper extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
+
+_defineProperty(HClipper, "use", (randomIn, segmentIn, params) => {
+  var mode = params.mode;
+  var start = params.start,
+      end = params.end;
+
+  if (start.compareTo(end) > 0) {
+    var _ref = [end, start];
+    start = _ref[0];
+    end = _ref[1];
+  }
+
+  if (end.compareTo(segmentIn.duration) !== 0) HClipperRight.use(null, segmentIn, {
+    mode,
+    duration: end
+  });
+  if (start.compareTo(new _Duration__WEBPACK_IMPORTED_MODULE_1__["Duration"](0, 4)) !== 0) HClipperLeft.use(null, segmentIn, {
+    mode,
+    duration: start
+  });
   return segmentIn;
 });
 
@@ -3703,8 +3730,9 @@ var seg = new _track_Segment__WEBPACK_IMPORTED_MODULE_10__["Segment"]({
   duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 1)
 });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
-_genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipperLeft"].use(null, seg, {
-  duration: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 8),
+_genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipper"].use(null, seg, {
+  start: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 8),
+  end: new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 8),
   mode: "clip"
 });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
