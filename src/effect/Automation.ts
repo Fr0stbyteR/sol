@@ -52,8 +52,17 @@ export class Automation implements IAutomation {
         }
         throw Error(`No point in automation: ${this.path}`);
     }
+    addPointAtTime(time: Duration) {
+        this.points.push(new AutomationPoint(this.getValueAtTime(time), time, 0));
+    }
     sort() {
         this.points = this.points.sort((a, b) => a.offset.compareTo(b.offset));
+    }
+    forward(duration: Duration) {
+        this.points.forEach(p => p.offset.add(duration));
+    }
+    rewind(duration: Duration) {
+        this.points.forEach(p => p.offset.sub(duration));
     }
     toString() {
         return `Automation: "${this.path}": {${this.points.map(p => `${p.value.toFixed(2)}@${p.offset.toString()}`).join()}}`;

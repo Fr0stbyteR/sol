@@ -28,17 +28,22 @@ export class HClipperRight extends Modifier {
         });
         s.notes = s.notes.filter(e => e);
         s.duration = end;
+        s.automations.forEach((a) => {
+            a.sort();
+            const $oob = a.points.findIndex(p => p.offset.compareTo(end) > 0);
+            if ($oob !== -1) a.points = a.points.slice(0, $oob);
+        });
         return s;
     }
 }
 export class HClipperLeft extends Modifier {
-    static use = (randomIn: Random, segmentIn: Segment, params: HSidedClipperParams) => {
+    static use = (randomIn: Random, s: Segment, params: HSidedClipperParams) => {
         const { mode, duration } = params;
         let start = duration.clone();
-        segmentIn.notes.forEach((note, i) => {
+        s.notes.forEach((note, i) => {
             const noteEnd = note.offset.clone().add(note.duration);
             if (noteEnd.compareTo(duration) <= 0) {
-                segmentIn.notes[i] = null;
+                s.notes[i] = null;
             } else {
                 if (mode === "preserve") {
                     if (note.offset.compareTo(start) < 0) start = note.offset;
@@ -49,16 +54,22 @@ export class HClipperLeft extends Modifier {
                             note.duration = noteEnd.sub(duration);
                             note.offset.add(oldDuration.sub(note.duration));
                         } else if (mode === "remove") {
-                            segmentIn.notes[i] = null;
+                            s.notes[i] = null;
                         }
                     }
                 }
             }
         });
-        segmentIn.notes = segmentIn.notes.filter(e => e);
-        segmentIn.duration.sub(start);
-        segmentIn.notes.forEach(note => note.offset.sub(start));
-        return segmentIn;
+        s.notes = s.notes.filter(e => e);
+        s.duration.sub(start);
+        s.notes.forEach(note => note.offset.sub(start));
+        s.automations.forEach((a) => {
+            a.sort();
+            const $0 = a.points.findIndex(p => p.offset.compareTo(start) >= 0);
+            if ($0 !== -1) a.points = a.points.slice($0);
+            a.rewind(start);
+        });
+        return s;
     }
 }
 interface HClipperParams {

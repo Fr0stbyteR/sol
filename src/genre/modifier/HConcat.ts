@@ -7,7 +7,7 @@ export class HConcatOne extends Modifier {
         const s2 = sIn2.clone();
         s2.notes.forEach(n => n.offset.add(s1.duration));
         s1.notes.concat(s2.notes);
-        s2.automations.forEach(a => a.points.forEach(p => p.offset.add(s1.duration)));
+        s2.automations.forEach(a => a.forward(s1.duration));
         s2.automations.forEach((a2) => {
             const $find = s1.automations.findIndex(a1 => a1.path === a2.path);
             if ($find === -1) s1.automations.push(a2);

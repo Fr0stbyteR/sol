@@ -3,21 +3,23 @@ import { Random } from "../Random";
 import { Segment } from "../../track/Segment";
 
 export class HStretcher extends Modifier {
-    static use = (randomIn: Random, segmentIn: Segment, factor: number) => {
+    static use = (randomIn: Random, s: Segment, factor: number) => {
         if (factor === 0) throw RangeError("Segment Strecher factor cannot be 0.");
         else if (factor > 0) {
-            segmentIn.duration.mul(factor);
-            segmentIn.notes.forEach((e) => {
+            s.duration.mul(factor);
+            s.notes.forEach((e) => {
                 e.duration.mul(factor);
                 e.offset.mul(factor);
             });
+            s.automations.forEach(a => a.points.forEach(p => p.offset.mul(factor)));
         } else {
-            segmentIn.duration.mul(-factor);
-            segmentIn.notes.forEach((e) => {
+            s.duration.mul(-factor);
+            s.notes.forEach((e) => {
                 e.duration.mul(-factor);
-                e.offset = segmentIn.duration.clone().sub(e.offset.mul(-factor).sub(e.duration));
+                e.offset = s.duration.clone().sub(e.offset.mul(-factor).sub(e.duration));
             });
+            s.automations.forEach(a => a.points.forEach(p => s.duration.clone().sub(p.offset.mul(-factor))));
         }
-        return segmentIn;
+        return s;
     }
 }
