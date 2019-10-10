@@ -72,35 +72,63 @@ export class Duration implements IDuration {
     }
 
     add(durationIn: Duration) {
-        if (this.denominator === durationIn.denominator) this.numerator += durationIn.numerator;
-        else {
-            this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
-            this.denominator *= durationIn.denominator;
+        if (this.isAbsolute && durationIn.isAbsolute) {
+            this.seconds += durationIn.seconds;
+        } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+            if (this.denominator === durationIn.denominator) {
+                this.numerator += durationIn.numerator;
+            } else {
+                this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
+                this.denominator *= durationIn.denominator;
+            }
+            this.simplify();
+        } else {
+            throw Error("Cannot operate between absolute and relative duration.");
         }
-        this.simplify().check();
-        return this;
+        return this.check();
     }
 
     sub(durationIn: Duration) {
-        if (this.denominator === durationIn.denominator) this.numerator -= durationIn.numerator;
-        else {
-            this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
-            this.denominator *= durationIn.denominator;
+        if (this.isAbsolute && durationIn.isAbsolute) {
+            this.seconds -= durationIn.seconds;
+        } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+            if (this.denominator === durationIn.denominator) {
+                this.numerator -= durationIn.numerator;
+            } else {
+                this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
+                this.denominator *= durationIn.denominator;
+            }
+            this.simplify();
+        } else {
+            throw Error("Cannot operate between absolute and relative duration.");
         }
-        this.simplify().check();
-        return this;
+        return this.check();
     }
 
     mul(f: number) {
-        this.numerator *= f;
-        this.simplify().check();
-        return this;
+        if (this.isAbsolute) {
+            this.seconds *= f;
+        } else {
+            this.numerator *= f;
+            this.simplify();
+        }
+        return this.check();
     }
 
-    div(f: number) {
-        this.numerator /= f;
-        this.simplify().check();
-        return this;
+    div(f: number): this;
+    div(durationIn: Duration): number;
+    div(first: number | Duration) {
+        if (typeof first === "number") {
+            if (this.isAbsolute) {
+                this.seconds /= first;
+            } else {
+                this.numerator /= first;
+                this.simplify();
+            }
+            return this.check();
+        }
+        if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
+        throw Error("Cannot operate between absolute and relative duration.");
     }
 
     private simplify() {

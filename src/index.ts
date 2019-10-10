@@ -10,7 +10,7 @@ import { Random } from "./genre/Random";
 import { TrackNote } from "./track/TrackNote";
 import { Duration } from "./Duration";
 import { Segment } from "./track/Segment";
-import { HClipperRight, HClipperLeft, HClipper } from "./genre/modifier/HClipper";
+import { HClipper } from "./genre/modifier/HClipper";
 
 console.log(new Pitch("C8").offset);
 new Note("#G").getInterval(new Note("C"));

@@ -8,12 +8,12 @@ interface HSidedClipperParams {
     mode: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
 }
 export class HClipperRight extends Modifier {
-    static use = (randomIn: Random, segmentIn: Segment, params: HSidedClipperParams) => {
+    static use = (randomIn: Random, s: Segment, params: HSidedClipperParams) => {
         const { mode, duration } = params;
         let end = duration.clone();
-        segmentIn.notes.forEach((note, i) => {
+        s.notes.forEach((note, i) => {
             if (note.offset.compareTo(duration) >= 0) {
-                segmentIn.notes[i] = null;
+                s.notes[i] = null;
             } else {
                 const noteEnd = note.offset.clone().add(note.duration);
                 if (mode === "preserve") {
@@ -21,14 +21,14 @@ export class HClipperRight extends Modifier {
                 } else {
                     if (noteEnd.compareTo(duration) > 0) {
                         if (mode === "clip") note.duration = noteEnd.sub(duration);
-                        else if (mode === "remove") segmentIn.notes[i] = null;
+                        else if (mode === "remove") s.notes[i] = null;
                     }
                 }
             }
         });
-        segmentIn.notes = segmentIn.notes.filter(e => e);
-        segmentIn.duration = end;
-        return segmentIn;
+        s.notes = s.notes.filter(e => e);
+        s.duration = end;
+        return s;
     }
 }
 export class HClipperLeft extends Modifier {

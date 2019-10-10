@@ -3,7 +3,7 @@ import { Duration, isDuration } from "../Duration";
 export interface IAutomationPoint {
     value: number;
     offset: Duration; // absolute position
-    exponent: number;
+    exponent: number; // 0 for linear, 1 for quadratic
 }
 export const isAutomationPoint = (x: any): x is IAutomationPoint => {
     return x instanceof AutomationPoint

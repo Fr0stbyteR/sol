@@ -54,3 +54,4 @@ export const toRoman = (nIn: number) => {
     }
     return nIn > 0 ? rOut : rOut.toLowerCase();
 };
+export const getValueFromCurve = (t0: number, t1: number, t: number, exp: number) => t0 + (t1 - t0) * (t ** (2 ** exp));
