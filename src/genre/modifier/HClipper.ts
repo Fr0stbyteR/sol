@@ -1,15 +1,15 @@
 import { Modifier } from "./Modifier";
-import { Random } from "../Random";
 import { Segment } from "../../track/Segment";
 import { Duration } from "../../Duration";
 
 interface HSidedClipperParams {
     duration: Duration;
-    mode: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
+    mode?: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
 }
 export class HClipperRight extends Modifier {
-    static use = (randomIn: Random, s: Segment, params: HSidedClipperParams) => {
-        const { mode, duration } = params;
+    static use = (s: Segment, params: HSidedClipperParams) => {
+        const duration = params.duration;
+        const mode = params.mode || "clip";
         let end = duration.clone();
         s.notes.forEach((note, i) => {
             if (note.offset.compareTo(duration) >= 0) {
@@ -37,8 +37,9 @@ export class HClipperRight extends Modifier {
     }
 }
 export class HClipperLeft extends Modifier {
-    static use = (randomIn: Random, s: Segment, params: HSidedClipperParams) => {
-        const { mode, duration } = params;
+    static use = (s: Segment, params: HSidedClipperParams) => {
+        const duration = params.duration;
+        const mode = params.mode || "clip";
         let start = duration.clone();
         s.notes.forEach((note, i) => {
             const noteEnd = note.offset.clone().add(note.duration);
@@ -78,12 +79,12 @@ interface HClipperParams {
     mode: "preserve" | "clip" | "remove";
 }
 export class HClipper extends Modifier {
-    static use = (randomIn: Random, segmentIn: Segment, params: HClipperParams) => {
-        const { mode } = params;
+    static use = (s: Segment, params: HClipperParams) => {
+        const mode = params.mode || "clip";
         let { start, end } = params;
         if (start.compareTo(end) > 0) [start, end] = [end, start];
-        if (end.compareTo(segmentIn.duration) !== 0) HClipperRight.use(null, segmentIn, { mode, duration: end });
-        if (start.compareTo(new Duration(0, 4)) !== 0) HClipperLeft.use(null, segmentIn, { mode, duration: start });
-        return segmentIn;
+        if (end.compareTo(s.duration) !== 0) HClipperRight.use(s, { mode, duration: end });
+        if (start.compareTo(new Duration(0, 4)) !== 0) HClipperLeft.use(s, { mode, duration: start });
+        return s;
     }
 }

@@ -1,5 +1,4 @@
 import { Segment } from "../../track/Segment";
-import { Random } from "../Random";
 import { IGeneratorParameters } from "../generator/Generator";
 
 /**
@@ -10,5 +9,5 @@ import { IGeneratorParameters } from "../generator/Generator";
  * @class Modifier
  */
 export abstract class Modifier {
-    static use: (randomIn: Random, segmentIn: Segment, modParamsIn?: any, genParamsIn?: IGeneratorParameters) => Segment;
+    static use: (segmentIn: Segment, modParamsIn?: any, genParamsIn?: IGeneratorParameters) => Segment;
 }
