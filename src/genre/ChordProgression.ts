@@ -14,27 +14,36 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
     chords: TonalChord[];
     constructor(cp: string);
     constructor(cp: string[]);
+    constructor(c: TonalChord);
     constructor(cp: TonalChord[]);
     constructor(cp: IChordProgression);
-    constructor(cp: string | string[] | TonalChord[] | IChordProgression) {
-        if (typeof cp === "string") {
-            const chords = cp.split(/\s+/);
-            this.fromStringArray(chords);
-        } else if (isStringArray(cp)) {
-            this.fromStringArray(cp);
-        } else if (isTonalChordArray(cp)) {
-            this.chords = cp.map(c => c.clone());
-        } else {
-            this.chords = cp.chords.map(c => c.clone());
-        }
+    constructor(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords = this.from(first);
         return this;
     }
     getChords(tonalityIn: Tonality) {
         return this.chords.map(c => c.getChord(tonalityIn));
     }
+    fromString(chords: string) {
+        return chords.split(/\s+/).map(s => new TonalChord(s));
+    }
     fromStringArray(chords: string[]) {
-        if (chords.length < 2) throw new Error("Input string not enough long.");
-        this.chords = chords.map(s => new TonalChord(s));
+        return chords.map(s => new TonalChord(s));
+    }
+    from(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        if (typeof first === "string") return this.fromString(first);
+        if (isStringArray(first)) return this.fromStringArray(first);
+        if (isTonalChord(first)) return [first.clone()];
+        if (isTonalChordArray(first)) return first.map(c => c.clone());
+        return first.chords.map(c => c.clone());
+    }
+    append(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords.concat(this.from(first));
+        return this;
+    }
+    prepend(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords = this.from(first).concat(this.chords);
+        return this;
     }
     toString() {
         return `ChordProgression: {${this.chords.map(tc => tc.toString()).join(" ")}}`;
