@@ -2,6 +2,8 @@ import { Interval, isIntervalArray } from "./Interval";
 import { Note, isNoteArray, isNote } from "./Note";
 import { Pitch, isPitchArray } from "./Pitch";
 import { Enum } from "./Enum";
+import { nearestFraction } from "./Utils";
+import { Frequency } from "./Frequency";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
@@ -47,6 +49,9 @@ export class EnumChord extends Enum {
     static byName(chordIn: TEnumChordName) {
         return EnumChord[chordIn];
     }
+    toChord(base: Note | Pitch | string) {
+        return new Chord(base, ...this.intervals);
+    }
     name() {
         return this._name;
     }
@@ -63,14 +68,12 @@ export class EnumChord extends Enum {
 export interface IChord {
     base: Note | Pitch;
     intervals: Interval[];
-    isAbsolute: boolean;
 }
 export const isChord = (x: any): x is IChord => {
     return x instanceof Chord
         || (typeof x === "object"
         && isNote(x.base)
-        && isIntervalArray(x.intervals)
-        && typeof x.isAbsolute === "boolean");
+        && isIntervalArray(x.intervals));
 };
 export const isChordArray = (x: any): x is Chord[] => {
     return Array.isArray(x)
@@ -79,7 +82,6 @@ export const isChordArray = (x: any): x is Chord[] => {
 export class Chord implements Iterable<Note>, IChord {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
-    isAbsolute: boolean;
     /**
      * Gives a new Chord instance (clone)
      * @param {IChord} chordIn
@@ -103,11 +105,9 @@ export class Chord implements Iterable<Note>, IChord {
     constructor(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
-        this.isAbsolute = false;
         if (isChord(first)) {
             this.base = first.base;
             this.intervals = first.intervals;
-            this.isAbsolute = first.isAbsolute;
         } else if (typeof first === "string") {
             const isPitch = Pitch.REGEX.exec(first);
             if (isPitch) this.base = new Pitch(first);
@@ -115,10 +115,10 @@ export class Chord implements Iterable<Note>, IChord {
         } else {
             this.base = first;
         }
-        this.isAbsolute = true;
-        if ((arrayIn as (Pitch | Note | Interval | string)[]).find(e => e instanceof Note && !(e instanceof Pitch))) this.isAbsolute = false;
-        if (!this.isAbsolute) this.base = new Note(this.base);
-        if (isPitchArray(arrayIn) && this.isAbsolute) {
+        let isAbsolute = true;
+        if ((arrayIn as (Pitch | Note | Interval | string)[]).find(e => e instanceof Note && !(e instanceof Pitch))) isAbsolute = false;
+        if (!isAbsolute) this.base = new Note(this.base);
+        if (isPitchArray(arrayIn) && isAbsolute) {
             this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
         } else if (isNoteArray(arrayIn)) {
             this.intervals = (arrayIn as Note[]).map(note => (this.base as Note).getInterval(note));
@@ -134,6 +134,9 @@ export class Chord implements Iterable<Note>, IChord {
     }
     get notes(): Note[] | Pitch[] {
         return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
+    }
+    get isAbsolute() {
+        return this.base instanceof Pitch;
     }
     contains(noteIn: Note | Pitch) {
         return !!this.notes.find(note => noteIn.equals(note));
@@ -175,9 +178,21 @@ export class Chord implements Iterable<Note>, IChord {
     getEnumChord() {
         return EnumChord.byChord(this);
     }
+    getImaginaryBase() {
+        const { notes } = this;
+        const { getRatio, THRES_AUDIT } = Frequency;
+        const bases = [];
+        for (let i = 0; i < notes.length - 1; i++) {
+            for (let j = i + 1; j < notes.length; j++) {
+                const d = notes[j].offset - notes[i].offset;
+                const f = nearestFraction(getRatio(d), THRES_AUDIT);
+                bases.push(notes[i].clone().div(f[0]));
+            }
+        }
+        return bases;
+    }
     equals(chordIn: object) {
         return isChord(chordIn)
-            && chordIn.isAbsolute === this.isAbsolute
             && chordIn.base.equals(this.base)
             && chordIn.intervals.length === this.intervals.length
             && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));

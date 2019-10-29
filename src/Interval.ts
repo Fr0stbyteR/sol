@@ -1,4 +1,4 @@
-import { floorMod } from "./Utils";
+import { floorMod, nearestFraction } from "./Utils";
 import { Enum } from "./Enum";
 import { Frequency } from "./Frequency";
 
@@ -219,7 +219,10 @@ export class Interval implements IInterval {
         return DEGREE_TO_OFFSET[floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
     }
     get ratio() {
-        return Frequency.SEMITONE ** this.offset;
+        return Frequency.getRatio(this.offset);
+    }
+    get fraction() {
+        return nearestFraction(this.ratio, Frequency.THRES_AUDIT);
     }
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);

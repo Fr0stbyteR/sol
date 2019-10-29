@@ -2,7 +2,7 @@
 import { Interval } from "./Interval";
 import { Note } from "./Note";
 import { Pitch } from "./Pitch";
-import { Chord } from "./Chord";
+import { Chord, EnumChord } from "./Chord";
 import { EnumScale } from "./Scale";
 import { Tonality } from "./Tonality";
 import { EnumChordProgression } from "./genre/EnumChordProgression";
@@ -59,3 +59,5 @@ seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(
 HClipper.use(seg, { start: new Duration(1, 8), end: new Duration(3, 8), mode: "clip" });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
 console.log(seg.duration.toString());
+console.log(new Interval("M2").fraction.toString());
+console.log(EnumChord.MAJ.toChord("C").getImaginaryBase().toString());

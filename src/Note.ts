@@ -1,6 +1,7 @@
 import { floorMod } from "./Utils";
 import { Interval, TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
 import { Enum } from "./Enum";
+import { Frequency } from "./Frequency";
 
 type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export class EnumNote extends Enum {
@@ -167,6 +168,13 @@ export class Note implements INote {
         this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
+    }
+    mul(fIn: number) {
+        const d = Math.round(Math.log(fIn) / Math.log(Frequency.SEMITONE));
+        return this.add(d);
+    }
+    div(fIn: number) {
+        return this.mul(1 / fIn);
     }
     equals(noteIn: object) {
         return isNote(noteIn)

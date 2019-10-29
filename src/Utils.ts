@@ -55,3 +55,21 @@ export const toRoman = (nIn: number) => {
     return nIn > 0 ? rOut : rOut.toLowerCase();
 };
 export const getValueFromCurve = (t0: number, t1: number, t: number, exp: number) => t0 + (t1 - t0) * (t ** (2 ** exp));
+/**
+ * Get a fraction typle from a floating number.
+ *
+ * @param {number} v Floating number
+ * @param {number} [approx=17 / 16] Approximation ratio (> 1)
+ * @returns {[number, number]} fraction tuple
+ */
+export const nearestFraction = (v: number, approx: number = 17 / 16): [number, number] => {
+    let lastJ = 1;
+    for (let i = 1; ; i++) {
+        for (let j = lastJ; ; j++) {
+            const d = (j / i) / v;
+            if (d > approx) break;
+            if (d < approx && d > 1 / approx) return [i, j];
+            lastJ = j;
+        }
+    }
+};
