@@ -20,5 +20,5 @@ export interface IGeneratorParameters {
     rhythm: TrackNote[];
 }
 export abstract class Generator {
-    static use: (randomIn: Random, constraintsIn?: IGeneratorParameters) => Segment = () => undefined;
+    static use: (randomIn: Random, params?: { [key: string]: any }) => Segment = () => undefined;
 }
