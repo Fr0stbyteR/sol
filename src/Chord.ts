@@ -204,20 +204,9 @@ export class Chord implements Iterable<Note>, IChord {
         return new Chord(this);
     }
 
-    [Symbol.iterator](): Iterator<Note | Pitch> {
-        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        let i = -1;
-        return {
-            next() {
-                let value: Note | Pitch;
-                let done = true;
-                if (i < o.intervals.length) {
-                    value = i === -1 ? o.base : o.base.clone().add(o.intervals[i]);
-                    i++;
-                    done = false;
-                }
-                return { value, done };
-            }
-        };
+    * [Symbol.iterator](): Iterator<Note | Pitch> {
+        for (let i = 0; i < this.intervals.length; i++) {
+            yield this.base.clone().add(this.intervals[i]);
+        }
     }
 }

@@ -1568,27 +1568,40 @@ class Chord {
   }
 
   [_Symbol$iterator]() {
-    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+    var _this = this;
 
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    return (
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                i = 0;
 
-        if (i < o.intervals.length) {
-          value = i === -1 ? o.base : o.base.clone().add(o.intervals[i]);
-          i++;
-          done = false;
-        }
+              case 1:
+                if (!(i < _this.intervals.length)) {
+                  _context.next = 7;
+                  break;
+                }
 
-        return {
-          value,
-          done
-        };
-      }
+                _context.next = 4;
+                return _this.base.clone().add(_this.intervals[i]);
 
-    };
+              case 4:
+                i++;
+                _context.next = 1;
+                break;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      })()
+    );
   }
 
 }
@@ -2800,27 +2813,40 @@ class Scale {
   }
 
   [_Symbol$iterator]() {
-    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+    var _this = this;
 
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    return (
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                i = 0;
 
-        if (i < o.intervals.length) {
-          value = o.intervals[i];
-          i++;
-          done = false;
-        }
+              case 1:
+                if (!(i < _this.intervals.length)) {
+                  _context.next = 7;
+                  break;
+                }
 
-        return {
-          value,
-          done
-        };
-      }
+                _context.next = 4;
+                return _this.intervals[i];
 
-    };
+              case 4:
+                i++;
+                _context.next = 1;
+                break;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      })()
+    );
   }
 
 }
@@ -3046,27 +3072,40 @@ class Tonality {
   }
 
   [_Symbol$iterator]() {
-    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+    var _this = this;
 
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    return (
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                i = 0;
 
-        if (i < o.scale.size) {
-          value = o.note.clone().add(o.scale.intervals[i]);
-          i++;
-          done = false;
-        }
+              case 1:
+                if (!(i < _this.scale.size)) {
+                  _context.next = 7;
+                  break;
+                }
 
-        return {
-          value,
-          done
-        };
-      }
+                _context.next = 4;
+                return _this.note.clone().add(_this.scale.intervals[i]);
 
-    };
+              case 4:
+                i++;
+                _context.next = 1;
+                break;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      })()
+    );
   }
 
 }
@@ -3480,27 +3519,40 @@ class ChordProgression {
   }
 
   [_Symbol$iterator]() {
-    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+    var _this = this;
 
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    return (
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                i = 0;
 
-        if (i < o.chords.length) {
-          value = o.chords[i];
-          i++;
-          done = false;
-        }
+              case 1:
+                if (!(i < _this.chords.length)) {
+                  _context.next = 7;
+                  break;
+                }
 
-        return {
-          value,
-          done
-        };
-      }
+                _context.next = 4;
+                return _this.chords[i];
 
-    };
+              case 4:
+                i++;
+                _context.next = 1;
+                break;
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      })()
+    );
   }
 
 }

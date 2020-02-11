@@ -116,20 +116,9 @@ export class Scale implements Iterable<Interval>, IScale {
     clone() {
         return new Scale(this);
     }
-    [Symbol.iterator](): Iterator<Interval> {
-        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        let i = -1;
-        return {
-            next() {
-                let value: Interval;
-                let done = true;
-                if (i < o.intervals.length) {
-                    value = o.intervals[i];
-                    i++;
-                    done = false;
-                }
-                return { value, done };
-            }
-        };
+    * [Symbol.iterator](): Iterator<Interval> {
+        for (let i = 0; i < this.intervals.length; i++) {
+            yield this.intervals[i];
+        }
     }
 }

@@ -93,20 +93,9 @@ export class Tonality implements Iterable<Note>, ITonality {
     clone() {
         return new Tonality(this);
     }
-    [Symbol.iterator](): Iterator<Note> {
-        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
-        let i = -1;
-        return {
-            next() {
-                let value: Note;
-                let done = true;
-                if (i < o.scale.size) {
-                    value = o.note.clone().add(o.scale.intervals[i]);
-                    i++;
-                    done = false;
-                }
-                return { value, done };
-            }
-        };
+    * [Symbol.iterator](): Iterator<Note> {
+        for (let i = 0; i < this.scale.size; i++) {
+            yield this.note.clone().add(this.scale.intervals[i]);
+        }
     }
 }
