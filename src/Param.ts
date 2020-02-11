@@ -65,7 +65,7 @@ export class Param implements IParam {
         const max = Math.max(minIn, maxIn);
         this._min = min;
         this._max = max;
-        this.value = this.value;
+        this.value = this._value;
     }
     clone() {
         return new Param(this);

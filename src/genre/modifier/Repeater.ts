@@ -5,10 +5,6 @@ import { HStretcher } from "./HStretcher";
 import { HClipperRight, HClipperLeft } from "./HClipper";
 import { Duration } from "../../Duration";
 
-interface HSidedClipperParams {
-    duration: Duration;
-    mode: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
-}
 export class Repeater extends Modifier {
     static use = (s: Segment, times: number) => {
         if (times === 0) return HClipperRight.use(s, { duration: new Duration(0, 4) });

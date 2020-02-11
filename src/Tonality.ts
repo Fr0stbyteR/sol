@@ -94,7 +94,7 @@ export class Tonality implements Iterable<Note>, ITonality {
         return new Tonality(this);
     }
     [Symbol.iterator](): Iterator<Note> {
-        const o = this;
+        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
         let i = -1;
         return {
             next() {

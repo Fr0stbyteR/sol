@@ -52,7 +52,7 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
         return new ChordProgression(this);
     }
     [Symbol.iterator](): Iterator<TonalChord> {
-        const o = this;
+        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
         let i = -1;
         return {
             next() {

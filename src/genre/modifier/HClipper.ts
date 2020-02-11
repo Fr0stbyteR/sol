@@ -2,12 +2,12 @@ import { Modifier } from "./Modifier";
 import { Segment } from "../../track/Segment";
 import { Duration } from "../../Duration";
 
-interface HSidedClipperParams {
+interface IHSidedClipperParams {
     duration: Duration;
     mode?: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
 }
 export class HClipperRight extends Modifier {
-    static use = (s: Segment, params: HSidedClipperParams) => {
+    static use = (s: Segment, params: IHSidedClipperParams) => {
         const duration = params.duration;
         const mode = params.mode || "clip";
         let end = duration.clone();
@@ -37,7 +37,7 @@ export class HClipperRight extends Modifier {
     }
 }
 export class HClipperLeft extends Modifier {
-    static use = (s: Segment, params: HSidedClipperParams) => {
+    static use = (s: Segment, params: IHSidedClipperParams) => {
         const duration = params.duration;
         const mode = params.mode || "clip";
         let start = duration.clone();
@@ -73,13 +73,13 @@ export class HClipperLeft extends Modifier {
         return s;
     }
 }
-interface HClipperParams {
+interface IHClipperParams {
     start: Duration;
     end: Duration;
     mode: "preserve" | "clip" | "remove";
 }
 export class HClipper extends Modifier {
-    static use = (s: Segment, params: HClipperParams) => {
+    static use = (s: Segment, params: IHClipperParams) => {
         const mode = params.mode || "clip";
         let { start, end } = params;
         if (start.compareTo(end) > 0) [start, end] = [end, start];

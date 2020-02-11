@@ -117,7 +117,7 @@ export class Scale implements Iterable<Interval>, IScale {
         return new Scale(this);
     }
     [Symbol.iterator](): Iterator<Interval> {
-        const o = this;
+        const o = this; // eslint-disable-line @typescript-eslint/no-this-alias
         let i = -1;
         return {
             next() {

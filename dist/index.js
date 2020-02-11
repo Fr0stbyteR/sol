@@ -1197,8 +1197,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArticulation", function() { return isArticulation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumArticulation", function() { return EnumArticulation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Articulation", function() { return Articulation; });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var isArticulation = x => {
   return x instanceof Articulation || typeof x === "object" && typeof x.velocity === "number" && typeof x.length === "number";
 };
@@ -1242,9 +1240,8 @@ class EnumArticulation {
 }
 class Articulation {
   constructor(first, lengthIn) {
-    _defineProperty(this, "velocity", void 0);
-
-    _defineProperty(this, "length", void 0);
+    this.velocity = void 0;
+    this.length = void 0;
 
     if (isArticulation(first)) {
       this.velocity = first.velocity;
@@ -1289,8 +1286,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 var _Symbol$iterator;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -1365,10 +1360,8 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
 
   constructor(first) {
     super();
-
-    _defineProperty(this, "_name", void 0);
-
-    _defineProperty(this, "intervals", void 0);
+    this._name = void 0;
+    this.intervals = void 0;
 
     if (typeof first === "string") {
       this._name = first;
@@ -1413,9 +1406,7 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
   }
 
 }
-
-_defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
-
+EnumChord.indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"];
 var isChord = x => {
   return x instanceof Chord || typeof x === "object" && Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(x.base) && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(x.intervals);
 };
@@ -1446,10 +1437,8 @@ class Chord {
    * @memberof Chord
    */
   constructor(first) {
-    _defineProperty(this, "base", void 0);
-
-    _defineProperty(this, "intervals", void 0);
-
+    this.base = void 0;
+    this.intervals = void 0;
     this.base = null;
     this.intervals = [];
 
@@ -1579,7 +1568,8 @@ class Chord {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
+    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
     var i = -1;
     return {
       next() {
@@ -1617,8 +1607,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDuration", function() { return isDuration; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Duration", function() { return Duration; });
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 var isDuration = x => {
   return x instanceof Duration || (typeof x.isAbsolute === "boolean" && x.isAbsolute ? typeof x.seconds === "number" : typeof x.numerator === "number" && typeof x.denominator === "number");
@@ -1628,13 +1616,10 @@ class Duration {
   // Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
   // Absolute duration if in abs mode.
   constructor(first, second) {
-    _defineProperty(this, "isAbsolute", void 0);
-
-    _defineProperty(this, "numerator", void 0);
-
-    _defineProperty(this, "denominator", void 0);
-
-    _defineProperty(this, "seconds", void 0);
+    this.isAbsolute = void 0;
+    this.numerator = void 0;
+    this.denominator = void 0;
+    this.seconds = void 0;
 
     if (isDuration(first)) {
       this.isAbsolute = first.isAbsolute;
@@ -1803,8 +1788,6 @@ class Duration {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Enum", function() { return Enum; });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 class Enum {
   static values() {
     return this.indexes.map(key => this[key]);
@@ -1831,8 +1814,7 @@ class Enum {
   }
 
 }
-
-_defineProperty(Enum, "indexes", []);
+Enum.indexes = [];
 
 /***/ }),
 
@@ -1846,17 +1828,12 @@ _defineProperty(Enum, "indexes", []);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frequency", function() { return Frequency; });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 class Frequency {}
+Frequency.A440 = 440;
+Frequency.SEMITONE = Math.pow(2, 1 / 12);
+Frequency.THRES_AUDIT = Math.pow(2, 1 / 36);
 
-_defineProperty(Frequency, "A440", 440);
-
-_defineProperty(Frequency, "SEMITONE", Math.pow(2, 1 / 12));
-
-_defineProperty(Frequency, "THRES_AUDIT", Math.pow(2, 1 / 36));
-
-_defineProperty(Frequency, "getRatio", d => Math.pow(2, d / 12));
+Frequency.getRatio = d => Math.pow(2, d / 12);
 
 /***/ }),
 
@@ -1876,8 +1853,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -1918,9 +1893,7 @@ class EnumIntervalProperty extends _Enum__WEBPACK_IMPORTED_MODULE_1__["Enum"] {
 
   constructor(abbIn) {
     super();
-
-    _defineProperty(this, "abb", void 0);
-
+    this.abb = void 0;
     this.abb = abbIn;
     return this;
   }
@@ -1939,16 +1912,14 @@ class EnumIntervalProperty extends _Enum__WEBPACK_IMPORTED_MODULE_1__["Enum"] {
 
 }
 
-_defineProperty(EnumIntervalProperty, "indexes", ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"]);
-
-_defineProperty(EnumIntervalProperty, "abbMap", {
+EnumIntervalProperty.indexes = ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"];
+EnumIntervalProperty.abbMap = {
   P: "PERFECT",
   M: "MAJOR",
   m: "MINOR",
   A: "AUGMENTED",
   d: "DIMINISHED"
-});
-
+};
 class Interval {
   static getOffsetFromProperty(propertyIn, degreeIn) {
     var degree = typeof degreeIn === "number" ? Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(degreeIn - 1, 7) + 1 : 1;
@@ -1994,12 +1965,9 @@ class Interval {
 
 
   constructor(first, second, third) {
-    _defineProperty(this, "degree", void 0);
-
-    _defineProperty(this, "onset", void 0);
-
-    _defineProperty(this, "octave", void 0);
-
+    this.degree = void 0;
+    this.onset = void 0;
+    this.octave = void 0;
     this.degree = 0;
     this.onset = 0;
     this.octave = 0;
@@ -2186,8 +2154,7 @@ class Interval {
   }
 
 }
-
-_defineProperty(Interval, "REGEX", /^([PMmAd])([0-9]+)((\+|-)\d+)?$/);
+Interval.REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
 
 /***/ }),
 
@@ -2208,8 +2175,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -2245,9 +2210,7 @@ class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
 
   constructor(offsetIn) {
     super();
-
-    _defineProperty(this, "offset", void 0);
-
+    this.offset = void 0;
     this.offset = offsetIn;
     return this;
   }
@@ -2283,10 +2246,8 @@ class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__["Enum"] {
   }
 
 }
-
-_defineProperty(EnumNote, "indexes", ["C", "D", "E", "F", "G", "A", "B"]);
-
-_defineProperty(EnumNote, "offsetMap", {
+EnumNote.indexes = ["C", "D", "E", "F", "G", "A", "B"];
+EnumNote.offsetMap = {
   0: "C",
   2: "D",
   4: "E",
@@ -2294,22 +2255,14 @@ _defineProperty(EnumNote, "offsetMap", {
   7: "G",
   9: "A",
   11: "B"
-});
-
-_defineProperty(EnumNote, "c", EnumNote.C);
-
-_defineProperty(EnumNote, "d", EnumNote.D);
-
-_defineProperty(EnumNote, "e", EnumNote.E);
-
-_defineProperty(EnumNote, "f", EnumNote.F);
-
-_defineProperty(EnumNote, "g", EnumNote.G);
-
-_defineProperty(EnumNote, "a", EnumNote.A);
-
-_defineProperty(EnumNote, "b", EnumNote.B);
-
+};
+EnumNote.c = EnumNote.C;
+EnumNote.d = EnumNote.D;
+EnumNote.e = EnumNote.E;
+EnumNote.f = EnumNote.F;
+EnumNote.g = EnumNote.G;
+EnumNote.a = EnumNote.A;
+EnumNote.b = EnumNote.B;
 var isNote = x => {
   return x instanceof Note || typeof x === "object" && x.enumNote instanceof EnumNote && typeof x.alteration === "number";
 };
@@ -2351,10 +2304,8 @@ class Note {
    * @memberof Note
    */
   constructor(first, second) {
-    _defineProperty(this, "enumNote", void 0);
-
-    _defineProperty(this, "alteration", void 0);
-
+    this.enumNote = void 0;
+    this.alteration = void 0;
     this.enumNote = EnumNote.C;
     this.alteration = 0;
 
@@ -2490,8 +2441,7 @@ class Note {
   }
 
 }
-
-_defineProperty(Note, "REGEX", /^([b#]*)([a-gA-G])$/);
+Note.REGEX = /^([b#]*)([a-gA-G])$/;
 
 /***/ }),
 
@@ -2512,7 +2462,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -2538,38 +2488,27 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
   constructor(first, second) {
     if (isPitch(first)) {
       super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      this.octave = void 0;
       this.octave = first.octave;
     } else if (first instanceof _Note__WEBPACK_IMPORTED_MODULE_0__["EnumNote"]) {
       super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      this.octave = void 0;
       this.octave = second || 0;
     } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_0__["isNote"])(first)) {
       super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      this.octave = void 0;
       this.octave = second || 0;
     } else if (typeof first === "string") {
       super();
-
-      _defineProperty(this, "octave", void 0);
-
+      this.octave = void 0;
       this.fromString(first);
     } else if (typeof first === "number") {
       super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      this.octave = void 0;
       this.octave = Math.floor(first / 12 - 1);
     } else {
       super();
-
-      _defineProperty(this, "octave", void 0);
+      this.octave = void 0;
     }
 
     return this;
@@ -2668,12 +2607,9 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
   }
 
 }
-
-_defineProperty(Pitch, "REGEX", /^([b#]*[a-gA-G])(-?\d+)?$/);
-
-_defineProperty(Pitch, "MINIMUM", Pitch.fromFrequency(20));
-
-_defineProperty(Pitch, "MAXIMUM", Pitch.fromFrequency(20000));
+Pitch.REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
+Pitch.MINIMUM = Pitch.fromFrequency(20);
+Pitch.MAXIMUM = Pitch.fromFrequency(20000);
 
 /***/ }),
 
@@ -2692,8 +2628,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 var _Symbol$iterator;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -2773,11 +2707,9 @@ var isScale = x => {
 _Symbol$iterator = Symbol.iterator;
 class Scale {
   constructor(first) {
-    _defineProperty(this, "scaleName", void 0);
-
-    _defineProperty(this, "intervals", void 0);
-
-    _defineProperty(this, "degreeNames", void 0);
+    this.scaleName = void 0;
+    this.intervals = void 0;
+    this.degreeNames = void 0;
 
     if (typeof first === "string") {
       this.scaleName = first;
@@ -2868,7 +2800,8 @@ class Scale {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
+    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
     var i = -1;
     return {
       next() {
@@ -2909,8 +2842,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -2922,11 +2853,9 @@ var isTonalChordArray = x => {
 };
 class TonalChord {
   constructor(first) {
-    _defineProperty(this, "alteration", void 0);
-
-    _defineProperty(this, "degree", void 0);
-
-    _defineProperty(this, "chord", void 0);
+    this.alteration = void 0;
+    this.degree = void 0;
+    this.chord = void 0;
 
     if (typeof first === "string") {
       var matched = TonalChord.REGEX1.exec(first);
@@ -2990,10 +2919,8 @@ class TonalChord {
   }
 
 }
-
-_defineProperty(TonalChord, "REGEX1", /^([#b]?)(I{1,3}|i{1,3}|I?V|i?v|VI{1,2}|vi{1,2})(\+|-?)$/);
-
-_defineProperty(TonalChord, "REGEX2", /^([#b]?)([1-7])(M|m|\+|-?)$/);
+TonalChord.REGEX1 = /^([#b]?)(I{1,3}|i{1,3}|I?V|i?v|VI{1,2}|vi{1,2})(\+|-?)$/;
+TonalChord.REGEX2 = /^([#b]?)([1-7])(M|m|\+|-?)$/;
 
 /***/ }),
 
@@ -3014,8 +2941,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 var _Symbol$iterator;
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -3026,9 +2951,8 @@ var isTonality = x => {
 _Symbol$iterator = Symbol.iterator;
 class Tonality {
   constructor(first, second) {
-    _defineProperty(this, "note", void 0);
-
-    _defineProperty(this, "scale", void 0);
+    this.note = void 0;
+    this.scale = void 0;
 
     if (isTonality(first)) {
       this.note = first.note.clone();
@@ -3122,7 +3046,8 @@ class Tonality {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
+    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
     var i = -1;
     return {
       next() {
@@ -3263,8 +3188,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isVelocity", function() { return isVelocity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumVelocity", function() { return EnumVelocity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Velocity", function() { return Velocity; });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var isVelocity = x => {
   return x instanceof Velocity || typeof x === "object" && typeof x.velocity === "number";
 };
@@ -3328,8 +3251,7 @@ class EnumVelocity {
 }
 class Velocity {
   constructor(velocityIn) {
-    _defineProperty(this, "velocity", void 0);
-
+    this.velocity = void 0;
     if (typeof velocityIn === "number") this.velocity = velocityIn;else this.velocity = velocityIn.velocity;
     return this;
   }
@@ -3364,8 +3286,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Automation", function() { return Automation; });
 /* harmony import */ var _AutomationPoint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutomationPoint */ "./src/effect/AutomationPoint.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Utils */ "./src/Utils.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 var isAutomation = x => {
@@ -3376,9 +3296,8 @@ var isAutomationArray = x => {
 };
 class Automation {
   constructor(first, points) {
-    _defineProperty(this, "path", void 0);
-
-    _defineProperty(this, "points", void 0);
+    this.path = void 0;
+    this.points = void 0;
 
     if (typeof first === "string") {
       this.path = first;
@@ -3460,8 +3379,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAutomationPointArray", function() { return isAutomationPointArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AutomationPoint", function() { return AutomationPoint; });
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 var isAutomationPoint = x => {
   return x instanceof AutomationPoint || typeof x.value === "number" && Object(_Duration__WEBPACK_IMPORTED_MODULE_0__["isDuration"])(x.offset) && typeof x.exponent === "number";
@@ -3471,11 +3388,9 @@ var isAutomationPointArray = x => {
 };
 class AutomationPoint {
   constructor(first, offset, exponent) {
-    _defineProperty(this, "value", void 0);
-
-    _defineProperty(this, "offset", void 0);
-
-    _defineProperty(this, "exponent", void 0);
+    this.value = void 0;
+    this.offset = void 0;
+    this.exponent = void 0;
 
     if (typeof first === "number") {
       this.value = first;
@@ -3513,8 +3428,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Utils */ "./src/Utils.ts");
 var _Symbol$iterator;
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 var isChordProgression = x => {
@@ -3523,8 +3436,7 @@ var isChordProgression = x => {
 _Symbol$iterator = Symbol.iterator;
 class ChordProgression {
   constructor(first) {
-    _defineProperty(this, "chords", void 0);
-
+    this.chords = void 0;
     this.chords = this.from(first);
     return this;
   }
@@ -3568,7 +3480,8 @@ class ChordProgression {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
+    var o = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
     var i = -1;
     return {
       next() {
@@ -3605,32 +3518,19 @@ class ChordProgression {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EnumChordProgression", function() { return EnumChordProgression; });
 /* harmony import */ var _ChordProgression__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChordProgression */ "./src/genre/ChordProgression.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 class EnumChordProgression {}
-
-_defineProperty(EnumChordProgression, "PERFECT", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V I"));
-
-_defineProperty(EnumChordProgression, "REV_ANDAL", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("bVI bVII I"));
-
-_defineProperty(EnumChordProgression, "CANON", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi iii IV I"));
-
-_defineProperty(EnumChordProgression, "POP1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V iii vi"));
-
-_defineProperty(EnumChordProgression, "POP2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I vi IV V"));
-
-_defineProperty(EnumChordProgression, "POP3", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi IV"));
-
-_defineProperty(EnumChordProgression, "EPIC1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi IV I V"));
-
-_defineProperty(EnumChordProgression, "EPIC2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi I V ii"));
-
-_defineProperty(EnumChordProgression, "EDM1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV I vi V"));
-
-_defineProperty(EnumChordProgression, "EDM2", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V vi I"));
-
-_defineProperty(EnumChordProgression, "TRAP1", new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi I IV III"));
+EnumChordProgression.PERFECT = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V I");
+EnumChordProgression.REV_ANDAL = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("bVI bVII I");
+EnumChordProgression.CANON = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi iii IV I");
+EnumChordProgression.POP1 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V iii vi");
+EnumChordProgression.POP2 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I vi IV V");
+EnumChordProgression.POP3 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("I V vi IV");
+EnumChordProgression.EPIC1 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi IV I V");
+EnumChordProgression.EPIC2 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi I V ii");
+EnumChordProgression.EDM1 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV I vi V");
+EnumChordProgression.EDM2 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("IV V vi I");
+EnumChordProgression.TRAP1 = new _ChordProgression__WEBPACK_IMPORTED_MODULE_0__["ChordProgression"]("vi I IV III");
 
 /***/ }),
 
@@ -3646,13 +3546,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
 /* harmony import */ var seedrandom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! seedrandom */ "./node_modules/seedrandom/index.js");
 /* harmony import */ var seedrandom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(seedrandom__WEBPACK_IMPORTED_MODULE_0__);
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 class Random {
   constructor(seedIn) {
-    _defineProperty(this, "prng", void 0);
-
+    this.prng = void 0;
     this.prng = seedrandom__WEBPACK_IMPORTED_MODULE_0__(seedIn || "");
     return this;
   }
@@ -3695,13 +3592,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HClipper", function() { return HClipper; });
 /* harmony import */ var _Modifier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modifier */ "./src/genre/modifier/Modifier.ts");
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Duration */ "./src/Duration.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 class HClipperRight extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
 
-_defineProperty(HClipperRight, "use", (s, params) => {
+HClipperRight.use = (s, params) => {
   var duration = params.duration;
   var mode = params.mode || "clip";
   var end = duration.clone();
@@ -3728,11 +3623,11 @@ _defineProperty(HClipperRight, "use", (s, params) => {
     if ($oob !== -1) a.points = a.points.slice(0, $oob);
   });
   return s;
-});
+};
 
 class HClipperLeft extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
 
-_defineProperty(HClipperLeft, "use", (s, params) => {
+HClipperLeft.use = (s, params) => {
   var duration = params.duration;
   var mode = params.mode || "clip";
   var start = duration.clone();
@@ -3767,11 +3662,11 @@ _defineProperty(HClipperLeft, "use", (s, params) => {
     a.rewind(start);
   });
   return s;
-});
+};
 
 class HClipper extends _Modifier__WEBPACK_IMPORTED_MODULE_0__["Modifier"] {}
 
-_defineProperty(HClipper, "use", (s, params) => {
+HClipper.use = (s, params) => {
   var mode = params.mode || "clip";
   var start = params.start,
       end = params.end;
@@ -3791,7 +3686,7 @@ _defineProperty(HClipper, "use", (s, params) => {
     duration: start
   });
   return s;
-});
+};
 
 /***/ }),
 
@@ -3805,8 +3700,6 @@ _defineProperty(HClipper, "use", (s, params) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modifier", function() { return Modifier; });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /**
  * Describe a processor that modifies a segment, return itself modified.
  *
@@ -3815,8 +3708,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @class Modifier
  */
 class Modifier {}
-
-_defineProperty(Modifier, "use", void 0);
+Modifier.use = void 0;
 
 /***/ }),
 
@@ -4045,8 +3937,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Instrument", function() { return Instrument; });
 /* harmony import */ var _EnumInstrumentTag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EnumInstrumentTag */ "./src/instrument/EnumInstrumentTag.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Pitch */ "./src/Pitch.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 var isInstrument = x => {
@@ -4059,10 +3949,8 @@ class Instrument {
   // instrument name
   // instrument instance name
   constructor(optionsIn) {
-    _defineProperty(this, "name", void 0);
-
-    _defineProperty(this, "params", void 0);
-
+    this.name = void 0;
+    this.params = void 0;
     this.name = optionsIn.name;
     this.params = {};
 
@@ -4106,14 +3994,10 @@ class Instrument {
   }
 
 }
-
-_defineProperty(Instrument, "NAME", void 0);
-
-_defineProperty(Instrument, "TAGS", void 0);
-
-_defineProperty(Instrument, "MIN_PITCH", void 0);
-
-_defineProperty(Instrument, "MAX_PITCH", void 0);
+Instrument.NAME = void 0;
+Instrument.TAGS = void 0;
+Instrument.MIN_PITCH = void 0;
+Instrument.MAX_PITCH = void 0;
 
 /***/ }),
 
@@ -4133,8 +4017,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TrackNote__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TrackNote */ "./src/track/TrackNote.ts");
 /* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -4147,14 +4029,10 @@ var isSegmentArray = x => {
 };
 class Segment {
   constructor(optionsIn) {
-    _defineProperty(this, "instrument", void 0);
-
-    _defineProperty(this, "notes", void 0);
-
-    _defineProperty(this, "automations", void 0);
-
-    _defineProperty(this, "duration", void 0);
-
+    this.instrument = void 0;
+    this.notes = void 0;
+    this.automations = void 0;
+    this.duration = void 0;
     this.instrument = optionsIn.instrument;
     this.notes = optionsIn.notes.map(e => e.clone());
     this.automations = optionsIn.automations.map(e => e.clone());
@@ -4219,8 +4097,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Velocity__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Velocity */ "./src/Velocity.ts");
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
 /* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Articulation */ "./src/Articulation.ts");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -4233,16 +4109,11 @@ var isTrackNoteArray = x => {
 };
 class TrackNote {
   constructor(optionsIn) {
-    _defineProperty(this, "duration", void 0);
-
-    _defineProperty(this, "offset", void 0);
-
-    _defineProperty(this, "pitch", void 0);
-
-    _defineProperty(this, "velocity", void 0);
-
-    _defineProperty(this, "articulation", void 0);
-
+    this.duration = void 0;
+    this.offset = void 0;
+    this.pitch = void 0;
+    this.velocity = void 0;
+    this.articulation = void 0;
     this.duration = optionsIn.duration.clone();
     this.offset = optionsIn.offset.clone();
     if (optionsIn.pitch) this.pitch = optionsIn.pitch.clone();
