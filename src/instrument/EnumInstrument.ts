@@ -3,7 +3,7 @@ import { TConcreteInstrument } from "./Instrument";
 import { EnumInstrumentTag, ACOUSTIC, ELECTRONIC } from "./EnumInstrumentTag";
 
 export class EnumInstrument {
-    static map: { [key: string]: TConcreteInstrument } = {};
+    static map: Record<string, TConcreteInstrument> = {};
     static BASS_DRUM = BassDrum;
     static SUB_BASS_DRUM = EnumInstrument.getClass("Sub Bass Drum", BassDrum);
     static ACOUSTIC_BASS_DRUM = EnumInstrument.getClass("Acoustic Bass Drum", BassDrum, ACOUSTIC);

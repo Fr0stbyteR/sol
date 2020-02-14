@@ -55,8 +55,9 @@ export class EnumChord extends Enum {
     name() {
         return this._name;
     }
-    equals(chordIn: { intervals?: any }) {
-        return "intervals" in chordIn
+    equals(chordIn: object) {
+        return isChord(chordIn)
+            && "intervals" in chordIn
             && isIntervalArray(chordIn.intervals)
             && chordIn.intervals.length === this.intervals.length
             && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
@@ -118,7 +119,7 @@ export class Chord implements Iterable<Note>, IChord {
         let isAbsolute = true;
         if ((arrayIn as (Pitch | Note | Interval | string)[]).find(e => e instanceof Note && !(e instanceof Pitch))) isAbsolute = false;
         if (!isAbsolute) this.base = new Note(this.base);
-        if (isPitchArray(arrayIn) && isAbsolute) {
+        if (isPitchArray(arrayIn)) {
             this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
         } else if (isNoteArray(arrayIn)) {
             this.intervals = (arrayIn as Note[]).map(note => (this.base as Note).getInterval(note));
@@ -139,7 +140,10 @@ export class Chord implements Iterable<Note>, IChord {
         return this.base instanceof Pitch;
     }
     contains(noteIn: Note | Pitch) {
-        return !!this.notes.find(note => noteIn.equals(note));
+        for (const note of this.notes) {
+            if (noteIn.equals(note)) return true;
+        }
+        return false;
     }
     inverseUp() {
         if (this.intervals.length === 0) return this;
@@ -205,8 +209,8 @@ export class Chord implements Iterable<Note>, IChord {
     }
 
     * [Symbol.iterator](): Iterator<Note | Pitch> {
-        for (let i = 0; i < this.intervals.length; i++) {
-            yield this.base.clone().add(this.intervals[i]);
+        for (const interval of this.intervals) {
+            yield this.base.clone().add(interval);
         }
     }
 }

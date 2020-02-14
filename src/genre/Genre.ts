@@ -1,13 +1,14 @@
 import { ChordProgressionGenre, isChordProgressionGenre } from "./ChordProgressionGenre";
 import { Tonality } from "../Tonality";
 import { ChordProgression } from "./ChordProgression";
-import { Form, Part } from "./form/Part";
+import { Part } from "./form/Part";
+import { Form } from "./form/Form";
 
 export interface IGenre {
     name: string;
     chordProgressionGenre: ChordProgressionGenre;
     getChordProgression: (tonalityIn: Tonality) => ChordProgression;
-    getParts: () => { [key: number]: Part };
+    getParts: () => Record<string, Part>;
     getForm: () => Form;
 }
 export const isGenre = (x: any): x is IGenre => {
@@ -22,7 +23,7 @@ export class Genre implements IGenre {
     name: string;
     chordProgressionGenre: ChordProgressionGenre;
     getChordProgression: (tonalityIn: Tonality) => ChordProgression;
-    getParts: () => { [key: number]: Part };
+    getParts: () => Record<string, Part>;
     getForm: () => Form;
     constructor(optionsIn: IGenre) {
         Object.assign(this, optionsIn);

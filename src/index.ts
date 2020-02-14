@@ -61,3 +61,4 @@ seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(
 console.log(seg.duration.toString());
 console.log(new Interval("M2").fraction.toString());
 console.log(EnumChord.MAJ.toChord("C").getImaginaryBase().toString());
+console.log(Duration.random(new Random("2"), new Duration(1, 4), new Duration(3, 1), new Duration(1, 2)));

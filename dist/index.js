@@ -1398,7 +1398,7 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__["Enum"] {
   }
 
   equals(chordIn) {
-    return "intervals" in chordIn && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(chordIn.intervals) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+    return isChord(chordIn) && "intervals" in chordIn && Object(_Interval__WEBPACK_IMPORTED_MODULE_0__["isIntervalArray"])(chordIn.intervals) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
   }
 
   clone() {
@@ -1461,7 +1461,7 @@ class Chord {
     if (arrayIn.find(e => e instanceof _Note__WEBPACK_IMPORTED_MODULE_1__["Note"] && !(e instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]))) isAbsolute = false;
     if (!isAbsolute) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](this.base);
 
-    if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitchArray"])(arrayIn) && isAbsolute) {
+    if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitchArray"])(arrayIn)) {
       this.intervals = arrayIn.sort(_Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].compare).map(pitch => this.base.getInterval(pitch));
     } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNoteArray"])(arrayIn)) {
       this.intervals = arrayIn.map(note => this.base.getInterval(note));
@@ -1487,7 +1487,31 @@ class Chord {
   }
 
   contains(noteIn) {
-    return !!this.notes.find(note => noteIn.equals(note));
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = this.notes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var note = _step.value;
+        if (noteIn.equals(note)) return true;
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    return false;
   }
 
   inverseUp() {
@@ -1573,33 +1597,73 @@ class Chord {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee() {
-        var i;
+        var _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, interval;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                i = 0;
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context.prev = 3;
+                _iterator2 = _this.intervals[Symbol.iterator]();
 
-              case 1:
-                if (!(i < _this.intervals.length)) {
-                  _context.next = 7;
+              case 5:
+                if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                  _context.next = 12;
                   break;
                 }
 
-                _context.next = 4;
-                return _this.base.clone().add(_this.intervals[i]);
+                interval = _step2.value;
+                _context.next = 9;
+                return _this.base.clone().add(interval);
 
-              case 4:
-                i++;
-                _context.next = 1;
+              case 9:
+                _iteratorNormalCompletion2 = true;
+                _context.next = 5;
                 break;
 
-              case 7:
+              case 12:
+                _context.next = 18;
+                break;
+
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](3);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context.t0;
+
+              case 18:
+                _context.prev = 18;
+                _context.prev = 19;
+
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+
+              case 21:
+                _context.prev = 21;
+
+                if (!_didIteratorError2) {
+                  _context.next = 24;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 24:
+                return _context.finish(21);
+
+              case 25:
+                return _context.finish(18);
+
+              case 26:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[3, 14, 18, 26], [19,, 21, 25]]);
       })()
     );
   }
@@ -1693,10 +1757,14 @@ class Duration {
 
       this.simplify();
     } else {
-      throw Error("Cannot operate between absolute and relative duration.");
+      throw new Error("Cannot operate between absolute and relative duration.");
     }
 
     return this.check();
+  }
+
+  static add(a, b) {
+    return a.clone().add(b);
   }
 
   sub(durationIn) {
@@ -1712,10 +1780,14 @@ class Duration {
 
       this.simplify();
     } else {
-      throw Error("Cannot operate between absolute and relative duration.");
+      throw new Error("Cannot operate between absolute and relative duration.");
     }
 
     return this.check();
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
   }
 
   mul(f) {
@@ -1727,6 +1799,10 @@ class Duration {
     }
 
     return this.check();
+  }
+
+  static mul(a, b) {
+    return a.clone().mul(b);
   }
 
   div(first) {
@@ -1742,15 +1818,33 @@ class Duration {
     }
 
     if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
-    throw Error("Cannot operate between absolute and relative duration.");
+    throw new Error("Cannot operate between absolute and relative duration.");
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
+  }
+
+  equals(durationIn) {
+    return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+  }
+
+  compareTo(that) {
+    return Duration.compare(this, that);
+  }
+
+  static compare(x, y) {
+    if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
+    return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
   }
 
   simplify() {
-    var _gcd = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["gcd"])(this.numerator, this.denominator);
+    var $gcd = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["gcd"])(this.numerator, this.denominator);
 
-    if (_gcd > 1) {
-      this.denominator /= _gcd;
-      this.numerator /= _gcd;
+    if ($gcd > 1) {
+      this.denominator /= $gcd;
+      this.numerator /= $gcd;
     }
 
     return this;
@@ -1770,17 +1864,11 @@ class Duration {
     return new Duration(this);
   }
 
-  compareTo(that) {
-    return Duration.compare(this, that);
-  }
-
-  static compare(x, y) {
-    if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
-    return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
-  }
-
-  equals(durationIn) {
-    return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+  static random(randomIn, min, max, step) {
+    if (min.equals(max)) return min.clone();
+    var d = max.clone().sub(min);
+    var steps = randomIn.randint(0, ~~d.div(step));
+    return min.clone().add(step.clone().mul(steps));
   }
 
   toString() {
@@ -2079,6 +2167,10 @@ class Interval {
     return this;
   }
 
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
   sub(iIn) {
     var i = {
       degree: 0,
@@ -2092,6 +2184,22 @@ class Interval {
     this.onset = i.onset;
     this.octave = i.octave;
     return this;
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  equals(intervalIn) {
+    return isInterval(intervalIn) && this.degree === intervalIn.degree && this.onset === intervalIn.onset && this.octave === intervalIn.octave;
+  }
+
+  compareTo(iIn) {
+    return Interval.compare(this, iIn);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
   }
 
   reverse() {
@@ -2148,10 +2256,6 @@ class Interval {
     return arrayIn.map(e => new Interval(e));
   }
 
-  equals(intervalIn) {
-    return isInterval(intervalIn) && this.degree === intervalIn.degree && this.onset === intervalIn.onset && this.octave === intervalIn.octave;
-  }
-
   toString() {
     var sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
     var sOctave = this.octave > 0 ? "+" + this.octave : this.octave < 0 ? this.octave : "";
@@ -2160,10 +2264,6 @@ class Interval {
 
   clone() {
     return new Interval(this);
-  }
-
-  static compare(x, y) {
-    return x.offset - y.offset;
   }
 
 }
@@ -2391,6 +2491,10 @@ class Note {
     return this;
   }
 
+  static ratioToOffset(ratio) {
+    return Math.round(Math.log(ratio) / Math.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].SEMITONE));
+  }
+
   add(iIn) {
     if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
     var i;
@@ -2412,7 +2516,7 @@ class Note {
   }
 
   mul(fIn) {
-    var d = Math.round(Math.log(fIn) / Math.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].SEMITONE));
+    var d = Note.ratioToOffset(fIn);
     return this.add(d);
   }
 
@@ -2527,6 +2631,10 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
     return this;
   }
 
+  get frequency() {
+    return _Frequency__WEBPACK_IMPORTED_MODULE_2__["Frequency"].A440 * Math.pow(2, (this.offset - 69) / 12);
+  }
+
   static fromString(nameIn) {
     var matched = Pitch.REGEX.exec(nameIn);
     if (matched === null) throw new SyntaxError("No such pitch ".concat(nameIn, "."));
@@ -2568,22 +2676,59 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
 
   add(iIn) {
     if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+    if (iIn instanceof Pitch) return this.mul(1 + iIn.frequency / this.frequency);
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
     this.octave += Math.floor((this.enumNote.index + i.degree - 1) / 7) + i.octave;
     return super.add(i);
   }
 
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
   sub(iIn) {
     if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+    if (iIn instanceof Pitch) return this.mul(1 - iIn.frequency / this.frequency);
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
     this.octave += Math.floor((this.enumNote.index - i.degree + 1) / 7) - i.octave;
     return super.sub(i);
   }
 
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  mul(fIn) {
+    var d = _Note__WEBPACK_IMPORTED_MODULE_0__["Note"].ratioToOffset(fIn);
+    return this.add(d);
+  }
+
+  static mul(a, b) {
+    return a.clone().mul(b);
+  }
+
+  div(first) {
+    if (first instanceof Pitch) return this.frequency / first.frequency;
+    return this.mul(1 / first);
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
+  }
+
   equals(pitchIn) {
     return super.equals(pitchIn) && isPitch(pitchIn) && this.octave === pitchIn.octave;
+  }
+
+  compareTo(pitchIn) {
+    return Pitch.compare(this, pitchIn);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
   }
 
   getInterval(pitchIn) {
@@ -2613,10 +2758,6 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
 
   clone() {
     return new Pitch(this);
-  }
-
-  static compare(x, y) {
-    return x.offset - y.offset;
   }
 
 }
@@ -2818,33 +2959,73 @@ class Scale {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee() {
-        var i;
+        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, interval;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                i = 0;
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 3;
+                _iterator = _this.intervals[Symbol.iterator]();
 
-              case 1:
-                if (!(i < _this.intervals.length)) {
-                  _context.next = 7;
+              case 5:
+                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                  _context.next = 12;
                   break;
                 }
 
-                _context.next = 4;
-                return _this.intervals[i];
+                interval = _step.value;
+                _context.next = 9;
+                return interval;
 
-              case 4:
-                i++;
-                _context.next = 1;
+              case 9:
+                _iteratorNormalCompletion = true;
+                _context.next = 5;
                 break;
 
-              case 7:
+              case 12:
+                _context.next = 18;
+                break;
+
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](3);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 18:
+                _context.prev = 18;
+                _context.prev = 19;
+
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+
+              case 21:
+                _context.prev = 21;
+
+                if (!_didIteratorError) {
+                  _context.next = 24;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 24:
+                return _context.finish(21);
+
+              case 25:
+                return _context.finish(18);
+
+              case 26:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[3, 14, 18, 26], [19,, 21, 25]]);
       })()
     );
   }
@@ -3353,14 +3534,32 @@ class Automation {
     this.sort();
     var prev;
     var next;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-    for (var i = 0; i < this.points.length; i++) {
-      var p = this.points[i];
-      if (p.offset.compareTo(time) < 0) prev = p;
+    try {
+      for (var _iterator = this.points[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var p = _step.value;
+        if (p.offset.compareTo(time) < 0) prev = p;
 
-      if (p.offset.compareTo(time) > 0) {
-        next = p;
-        break;
+        if (p.offset.compareTo(time) > 0) {
+          next = p;
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
       }
     }
 
@@ -3374,7 +3573,7 @@ class Automation {
       return Object(_Utils__WEBPACK_IMPORTED_MODULE_1__["getValueFromCurve"])(prev.value, next.value, ratio, prev.exponent);
     }
 
-    throw Error("No point in automation: ".concat(this.path));
+    throw new Error("No point in automation: ".concat(this.path));
   }
 
   addPointAtTime(time) {
@@ -3524,33 +3723,73 @@ class ChordProgression {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee() {
-        var i;
+        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, chord;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                i = 0;
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 3;
+                _iterator = _this.chords[Symbol.iterator]();
 
-              case 1:
-                if (!(i < _this.chords.length)) {
-                  _context.next = 7;
+              case 5:
+                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                  _context.next = 12;
                   break;
                 }
 
-                _context.next = 4;
-                return _this.chords[i];
+                chord = _step.value;
+                _context.next = 9;
+                return chord;
 
-              case 4:
-                i++;
-                _context.next = 1;
+              case 9:
+                _iteratorNormalCompletion = true;
+                _context.next = 5;
                 break;
 
-              case 7:
+              case 12:
+                _context.next = 18;
+                break;
+
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](3);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 18:
+                _context.prev = 18;
+                _context.prev = 19;
+
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+
+              case 21:
+                _context.prev = 21;
+
+                if (!_didIteratorError) {
+                  _context.next = 24;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 24:
+                return _context.finish(21);
+
+              case 25:
+                return _context.finish(18);
+
+              case 26:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[3, 14, 18, 26], [19,, 21, 25]]);
       })()
     );
   }
@@ -3856,6 +4095,7 @@ seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(
 console.log(seg.duration.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M2").fraction.toString());
 console.log(_Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("C").getImaginaryBase().toString());
+console.log(_Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"].random(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("2"), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 1), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 2)));
 
 /***/ }),
 
@@ -4006,8 +4246,8 @@ class Instrument {
     this.name = optionsIn.name;
     this.params = {};
 
-    for (var _key in optionsIn.params) {
-      this.params[_key] = optionsIn.params[_key].clone();
+    for (var key in optionsIn.params) {
+      this.params[key] = optionsIn.params[key].clone();
     }
 
     return this;
@@ -4022,8 +4262,8 @@ class Instrument {
   }
 
   hasTag() {
-    for (var _len = arguments.length, tagsIn = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-      tagsIn[_key2] = arguments[_key2];
+    for (var _len = arguments.length, tagsIn = new Array(_len), _key = 0; _key < _len; _key++) {
+      tagsIn[_key] = arguments[_key];
     }
 
     return tagsIn.every(tag => this.tags.indexOf(tag) !== -1);

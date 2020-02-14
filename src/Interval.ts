@@ -24,7 +24,7 @@ type TIntervalPropertyValue = "PERFECT" | "MAJOR" | "MINOR" | "AUGMENTED" | "DIM
 export const DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 class EnumIntervalProperty extends Enum {
     protected static indexes = ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"];
-    private static abbMap: { [key: string]: TIntervalPropertyValue } = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
+    private static abbMap: Record<string, TIntervalPropertyValue> = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
     static get PERFECT() { return new EnumIntervalProperty("P"); }
     static get MAJOR() { return new EnumIntervalProperty("M"); }
     static get MINOR() { return new EnumIntervalProperty("m"); }
@@ -53,7 +53,7 @@ class EnumIntervalProperty extends Enum {
     }
 }
 
-export class Interval implements IInterval {
+export class Interval implements IInterval, Computable<Interval> {
     private static REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
     degree: number;
     onset: number;
@@ -185,6 +185,9 @@ export class Interval implements IInterval {
         this.octave = i.octave;
         return this;
     }
+    static add(a: Interval, b: Interval) {
+        return a.clone().add(b);
+    }
     sub(iIn: Interval) {
         const i = { degree: 0, onset: 0, octave: 0 };
         i.degree = floorMod(this.degree - iIn.degree + 1 - 1, 7) + 1;
@@ -194,6 +197,21 @@ export class Interval implements IInterval {
         this.onset = i.onset;
         this.octave = i.octave;
         return this;
+    }
+    static sub(a: Interval, b: Interval) {
+        return a.clone().sub(b);
+    }
+    equals(intervalIn: object) {
+        return isInterval(intervalIn)
+            && this.degree === intervalIn.degree
+            && this.onset === intervalIn.onset
+            && this.octave === intervalIn.octave;
+    }
+    compareTo(iIn: Interval) {
+        return Interval.compare(this, iIn);
+    }
+    static compare(x: Interval, y: Interval) {
+        return x.offset - y.offset;
     }
     reverse() {
         const i = { degree: 0, onset: 0, octave: 0 };
@@ -230,12 +248,6 @@ export class Interval implements IInterval {
     static fromArray(...arrayIn: (string | IInterval)[]) {
         return arrayIn.map(e => new Interval(e as any));
     }
-    equals(intervalIn: object) {
-        return isInterval(intervalIn)
-            && this.degree === intervalIn.degree
-            && this.onset === intervalIn.onset
-            && this.octave === intervalIn.octave;
-    }
     toString() {
         const sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
         const sOctave = this.octave > 0 ? ("+" + this.octave) : this.octave < 0 ? this.octave : "";
@@ -243,8 +255,5 @@ export class Interval implements IInterval {
     }
     clone() {
         return new Interval(this);
-    }
-    static compare(x: Interval, y: Interval) {
-        return x.offset - y.offset;
     }
 }

@@ -1,6 +1,5 @@
 import { Duration, isDuration } from "../../Duration";
 
-export type Form = IPart[];
 export interface IPart {
     minDuration: Duration;
     maxDuration: Duration;
@@ -8,9 +7,14 @@ export interface IPart {
 }
 export const isPart = (x: any): x is IPart => {
     return x instanceof Part
-        || (isDuration(x.minDuration)
-        || isDuration(x.maxDuration)
-        || isDuration(x.stepDuration));
+        || (typeof x === "object"
+        && isDuration(x.minDuration)
+        && isDuration(x.maxDuration)
+        && isDuration(x.stepDuration));
+};
+export const isPartArray = (x: any): x is Part[] => {
+    return Array.isArray(x)
+        && x.every(e => e instanceof Part);
 };
 export class Part implements IPart {
     minDuration: Duration;

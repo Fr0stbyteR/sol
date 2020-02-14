@@ -1,6 +1,7 @@
 import { Genre } from "./Genre";
 import { Part } from "./form/Part";
 import { ChordProgressionGenre } from "./ChordProgressionGenre";
+import { Form } from "./form/Form";
 
 // https://djtrauma.wordpress.com/2012/07/17/dubstep-song-structure/
 const parts = {
@@ -20,7 +21,7 @@ export const EDM = new Genre({
     getChordProgression: () => null,
     chordProgressionGenre: new ChordProgressionGenre(),
     getForm: () => {
-        return [
+        return new Form(
             prebeat,
             intro,
             bassdrop,
@@ -33,6 +34,6 @@ export const EDM = new Genre({
             buildup,
             drop,
             outro
-        ];
+        );
     }
 });

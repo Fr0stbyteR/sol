@@ -1,5 +1,6 @@
 import { TimeCode } from "./TimeCode";
 import { gcd } from "./Utils";
+import { Random } from "./genre/Random";
 
 export interface IDuration {
     isAbsolute: boolean;
@@ -15,7 +16,7 @@ export const isDuration = (x: any): x is IDuration => {
             : typeof x.numerator === "number" && typeof x.denominator === "number"
         );
 };
-export class Duration implements IDuration {
+export class Duration implements IDuration, Computable<Duration> {
     isAbsolute: boolean; // Absolute duration is represented by seconds.
     numerator: number; // Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
     denominator: number;
@@ -83,11 +84,13 @@ export class Duration implements IDuration {
             }
             this.simplify();
         } else {
-            throw Error("Cannot operate between absolute and relative duration.");
+            throw new Error("Cannot operate between absolute and relative duration.");
         }
         return this.check();
     }
-
+    static add(a: Duration, b: Duration) {
+        return a.clone().add(b);
+    }
     sub(durationIn: Duration) {
         if (this.isAbsolute && durationIn.isAbsolute) {
             this.seconds -= durationIn.seconds;
@@ -100,11 +103,13 @@ export class Duration implements IDuration {
             }
             this.simplify();
         } else {
-            throw Error("Cannot operate between absolute and relative duration.");
+            throw new Error("Cannot operate between absolute and relative duration.");
         }
         return this.check();
     }
-
+    static sub(a: Duration, b: Duration) {
+        return a.clone().sub(b);
+    }
     mul(f: number) {
         if (this.isAbsolute) {
             this.seconds *= f;
@@ -114,7 +119,9 @@ export class Duration implements IDuration {
         }
         return this.check();
     }
-
+    static mul(a: Duration, b: number) {
+        return a.clone().mul(b);
+    }
     div(f: number): this;
     div(durationIn: Duration): number;
     div(first: number | Duration) {
@@ -128,14 +135,30 @@ export class Duration implements IDuration {
             return this.check();
         }
         if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
-        throw Error("Cannot operate between absolute and relative duration.");
+        throw new Error("Cannot operate between absolute and relative duration.");
+    }
+    static div(a: Duration, b: number): Duration;
+    static div(a: Duration, b: Duration): number;
+    static div(a: Duration, b: Duration | number) {
+        if (typeof b === "number") return a.clone().div(b);
+        return a.clone().div(b);
+    }
+    equals(durationIn: object) {
+        return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+    }
+    compareTo(that: IDuration) {
+        return Duration.compare(this, that);
+    }
+    static compare(x: IDuration, y: IDuration) {
+        if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
+        return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
     }
 
     private simplify() {
-        const _gcd = gcd(this.numerator, this.denominator);
-        if (_gcd > 1) {
-            this.denominator /= _gcd;
-            this.numerator /= _gcd;
+        const $gcd = gcd(this.numerator, this.denominator);
+        if ($gcd > 1) {
+            this.denominator /= $gcd;
+            this.numerator /= $gcd;
         }
         return this;
     }
@@ -153,17 +176,11 @@ export class Duration implements IDuration {
         return new Duration(this);
     }
 
-    compareTo(that: IDuration) {
-        return Duration.compare(this, that);
-    }
-
-    static compare(x: IDuration, y: IDuration) {
-        if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
-        return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
-    }
-
-    equals(durationIn: object) {
-        return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+    static random(randomIn: Random, min: Duration, max: Duration, step: Duration): Duration {
+        if (min.equals(max)) return min.clone();
+        const d = max.clone().sub(min);
+        const steps = randomIn.randint(0, ~~d.div(step));
+        return min.clone().add(step.clone().mul(steps));
     }
 
     toString() {

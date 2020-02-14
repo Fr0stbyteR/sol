@@ -8,17 +8,18 @@ import { TrackChord } from "../../track/TrackChord";
 import { TrackNote } from "../../track/TrackNote";
 import { Random } from "../Random";
 
-export interface IGeneratorParameters {
-    durationRange?: [Duration, Duration];
-    pitchRange?: [Pitch, Pitch];
-    noteDurationRange?: [Duration, Duration];
-    pitchIntervalRange?: [Interval, Interval];
-    timeIntervalRange?: [Duration, Duration];
-    scale?: Scale;
-    timeCode?: TimeCode;
-    chordProgression?: TrackChord[];
+export interface IGeneratorParams {
+    durationRange: [Duration, Duration];
+    durationStep: Duration;
+    pitchRange: [Pitch, Pitch];
+    noteDurationRange: [Duration, Duration];
+    pitchIntervalRange: [Interval, Interval];
+    timeIntervalRange: [Duration, Duration];
+    scale: Scale;
+    timeCode: TimeCode;
+    chordProgression: TrackChord[];
     rhythm: TrackNote[];
 }
 export abstract class Generator {
-    static use: (randomIn: Random, params?: { [key: string]: any }) => Segment = () => undefined;
+    static use: (randomIn: Random, params?: Partial<IGeneratorParams>) => Segment;
 }

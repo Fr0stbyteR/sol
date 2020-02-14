@@ -117,8 +117,8 @@ export class Scale implements Iterable<Interval>, IScale {
         return new Scale(this);
     }
     * [Symbol.iterator](): Iterator<Interval> {
-        for (let i = 0; i < this.intervals.length; i++) {
-            yield this.intervals[i];
+        for (const interval of this.intervals) {
+            yield interval;
         }
     }
 }

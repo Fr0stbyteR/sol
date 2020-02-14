@@ -34,8 +34,7 @@ export class Automation implements IAutomation {
         this.sort();
         let prev: AutomationPoint;
         let next: AutomationPoint;
-        for (let i = 0; i < this.points.length; i++) {
-            const p = this.points[i];
+        for (const p of this.points) {
             if (p.offset.compareTo(time) < 0) prev = p;
             if (p.offset.compareTo(time) > 0) {
                 next = p;
@@ -50,7 +49,7 @@ export class Automation implements IAutomation {
             const ratio = split.div(duration);
             return getValueFromCurve(prev.value, next.value, ratio, prev.exponent);
         }
-        throw Error(`No point in automation: ${this.path}`);
+        throw new Error(`No point in automation: ${this.path}`);
     }
     addPointAtTime(time: Duration) {
         this.points.push(new AutomationPoint(this.getValueAtTime(time), time, 0));

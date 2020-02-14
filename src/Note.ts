@@ -6,7 +6,7 @@ import { Frequency } from "./Frequency";
 type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export class EnumNote extends Enum {
     protected static indexes: TEnumNoteValue[] = ["C", "D", "E", "F", "G", "A", "B"];
-    private static offsetMap: { [key: number]: TEnumNoteValue } = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
+    private static offsetMap: Record<string, TEnumNoteValue> = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
     static get C() { return new EnumNote(0); }
     static get D() { return new EnumNote(2); }
     static get E() { return new EnumNote(4); }
@@ -149,7 +149,12 @@ export class Note implements INote {
         this.alteration = alteration;
         return this;
     }
-    add(iIn: number | string | Interval) {
+    static ratioToOffset(ratio: number) {
+        return Math.round(Math.log(ratio) / Math.log(Frequency.SEMITONE));
+    }
+    add(semitones: number): Note;
+    add(interval: string | Interval): Note;
+    add(iIn: number | string | Interval | Note) {
         if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
         let i: Interval;
         if (typeof iIn === "string") i = new Interval(iIn);
@@ -159,6 +164,8 @@ export class Note implements INote {
         this.enumNote = newEnumNote;
         return this;
     }
+    sub(semitones: number): Note;
+    sub(interval: string | Interval): Note;
     sub(iIn: number | string | Interval) {
         if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
         let i: Interval;
@@ -170,7 +177,7 @@ export class Note implements INote {
         return this;
     }
     mul(fIn: number) {
-        const d = Math.round(Math.log(fIn) / Math.log(Frequency.SEMITONE));
+        const d = Note.ratioToOffset(fIn);
         return this.add(d);
     }
     div(fIn: number) {

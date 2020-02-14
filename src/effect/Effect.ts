@@ -5,7 +5,7 @@ export interface IEffect {
     name: string;
     sideChain: string[];
     send: string[];
-    params: { [path: string]: Param };
+    params: Record<string, Param>;
 }
 export const isEffect = (x: any): x is IEffect => {
     return x instanceof Effect
@@ -22,7 +22,7 @@ export class Effect implements IEffect {
     name: string;
     sideChain: string[];
     send: string[];
-    params: { [key: string]: Param };
+    params: Record<string, Param>;
     constructor(optionsIn: IEffect) {
         this.sideChain = [...optionsIn.sideChain];
         this.send = [...optionsIn.send];

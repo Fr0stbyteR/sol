@@ -52,8 +52,8 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
         return new ChordProgression(this);
     }
     * [Symbol.iterator](): Iterator<TonalChord> {
-        for (let i = 0; i < this.chords.length; i++) {
-            yield this.chords[i];
+        for (const chord of this.chords) {
+            yield chord;
         }
     }
 }
