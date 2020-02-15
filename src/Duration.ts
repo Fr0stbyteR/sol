@@ -16,7 +16,7 @@ export const isDuration = (x: any): x is IDuration => {
             : typeof x.numerator === "number" && typeof x.denominator === "number"
         );
 };
-export class Duration implements IDuration, Computable<Duration> {
+export class Duration implements IDuration, IComputable<Duration> {
     isAbsolute: boolean; // Absolute duration is represented by seconds.
     numerator: number; // Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
     denominator: number;
@@ -164,11 +164,13 @@ export class Duration implements IDuration, Computable<Duration> {
     }
 
     private check() {
+        /*
         if (this.isAbsolute) {
             if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
         } else {
             if (this.seconds < 0) throw new Error("Duration should have positive value.");
         }
+        */
         return this;
     }
 

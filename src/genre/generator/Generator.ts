@@ -19,6 +19,7 @@ export interface IGeneratorParams {
     timeCode: TimeCode;
     chordProgression: TrackChord[];
     rhythm: TrackNote[];
+    baseNote: TrackNote;
 }
 export abstract class Generator {
     static use: (randomIn: Random, params?: Partial<IGeneratorParams>) => Segment;

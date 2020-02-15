@@ -16,7 +16,7 @@ export const isPitchArray = (x: any): x is Pitch[] => {
     return Array.isArray(x)
         && x.every(el => el instanceof Pitch);
 };
-export class Pitch extends Note implements IPitch, Computable<Pitch> {
+export class Pitch extends Note implements IPitch, IComputable<Pitch> {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
     static fromFrequency(f: number) {
         return new Pitch(69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));

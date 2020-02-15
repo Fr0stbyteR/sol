@@ -53,7 +53,7 @@ class EnumIntervalProperty extends Enum {
     }
 }
 
-export class Interval implements IInterval, Computable<Interval> {
+export class Interval implements IInterval, IComputable<Interval> {
     private static REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
     degree: number;
     onset: number;
