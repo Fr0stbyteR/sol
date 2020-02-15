@@ -20,6 +20,8 @@ export interface IGeneratorParams {
     chordProgression: TrackChord[];
     rhythm: TrackNote[];
     baseNote: TrackNote;
+    stablity: number;
+    complexity: number;
 }
 export abstract class Generator {
     static use: (randomIn: Random, params?: Partial<IGeneratorParams>) => Segment;

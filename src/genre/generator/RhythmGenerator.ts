@@ -10,17 +10,34 @@ export interface IRhythmGeneratorAParams {
     durationStep: Duration;
     noteDurationRange: [Duration, Duration];
     baseNote: TrackNote;
+    stablity: number;
+    complexity: number;
 }
-type TPipe = (segmentIn: Segment, randomIn: Random, pIn: number, resolutionIn: Duration, orderIn: number, baseNoteIn: TrackNote) => void;
+type TPipe = (segmentIn: Segment, randomIn: Random, pIn: number, gridIn: Duration, orderIn: number, baseNoteIn: TrackNote) => void;
 export class RhythmGeneratorA extends Generator {
     static use = (randomIn: Random, params: IRhythmGeneratorAParams) => {
-        const { durationRange, durationStep } = params;
+        const { durationRange, durationStep, baseNote, stablity, complexity } = params;
         const duration = Duration.random(randomIn, durationRange[0], durationRange[1], durationStep);
         const notes: TrackNote[] = [];
         const automations: Automation[] = [];
         const seg = new Segment({ notes, duration, automations });
+        const { fill, prepare, anticipate, rebound, defer, split, tree, maxSteps } = RhythmGeneratorA;
+        const pipes = [prepare, anticipate, rebound, defer, split, tree];
+        let steps = ~~(maxSteps * complexity);
+        let order = 0;
+        const grid = duration.clone();
+        while (steps--) {
+            if (randomIn.quick() < stablity) {
+                fill(seg, randomIn, stablity, grid, order, baseNote);
+            } else {
+                pipes[randomIn.randint(0, pipes.length)](seg, randomIn, 1 - stablity, grid, order, baseNote);
+            }
+            order++;
+            grid.div(2);
+        }
         return seg;
     }
+    static maxSteps = 16;
     static fill: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
         const { duration, notes } = segmentIn;
         const $ = new Duration(0, 4);
@@ -74,6 +91,35 @@ export class RhythmGeneratorA extends Generator {
             if (randomIn.quick() < pIn) {
                 if (orderIn) note.velocity = baseNoteIn.velocity.clone().mul(0.9 ** orderIn);
                 note.offset.add(gridIn);
+            }
+        }
+    }
+    static split: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
+        const { notes, duration } = segmentIn;
+        const end = duration.clone().sub(gridIn);
+        for (const note of notes) {
+            if (note.offset.compareTo(gridIn) < 0 || note.offset.compareTo(end) > 0) continue;
+            if (randomIn.quick() < pIn) {
+                if (orderIn) note.velocity = baseNoteIn.velocity.clone().mul(0.9 ** orderIn);
+                const left = note.clone();
+                note.offset.add(gridIn);
+                left.offset.sub(gridIn);
+                segmentIn.notes.push(left);
+            }
+        }
+    }
+    static tree: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
+        const { notes, duration } = segmentIn;
+        const end = duration.clone().sub(gridIn);
+        for (const note of notes) {
+            if (note.offset.compareTo(gridIn) < 0 || note.offset.compareTo(end) > 0) continue;
+            if (randomIn.quick() < pIn) {
+                if (orderIn) note.velocity = baseNoteIn.velocity.clone().mul(0.9 ** orderIn);
+                const left = note.clone();
+                const right = note.clone();
+                right.offset.add(gridIn);
+                left.offset.sub(gridIn);
+                segmentIn.notes.push(left, right);
             }
         }
     }
