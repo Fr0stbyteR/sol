@@ -1,5 +1,5 @@
 import { TimeCode } from "./TimeCode";
-import { gcd } from "./Utils";
+import { gcd, precisionFactor } from "./Utils";
 import { Random } from "./genre/Random";
 
 export interface IDuration {
@@ -129,7 +129,7 @@ export class Duration implements IDuration, IComputable<Duration> {
             if (this.isAbsolute) {
                 this.seconds /= first;
             } else {
-                this.numerator /= first;
+                this.denominator *= first;
                 this.simplify();
             }
             return this.check();
@@ -155,8 +155,10 @@ export class Duration implements IDuration, IComputable<Duration> {
     }
 
     private simplify() {
-        const $gcd = gcd(this.numerator, this.denominator);
-        if ($gcd > 1) {
+        if (this.numerator === 0) return this;
+        const f = Math.max(precisionFactor(this.numerator), precisionFactor(this.denominator));
+        const $gcd = gcd(this.numerator * f, this.denominator * f) / f;
+        if ($gcd !== 1) {
             this.denominator /= $gcd;
             this.numerator /= $gcd;
         }

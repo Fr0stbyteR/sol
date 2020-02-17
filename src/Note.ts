@@ -189,12 +189,15 @@ export class Note implements INote {
             && this.alteration === noteIn.alteration;
     }
     getInterval(noteIn: INote) {
-        if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");
         const that = noteIn instanceof Note ? noteIn : new Note(noteIn);
         const degree = that.enumNote.index - this.enumNote.index + 1;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;
         return new Interval(degree, onset, octave);
+    }
+    getDistance(that: Note) {
+        const distance = Math.abs(this.offset - that.offset);
+        return distance > 6 ? 12 - distance : distance;
     }
     get offset() {
         return this.enumNote.offset + this.alteration;
@@ -207,5 +210,14 @@ export class Note implements INote {
     }
     clone() {
         return new Note(this);
+    }
+
+    getTendancy(that: Note) {
+        const d = this.getDistance(that);
+        return d === 0 || d > 2 ? 0 : 1 / d;
+    }
+    getStability(that: Note) {
+        const [, d] = this.getInterval(that).fraction;
+        return 1 / d;
     }
 }

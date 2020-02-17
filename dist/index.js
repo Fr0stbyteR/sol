@@ -1810,7 +1810,7 @@ class Duration {
       if (this.isAbsolute) {
         this.seconds /= first;
       } else {
-        this.numerator /= first;
+        this.denominator *= first;
         this.simplify();
       }
 
@@ -1840,9 +1840,11 @@ class Duration {
   }
 
   simplify() {
-    var $gcd = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["gcd"])(this.numerator, this.denominator);
+    if (this.numerator === 0) return this;
+    var f = Math.max(Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["precisionFactor"])(this.numerator), Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["precisionFactor"])(this.denominator));
+    var $gcd = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["gcd"])(this.numerator * f, this.denominator * f) / f;
 
-    if ($gcd > 1) {
+    if ($gcd !== 1) {
       this.denominator /= $gcd;
       this.numerator /= $gcd;
     }
@@ -1851,12 +1853,13 @@ class Duration {
   }
 
   check() {
+    /*
     if (this.isAbsolute) {
-      if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+        if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
     } else {
-      if (this.seconds < 0) throw new Error("Duration should have positive value.");
+        if (this.seconds < 0) throw new Error("Duration should have positive value.");
     }
-
+    */
     return this;
   }
 
@@ -2288,6 +2291,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -2529,12 +2540,16 @@ class Note {
   }
 
   getInterval(noteIn) {
-    if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");
     var that = noteIn instanceof Note ? noteIn : new Note(noteIn);
     var degree = that.enumNote.index - this.enumNote.index + 1;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"].getOffsetFromDegree(degree);
     var octave = 0;
     return new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](degree, onset, octave);
+  }
+
+  getDistance(that) {
+    var distance = Math.abs(this.offset - that.offset);
+    return distance > 6 ? 12 - distance : distance;
   }
 
   get offset() {
@@ -2555,6 +2570,18 @@ class Note {
 
   clone() {
     return new Note(this);
+  }
+
+  getTendancy(that) {
+    var d = this.getDistance(that);
+    return d === 0 || d > 2 ? 0 : 1 / d;
+  }
+
+  getStability(that) {
+    var _this$getInterval$fra = _slicedToArray(this.getInterval(that).fraction, 2),
+        d = _this$getInterval$fra[1];
+
+    return 1 / d;
   }
 
 }
@@ -2732,12 +2759,15 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
   }
 
   getInterval(pitchIn) {
-    if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
     var that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
     var degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"].getOffsetFromDegree(degree);
     var octave = 0;
     return new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](degree, onset, octave);
+  }
+
+  getDistance(that) {
+    return Math.abs(this.offset - that.offset);
   }
 
   get offset() {
@@ -3297,11 +3327,12 @@ class Tonality {
 /*!**********************!*\
   !*** ./src/Utils.ts ***!
   \**********************/
-/*! exports provided: gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction */
+/*! exports provided: precisionFactor, gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "precisionFactor", function() { return precisionFactor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gcd", function() { return gcd; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lcm", function() { return lcm; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "floorMod", function() { return floorMod; });
@@ -3311,11 +3342,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toRoman", function() { return toRoman; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValueFromCurve", function() { return getValueFromCurve; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestFraction", function() { return nearestFraction; });
+var precisionFactor = function precisionFactor(x) {
+  var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  return Math.round(x * e) !== x * e ? precisionFactor(x, e * 10) : e;
+};
 var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
 var lcm = (a, b) => a * (b / gcd(a, b));
-var floorMod = (x, y) => {
-  return (x % y + y) % y;
-};
+var floorMod = (x, y) => (x % y + y) % y;
 var isStringArray = x => {
   return Array.isArray(x) && x.every(e => typeof e === "string");
 };
@@ -3471,9 +3504,49 @@ class EnumVelocity {
 }
 class Velocity {
   constructor(velocityIn) {
-    this.velocity = void 0;
+    this._velocity = void 0;
     if (typeof velocityIn === "number") this.velocity = velocityIn;else this.velocity = velocityIn.velocity;
     return this;
+  }
+
+  get velocity() {
+    return this._velocity;
+  }
+
+  set velocity(value) {
+    this._velocity = Math.max(0, Math.min(128, ~~value));
+  }
+
+  add(that) {
+    this.velocity += that.velocity;
+    return this;
+  }
+
+  sub(that) {
+    this.velocity -= that.velocity;
+    return this;
+  }
+
+  mul(fIn) {
+    this.velocity *= fIn;
+    return this;
+  }
+
+  div(that) {
+    if (typeof that === "number") {
+      this.velocity /= that;
+      return this;
+    }
+
+    return this.velocity /= that.velocity;
+  }
+
+  equals(that) {
+    return isVelocity(that) && this.velocity === that.velocity;
+  }
+
+  compareTo(that) {
+    return this.velocity - that.velocity;
   }
 
   normalize() {
@@ -4096,6 +4169,8 @@ console.log(seg.duration.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M2").fraction.toString());
 console.log(_Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("C").getImaginaryBase().toString());
 console.log(_Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"].random(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("2"), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 1), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 2)));
+console.log(new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](0.03, 4).div(2));
+console.log(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C4").getStability(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G3")));
 
 /***/ }),
 

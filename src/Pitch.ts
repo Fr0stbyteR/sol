@@ -171,12 +171,14 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch> {
         return x.offset - y.offset;
     }
     getInterval(pitchIn: IPitch) {
-        if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
         const that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
         const degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;
         return new Interval(degree, onset, octave);
+    }
+    getDistance(that: Pitch) {
+        return Math.abs(this.offset - that.offset);
     }
     get offset() {
         return this.enumNote.offset + this.alteration + 12 * (this.octave + 1);
@@ -189,5 +191,12 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch> {
     }
     clone(): Pitch {
         return new Pitch(this);
+    }
+
+    getTendancy(that: Pitch) {
+        return super.getTendancy(that);
+    }
+    getStability(that: Pitch) {
+        return super.getStability(that);
     }
 }

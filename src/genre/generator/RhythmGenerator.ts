@@ -8,15 +8,15 @@ import { Automation } from "../../effect/Automation";
 export interface IRhythmGeneratorAParams {
     durationRange: [Duration, Duration];
     durationStep: Duration;
-    noteDurationRange: [Duration, Duration];
     baseNote: TrackNote;
-    stablity: number;
+    stability: number;
     complexity: number;
+    group?: number[];
 }
 type TPipe = (segmentIn: Segment, randomIn: Random, pIn: number, gridIn: Duration, orderIn: number, baseNoteIn: TrackNote) => void;
 export class RhythmGeneratorA extends Generator {
     static use = (randomIn: Random, params: IRhythmGeneratorAParams) => {
-        const { durationRange, durationStep, baseNote, stablity, complexity } = params;
+        const { durationRange, durationStep, baseNote, stability, complexity, group } = params;
         const duration = Duration.random(randomIn, durationRange[0], durationRange[1], durationStep);
         const notes: TrackNote[] = [];
         const automations: Automation[] = [];
@@ -27,13 +27,13 @@ export class RhythmGeneratorA extends Generator {
         let order = 0;
         const grid = duration.clone();
         while (steps--) {
-            if (randomIn.quick() < stablity) {
-                fill(seg, randomIn, stablity, grid, order, baseNote);
+            if (randomIn.quick() < stability) {
+                fill(seg, randomIn, stability, grid, order, baseNote);
             } else {
-                pipes[randomIn.randint(0, pipes.length)](seg, randomIn, 1 - stablity, grid, order, baseNote);
+                pipes[randomIn.randint(0, pipes.length)](seg, randomIn, 1 - stability, grid, order, baseNote);
             }
             order++;
-            grid.div(2);
+            grid.div(group && group.length ? (order < group.length ? group[order] : group[group.length - 1]) : 2);
         }
         return seg;
     }

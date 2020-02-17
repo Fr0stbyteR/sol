@@ -7,6 +7,7 @@ import { Interval } from "../../Interval";
 import { TrackChord } from "../../track/TrackChord";
 import { TrackNote } from "../../track/TrackNote";
 import { Random } from "../Random";
+import { Chord } from "../../Chord";
 
 export interface IGeneratorParams {
     durationRange: [Duration, Duration];
@@ -20,7 +21,8 @@ export interface IGeneratorParams {
     chordProgression: TrackChord[];
     rhythm: TrackNote[];
     baseNote: TrackNote;
-    stablity: number;
+    baseChord: Chord;
+    stability: number;
     complexity: number;
 }
 export abstract class Generator {
