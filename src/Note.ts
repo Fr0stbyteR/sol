@@ -189,7 +189,7 @@ export class Note implements INote {
             && this.alteration === noteIn.alteration;
     }
     getInterval(noteIn: INote) {
-        const that = noteIn instanceof Note ? noteIn : new Note(noteIn);
+        const that = noteIn instanceof Note && noteIn.constructor === Note ? noteIn : new Note(noteIn);
         const degree = that.enumNote.index - this.enumNote.index + 1;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;

@@ -122,7 +122,9 @@ export class Interval implements IInterval, IComputable<Interval> {
         this.onset = 0;
         this.octave = 0;
         if (isInterval(first)) {
-            this.constructor(first.degree, first.onset, first.octave);
+            this.degree = floorMod(first.degree - 1, 7) + 1;
+            this.onset = first.onset || 0;
+            this.octave = Math.floor((first.octave - 1) / 7) + (third || 0);
         } else if (typeof first === "string") {
             this.fromString(first);
         } else if (typeof first === "number") {
@@ -179,7 +181,7 @@ export class Interval implements IInterval, IComputable<Interval> {
         const i = { degree: 0, onset: 0, octave: 0 };
         i.degree = floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
         i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
-        i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
+        i.octave = this.octave + iIn.octave + Math.floor((this.degree + iIn.degree - 1 - 1) / 7);
         this.degree = i.degree;
         this.onset = i.onset;
         this.octave = i.octave;

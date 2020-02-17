@@ -1446,8 +1446,9 @@ class Chord {
       this.base = first.base;
       this.intervals = first.intervals;
     } else if (typeof first === "string") {
-      var isPitch = _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].REGEX.exec(first);
-      if (isPitch) this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first);else this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);
+      var _isPitch = _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].REGEX.exec(first);
+
+      if (_isPitch) this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first);else this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);
     } else {
       this.base = first;
     }
@@ -1579,6 +1580,56 @@ class Chord {
     return bases;
   }
 
+  add(first) {
+    if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitch"])(first)) {
+      this.intervals.push(this.base.getInterval(first));
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(first)) {
+      this.intervals.push(this.base.getInterval(first));
+    } else {
+      var d;
+
+      if (this.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]) {
+        if (!(first.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"])) d = this.base.getInterval(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first.base, this.base.octave));else d = this.base.getInterval(first.base);
+      } else {
+        if (first.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]) d = this.base.getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first.base));else d = this.base.getInterval(first.base);
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = first.intervals[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var interval = _step2.value;
+          this.intervals.push(d.clone().add(interval));
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+
+    return this;
+  }
+
+  sub(x) {
+    throw new Error("Method not implemented.");
+  }
+
+  compareTo(x) {
+    throw new Error("Method not implemented.");
+  }
+
   equals(chordIn) {
     return isChord(chordIn) && chordIn.base.equals(this.base) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
   }
@@ -1597,30 +1648,30 @@ class Chord {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee() {
-        var _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, interval;
+        var _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, note;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _iteratorNormalCompletion2 = true;
-                _didIteratorError2 = false;
-                _iteratorError2 = undefined;
+                _iteratorNormalCompletion3 = true;
+                _didIteratorError3 = false;
+                _iteratorError3 = undefined;
                 _context.prev = 3;
-                _iterator2 = _this.intervals[Symbol.iterator]();
+                _iterator3 = _this.notes[Symbol.iterator]();
 
               case 5:
-                if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
                   _context.next = 12;
                   break;
                 }
 
-                interval = _step2.value;
+                note = _step3.value;
                 _context.next = 9;
-                return _this.base.clone().add(interval);
+                return note;
 
               case 9:
-                _iteratorNormalCompletion2 = true;
+                _iteratorNormalCompletion3 = true;
                 _context.next = 5;
                 break;
 
@@ -1631,26 +1682,26 @@ class Chord {
               case 14:
                 _context.prev = 14;
                 _context.t0 = _context["catch"](3);
-                _didIteratorError2 = true;
-                _iteratorError2 = _context.t0;
+                _didIteratorError3 = true;
+                _iteratorError3 = _context.t0;
 
               case 18:
                 _context.prev = 18;
                 _context.prev = 19;
 
-                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                  _iterator2.return();
+                if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                  _iterator3.return();
                 }
 
               case 21:
                 _context.prev = 21;
 
-                if (!_didIteratorError2) {
+                if (!_didIteratorError3) {
                   _context.next = 24;
                   break;
                 }
 
-                throw _iteratorError2;
+                throw _iteratorError3;
 
               case 24:
                 return _context.finish(21);
@@ -1666,6 +1717,38 @@ class Chord {
         }, _callee, null, [[3, 14, 18, 26], [19,, 21, 25]]);
       })()
     );
+  }
+
+  getTendancy(that) {
+    var m = [];
+    var notes = this.notes;
+    var $notes = that.notes;
+
+    for (var i = 0; i < $notes.length; i++) {
+      m[i] = [];
+
+      for (var j = 0; j < notes.length; j++) {
+        m[i][j] = notes[j].getTendancy($notes[i]);
+      }
+    }
+
+    return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
+  }
+
+  getStability(that) {
+    var m = [];
+    var notes = this.notes;
+    var $notes = that.notes;
+
+    for (var i = 0; i < $notes.length; i++) {
+      m[i] = [];
+
+      for (var j = 0; j < notes.length; j++) {
+        m[i][j] = notes[j].getStability($notes[i]);
+      }
+    }
+
+    return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
   }
 
 }
@@ -2077,7 +2160,9 @@ class Interval {
     this.octave = 0;
 
     if (isInterval(first)) {
-      this.constructor(first.degree, first.onset, first.octave);
+      this.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(first.degree - 1, 7) + 1;
+      this.onset = first.onset || 0;
+      this.octave = Math.floor((first.octave - 1) / 7) + (third || 0);
     } else if (typeof first === "string") {
       this.fromString(first);
     } else if (typeof first === "number") {
@@ -2163,7 +2248,7 @@ class Interval {
     };
     i.degree = Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.degree + iIn.degree - 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
-    i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
+    i.octave = this.octave + iIn.octave + Math.floor((this.degree + iIn.degree - 1 - 1) / 7);
     this.degree = i.degree;
     this.onset = i.onset;
     this.octave = i.octave;
@@ -2788,6 +2873,14 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
 
   clone() {
     return new Pitch(this);
+  }
+
+  getTendancy(that) {
+    return super.getTendancy(that);
+  }
+
+  getStability(that) {
+    return super.getStability(that);
   }
 
 }
@@ -4130,6 +4223,7 @@ console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M3").reverse
 console.log(c.notes.toString());
 console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")));
 var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
+var c2 = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("B0"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("D1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
 console.log(c1.getEnumChord());
 var s = _Scale__WEBPACK_IMPORTED_MODULE_4__["EnumScale"].MINOR;
 console.log(s.toString());
@@ -4171,6 +4265,8 @@ console.log(_Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("C").ge
 console.log(_Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"].random(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("2"), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 1), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 2)));
 console.log(new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](0.03, 4).div(2));
 console.log(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C4").getStability(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G3")));
+console.log(c1.getTendancy(c2));
+console.log(c1.add(c2).toString());
 
 /***/ }),
 

@@ -170,9 +170,9 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch> {
     static compare(x: Pitch, y: Pitch) {
         return x.offset - y.offset;
     }
-    getInterval(pitchIn: IPitch) {
-        const that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
-        const degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
+    getInterval(pitchIn: INote) {
+        const that = pitchIn instanceof Pitch ? pitchIn : isPitch(pitchIn) ? new Pitch(pitchIn) : new Pitch(pitchIn, this.octave);
+        const degree = that.enumNote.index - this.enumNote.index + 1 + (that.octave - this.octave) * 7;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;
         return new Interval(degree, onset, octave);

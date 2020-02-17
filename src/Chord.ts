@@ -1,6 +1,6 @@
 import { Interval, isIntervalArray } from "./Interval";
-import { Note, isNoteArray, isNote } from "./Note";
-import { Pitch, isPitchArray } from "./Pitch";
+import { Note, isNoteArray, isNote, INote } from "./Note";
+import { Pitch, isPitchArray, isPitch, IPitch } from "./Pitch";
 import { Enum } from "./Enum";
 import { nearestFraction } from "./Utils";
 import { Frequency } from "./Frequency";
@@ -80,7 +80,7 @@ export const isChordArray = (x: any): x is Chord[] => {
     return Array.isArray(x)
         && x.every(e => e instanceof Chord);
 };
-export class Chord implements Iterable<Note>, IChord {
+export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
     /**
@@ -116,13 +116,10 @@ export class Chord implements Iterable<Note>, IChord {
         } else {
             this.base = first;
         }
-        let isAbsolute = true;
-        if ((arrayIn as (Pitch | Note | Interval | string)[]).find(e => e instanceof Note && !(e instanceof Pitch))) isAbsolute = false;
-        if (!isAbsolute) this.base = new Note(this.base);
         if (isPitchArray(arrayIn)) {
             this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
         } else if (isNoteArray(arrayIn)) {
-            this.intervals = (arrayIn as Note[]).map(note => (this.base as Note).getInterval(note));
+            this.intervals = arrayIn.map(note => this.base.getInterval(note));
         } else if (isIntervalArray(arrayIn)) {
             this.intervals = arrayIn.sort(Interval.compare);
         } else {
@@ -136,8 +133,36 @@ export class Chord implements Iterable<Note>, IChord {
     get notes(): Note[] | Pitch[] {
         return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
     }
+    set notes(notesIn: Note[] | Pitch[]) {
+        if (!notesIn.length) return;
+        const [first, ...arrayIn] = notesIn;
+        this.base = first;
+        if (isPitchArray(arrayIn)) {
+            this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
+        } else if (isNoteArray(arrayIn)) {
+            this.intervals = arrayIn.map(note => this.base.getInterval(note));
+        }
+    }
     get isAbsolute() {
         return this.base instanceof Pitch;
+    }
+    removeDup() {
+        const { intervals } = this;
+        this.intervals = intervals.filter((i0, i) => {
+            const { offset } = i0;
+            if (offset === 0) return false;
+            if (intervals.findIndex(i1 => i1 === i0 || i1.offset === offset) === i) return true;
+            return false;
+        });
+    }
+    reorder() {
+        this.intervals = this.intervals.sort(Interval.compare);
+        if (this.intervals.length && this.intervals[0].offset < 0) {
+            const d = this.intervals[0].reverse();
+            for (let i = 1; i < this.intervals.length; i++) {
+                this.intervals[i].add(d);
+            }
+        }
     }
     contains(noteIn: Note | Pitch) {
         for (const note of this.notes) {
@@ -195,6 +220,58 @@ export class Chord implements Iterable<Note>, IChord {
         }
         return bases;
     }
+    add(chordIn: Chord): Chord;
+    add(noteIn: INote | Note[]): Chord;
+    add(pitchIn: IPitch | Pitch[]): Chord;
+    add(intervalIn: Interval): Chord;
+    add(first: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
+        if (first instanceof Interval) {
+            this.intervals.push(first);
+        } else if (isNote(first)) {
+            this.intervals.push(this.base.getInterval(first));
+        } else if (isNoteArray(first)) {
+            this.intervals.push(...(first as Array<Note | Pitch>).map(p => this.base.getInterval(p)));
+        } else {
+            const d = this.base.getInterval(first.base);
+            for (const interval of first.intervals) {
+                this.intervals.push(d.clone().add(interval));
+            }
+        }
+        this.reorder();
+        return this;
+    }
+    sub(chordIn: Chord): Chord;
+    sub(noteIn: INote | Note[]): Chord;
+    sub(pitchIn: IPitch | Pitch[]): Chord;
+    sub(intervalIn: Interval): Chord;
+    sub(first: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
+        if (first instanceof Interval) {
+            this.intervals = this.intervals.filter((i0, i) => !i0.equals(first));
+        } else if (isNote(first)) {
+            const that = first instanceof Note ? first : isPitch(first) ? new Pitch(first) : new Note(first);
+            const notes = this.notes.filter(n0 => !that.equals(n0));
+            if (!notes.length) return null;
+            this.notes = notes;
+        } else if (isNoteArray(first)) {
+            let { notes } = this;
+            first.forEach((n) => {
+                const that = n instanceof Note ? n : isPitch(n) ? new Pitch(n) : new Note(n);
+                notes = this.notes.filter(n0 => !that.equals(n0));
+            });
+            if (!notes.length) return null;
+            this.notes = notes;
+        } else {
+            this.sub(first.notes);
+        }
+        this.reorder();
+        return this;
+    }
+    compareTo(that: Chord): number {
+        return Chord.compare(this, that);
+    }
+    static compare(x: Chord, y: Chord) {
+        return x.intervals.length - y.intervals.length;
+    }
     equals(chordIn: object) {
         return isChord(chordIn)
             && chordIn.base.equals(this.base)
@@ -209,8 +286,33 @@ export class Chord implements Iterable<Note>, IChord {
     }
 
     * [Symbol.iterator](): Iterator<Note | Pitch> {
-        for (const interval of this.intervals) {
-            yield this.base.clone().add(interval);
+        for (const note of this.notes) {
+            yield note;
         }
+    }
+
+    getTendancy(that: Chord) {
+        const m: number[][] = [];
+        const { notes } = this;
+        const { notes: $notes } = that;
+        for (let i = 0; i < $notes.length; i++) {
+            m[i] = [];
+            for (let j = 0; j < notes.length; j++) {
+                m[i][j] = notes[j].getTendancy($notes[i]);
+            }
+        }
+        return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
+    }
+    getStability(that: Chord) {
+        const m: number[][] = [];
+        const { notes } = this;
+        const { notes: $notes } = that;
+        for (let i = 0; i < $notes.length; i++) {
+            m[i] = [];
+            for (let j = 0; j < notes.length; j++) {
+                m[i][j] = notes[j].getStability($notes[i]);
+            }
+        }
+        return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
     }
 }
