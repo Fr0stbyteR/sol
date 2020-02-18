@@ -16,7 +16,7 @@ export const isPitchArray = (x: any): x is Pitch[] => {
     return Array.isArray(x)
         && x.every(el => el instanceof Pitch);
 };
-export class Pitch extends Note implements IPitch, IComputable<Pitch> {
+export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable<Pitch> {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
     static fromFrequency(f: number) {
         return new Pitch(69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));
@@ -64,23 +64,27 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch> {
      * @memberof Pitch
      */
     constructor(first?: IPitch | EnumNote | INote | string | number, second?: number) {
+        super();
+        this.become(first, second);
+    }
+    become(first?: IPitch | EnumNote | INote | string | number, second?: number) {
         if (isPitch(first)) {
-            super(first);
+            super.become(first);
             this.octave = first.octave;
         } else if (first instanceof EnumNote) {
-            super(first);
+            super.become(first);
             this.octave = second || 0;
         } else if (isNote(first)) {
-            super(first);
+            super.become(first);
             this.octave = second || 0;
         } else if (typeof first === "string") {
-            super();
+            super.become();
             this.fromString(first);
         } else if (typeof first === "number") {
-            super(first);
+            super.become(first);
             this.octave = Math.floor(first / 12 - 1);
         } else {
-            super();
+            super.become();
         }
         return this;
     }

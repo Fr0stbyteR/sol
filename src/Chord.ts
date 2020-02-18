@@ -2,8 +2,7 @@ import { Interval, isIntervalArray } from "./Interval";
 import { Note, isNoteArray, isNote, INote } from "./Note";
 import { Pitch, isPitchArray, isPitch, IPitch } from "./Pitch";
 import { Enum } from "./Enum";
-import { nearestFraction } from "./Utils";
-import { Frequency } from "./Frequency";
+import { nearestFractions } from "./Utils";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
@@ -80,7 +79,7 @@ export const isChordArray = (x: any): x is Chord[] => {
     return Array.isArray(x)
         && x.every(e => e instanceof Chord);
 };
-export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
+export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClonable<Chord> {
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
     /**
@@ -106,6 +105,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
     constructor(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
+        this.become(first, ...arrayIn);
+    }
+    become(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
         if (isChord(first)) {
             this.base = first.base;
             this.intervals = first.intervals;
@@ -145,6 +147,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
     }
     get isAbsolute() {
         return this.base instanceof Pitch;
+    }
+    get ratio() {
+        return nearestFractions([1, ...this.intervals.map(i => i.ratio)]);
     }
     removeDup() {
         const { intervals } = this;
@@ -208,17 +213,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
         return EnumChord.byChord(this);
     }
     getImaginaryBase() {
-        const { notes } = this;
-        const { getRatio, THRES_AUDIT } = Frequency;
-        const bases = [];
-        for (let i = 0; i < notes.length - 1; i++) {
-            for (let j = i + 1; j < notes.length; j++) {
-                const d = notes[j].offset - notes[i].offset;
-                const f = nearestFraction(getRatio(d), THRES_AUDIT);
-                bases.push(notes[i].clone().div(f[0]));
-            }
-        }
-        return bases;
+        return this.base.div(this.ratio[0]);
     }
     add(chordIn: Chord): Chord;
     add(noteIn: INote | Note[]): Chord;
@@ -240,13 +235,16 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
         this.reorder();
         return this;
     }
+    static add(a: Chord, b: Chord) {
+        return a.clone().add(b);
+    }
     sub(chordIn: Chord): Chord;
     sub(noteIn: INote | Note[]): Chord;
     sub(pitchIn: IPitch | Pitch[]): Chord;
     sub(intervalIn: Interval): Chord;
     sub(first: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
         if (first instanceof Interval) {
-            this.intervals = this.intervals.filter((i0, i) => !i0.equals(first));
+            this.intervals = this.intervals.filter(i0 => !i0.equals(first));
         } else if (isNote(first)) {
             const that = first instanceof Note ? first : isPitch(first) ? new Pitch(first) : new Note(first);
             const notes = this.notes.filter(n0 => !that.equals(n0));
@@ -265,6 +263,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord> {
         }
         this.reorder();
         return this;
+    }
+    static sub(a: Chord, b: Chord) {
+        return a.clone().sub(b);
     }
     compareTo(that: Chord): number {
         return Chord.compare(this, that);

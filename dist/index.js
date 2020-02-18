@@ -1284,9 +1284,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Utils */ "./src/Utils.ts");
-/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 var _Symbol$iterator;
 
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
@@ -1442,6 +1448,14 @@ class Chord {
     this.base = null;
     this.intervals = [];
 
+    for (var _len2 = arguments.length, arrayIn = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      arrayIn[_key2 - 1] = arguments[_key2];
+    }
+
+    this.become(first, ...arrayIn);
+  }
+
+  become(first) {
     if (isChord(first)) {
       this.base = first.base;
       this.intervals = first.intervals;
@@ -1453,14 +1467,9 @@ class Chord {
       this.base = first;
     }
 
-    var isAbsolute = true;
-
-    for (var _len2 = arguments.length, arrayIn = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      arrayIn[_key2 - 1] = arguments[_key2];
+    for (var _len3 = arguments.length, arrayIn = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      arrayIn[_key3 - 1] = arguments[_key3];
     }
-
-    if (arrayIn.find(e => e instanceof _Note__WEBPACK_IMPORTED_MODULE_1__["Note"] && !(e instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]))) isAbsolute = false;
-    if (!isAbsolute) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](this.base);
 
     if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitchArray"])(arrayIn)) {
       this.intervals = arrayIn.sort(_Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].compare).map(pitch => this.base.getInterval(pitch));
@@ -1483,8 +1492,50 @@ class Chord {
     return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
   }
 
+  set notes(notesIn) {
+    if (!notesIn.length) return;
+
+    var _notesIn = _toArray(notesIn),
+        first = _notesIn[0],
+        arrayIn = _notesIn.slice(1);
+
+    this.base = first;
+
+    if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitchArray"])(arrayIn)) {
+      this.intervals = arrayIn.sort(_Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].compare).map(pitch => this.base.getInterval(pitch));
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNoteArray"])(arrayIn)) {
+      this.intervals = arrayIn.map(note => this.base.getInterval(note));
+    }
+  }
+
   get isAbsolute() {
     return this.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"];
+  }
+
+  get ratio() {
+    return Object(_Utils__WEBPACK_IMPORTED_MODULE_4__["nearestFractions"])([1, ...this.intervals.map(i => i.ratio)]);
+  }
+
+  removeDup() {
+    var intervals = this.intervals;
+    this.intervals = intervals.filter((i0, i) => {
+      var offset = i0.offset;
+      if (offset === 0) return false;
+      if (intervals.findIndex(i1 => i1 === i0 || i1.offset === offset) === i) return true;
+      return false;
+    });
+  }
+
+  reorder() {
+    this.intervals = this.intervals.sort(_Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"].compare);
+
+    if (this.intervals.length && this.intervals[0].offset < 0) {
+      var d = this.intervals[0].reverse();
+
+      for (var i = 1; i < this.intervals.length; i++) {
+        this.intervals[i].add(d);
+      }
+    }
   }
 
   contains(noteIn) {
@@ -1564,36 +1615,18 @@ class Chord {
   }
 
   getImaginaryBase() {
-    var notes = this.notes;
-    var getRatio = _Frequency__WEBPACK_IMPORTED_MODULE_5__["Frequency"].getRatio,
-        THRES_AUDIT = _Frequency__WEBPACK_IMPORTED_MODULE_5__["Frequency"].THRES_AUDIT;
-    var bases = [];
-
-    for (var i = 0; i < notes.length - 1; i++) {
-      for (var j = i + 1; j < notes.length; j++) {
-        var d = notes[j].offset - notes[i].offset;
-        var f = Object(_Utils__WEBPACK_IMPORTED_MODULE_4__["nearestFraction"])(getRatio(d), THRES_AUDIT);
-        bases.push(notes[i].clone().div(f[0]));
-      }
-    }
-
-    return bases;
+    return this.base.div(this.ratio[0]);
   }
 
   add(first) {
-    if (Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitch"])(first)) {
-      this.intervals.push(this.base.getInterval(first));
+    if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]) {
+      this.intervals.push(first);
     } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(first)) {
       this.intervals.push(this.base.getInterval(first));
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNoteArray"])(first)) {
+      this.intervals.push(...first.map(p => this.base.getInterval(p)));
     } else {
-      var d;
-
-      if (this.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]) {
-        if (!(first.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"])) d = this.base.getInterval(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first.base, this.base.octave));else d = this.base.getInterval(first.base);
-      } else {
-        if (first.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]) d = this.base.getInterval(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first.base));else d = this.base.getInterval(first.base);
-      }
-
+      var d = this.base.getInterval(first.base);
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -1619,15 +1652,48 @@ class Chord {
       }
     }
 
+    this.reorder();
     return this;
   }
 
-  sub(x) {
-    throw new Error("Method not implemented.");
+  static add(a, b) {
+    return a.clone().add(b);
   }
 
-  compareTo(x) {
-    throw new Error("Method not implemented.");
+  sub(first) {
+    if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]) {
+      this.intervals = this.intervals.filter(i0 => !i0.equals(first));
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNote"])(first)) {
+      var that = first instanceof _Note__WEBPACK_IMPORTED_MODULE_1__["Note"] ? first : Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitch"])(first) ? new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first) : new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);
+      var notes = this.notes.filter(n0 => !that.equals(n0));
+      if (!notes.length) return null;
+      this.notes = notes;
+    } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_1__["isNoteArray"])(first)) {
+      var _notes = this.notes;
+      first.forEach(n => {
+        var that = n instanceof _Note__WEBPACK_IMPORTED_MODULE_1__["Note"] ? n : Object(_Pitch__WEBPACK_IMPORTED_MODULE_2__["isPitch"])(n) ? new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](n) : new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](n);
+        _notes = this.notes.filter(n0 => !that.equals(n0));
+      });
+      if (!_notes.length) return null;
+      this.notes = _notes;
+    } else {
+      this.sub(first.notes);
+    }
+
+    this.reorder();
+    return this;
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  compareTo(that) {
+    return Chord.compare(this, that);
+  }
+
+  static compare(x, y) {
+    return x.intervals.length - y.intervals.length;
   }
 
   equals(chordIn) {
@@ -2329,7 +2395,7 @@ class Interval {
   }
 
   get fraction() {
-    return Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["nearestFraction"])(this.ratio, _Frequency__WEBPACK_IMPORTED_MODULE_2__["Frequency"].THRES_AUDIT);
+    return Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["nearestFraction"])(this.ratio);
   }
 
   get property() {
@@ -2517,7 +2583,10 @@ class Note {
     this.alteration = void 0;
     this.enumNote = EnumNote.C;
     this.alteration = 0;
+    this.become(first, second);
+  }
 
+  become(first, second) {
     if (first instanceof EnumNote) {
       this.enumNote = first;
       if (second) this.alteration = second;
@@ -2591,41 +2660,72 @@ class Note {
     return Math.round(Math.log(ratio) / Math.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].SEMITONE));
   }
 
-  add(iIn) {
-    if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+  static offsetToRatio(offset) {
+    return Math.pow(_Frequency__WEBPACK_IMPORTED_MODULE_3__["Frequency"].SEMITONE, offset);
+  }
+
+  add(first) {
+    if (typeof first === "number") return this.fromOffset(this.offset + first);
+    if (first instanceof Note) return this.become(first);
     var i;
-    if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
+    if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
     this.alteration += i.offset - 12 * i.octave - Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(newEnumNote.offset - this.enumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
 
-  sub(iIn) {
-    if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
+  sub(first) {
+    if (typeof first === "number") return this.fromOffset(this.offset - first);
+    if (first instanceof Note) return this.become(first);
     var i;
-    if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = iIn;
+    if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"]) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
     this.alteration += i.offset - 12 * i.octave - Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["floorMod"])(this.enumNote.offset - newEnumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
 
-  mul(fIn) {
-    var d = Note.ratioToOffset(fIn);
-    return this.add(d);
+  static sub(a, b) {
+    return a.clone().sub(b);
   }
 
-  div(fIn) {
-    return this.mul(1 / fIn);
+  mul(fIn) {
+    return this.add(Note.ratioToOffset(fIn));
+  }
+
+  static mul(a, b) {
+    return a.clone().mul(b);
+  }
+
+  div(first) {
+    if (first instanceof Note) return Note.offsetToRatio(this.offset - first.offset);
+    return this.mul(1 / first);
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
   }
 
   equals(noteIn) {
     return isNote(noteIn) && this.enumNote.equals(noteIn.enumNote) && this.alteration === noteIn.alteration;
   }
 
+  compareTo(that) {
+    return Note.compare(this, that);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
+  }
+
   getInterval(noteIn) {
-    var that = noteIn instanceof Note ? noteIn : new Note(noteIn);
+    var that = noteIn instanceof Note && noteIn.constructor === Note ? noteIn : new Note(noteIn);
     var degree = that.enumNote.index - this.enumNote.index + 1;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"].getOffsetFromDegree(degree);
     var octave = 0;
@@ -2715,29 +2815,29 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
    * @memberof Pitch
    */
   constructor(first, second) {
+    super();
+    this.octave = void 0;
+    this.become(first, second);
+  }
+
+  become(first, second) {
     if (isPitch(first)) {
-      super(first);
-      this.octave = void 0;
+      super.become(first);
       this.octave = first.octave;
     } else if (first instanceof _Note__WEBPACK_IMPORTED_MODULE_0__["EnumNote"]) {
-      super(first);
-      this.octave = void 0;
+      super.become(first);
       this.octave = second || 0;
     } else if (Object(_Note__WEBPACK_IMPORTED_MODULE_0__["isNote"])(first)) {
-      super(first);
-      this.octave = void 0;
+      super.become(first);
       this.octave = second || 0;
     } else if (typeof first === "string") {
-      super();
-      this.octave = void 0;
+      super.become();
       this.fromString(first);
     } else if (typeof first === "number") {
-      super(first);
-      this.octave = void 0;
+      super.become(first);
       this.octave = Math.floor(first / 12 - 1);
     } else {
-      super();
-      this.octave = void 0;
+      super.become();
     }
 
     return this;
@@ -2844,8 +2944,8 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__["Note"] {
   }
 
   getInterval(pitchIn) {
-    var that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
-    var degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
+    var that = pitchIn instanceof Pitch ? pitchIn : isPitch(pitchIn) ? new Pitch(pitchIn) : new Pitch(pitchIn, this.octave);
+    var degree = that.enumNote.index - this.enumNote.index + 1 + (that.octave - this.octave) * 7;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"].getOffsetFromDegree(degree);
     var octave = 0;
     return new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](degree, onset, octave);
@@ -3420,7 +3520,7 @@ class Tonality {
 /*!**********************!*\
   !*** ./src/Utils.ts ***!
   \**********************/
-/*! exports provided: precisionFactor, gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction */
+/*! exports provided: precisionFactor, gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction, nearestFractions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3435,6 +3535,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toRoman", function() { return toRoman; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValueFromCurve", function() { return getValueFromCurve; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestFraction", function() { return nearestFraction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestFractions", function() { return nearestFractions; });
+/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
+
 var precisionFactor = function precisionFactor(x) {
   var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   return Math.round(x * e) !== x * e ? precisionFactor(x, e * 10) : e;
@@ -3507,17 +3610,63 @@ var getValueFromCurve = (t0, t1, t, exp) => t0 + (t1 - t0) * Math.pow(t, Math.po
  */
 
 var nearestFraction = function nearestFraction(v) {
-  var approx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 17 / 16;
-  var lastJ = 1;
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  var approx = approxIn;
+  var iApprox = 1 / approx;
 
-  for (var i = 1;; i++) {
-    for (var j = lastJ;; j++) {
-      var d = j / i / v;
-      if (d > approx) break;
-      if (d < approx && d > 1 / approx) return [i, j];
-      lastJ = j;
-    }
+  if (iApprox > approx) {
+    var _ref = [approx, iApprox];
+    iApprox = _ref[0];
+    approx = _ref[1];
   }
+
+  var div = 0;
+  var ref;
+  var factor;
+  var iFactor;
+  var delta;
+
+  do {
+    ref = 1 / ++div;
+    factor = v / ref;
+    iFactor = Math.round(factor);
+    delta = iFactor / factor;
+  } while (approx < delta || delta < iApprox);
+
+  return [div, iFactor];
+};
+var nearestFractions = function nearestFractions(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  if (ratio.length < 2) return ratio;
+  var approx = approxIn;
+  var iApprox = 1 / approx;
+
+  if (iApprox > approx) {
+    var _ref2 = [approx, iApprox];
+    iApprox = _ref2[0];
+    approx = _ref2[1];
+  }
+
+  var div = 0;
+  var ref;
+  var factor = [];
+  var iFactor = [];
+  var delta = [];
+
+  do {
+    ref = ratio[0] / ++div;
+    factor[0] = div;
+    iFactor[0] = div;
+    delta[0] = 1;
+
+    for (var i = 1; i < ratio.length; i++) {
+      factor[i] = ratio[i] / ref;
+      iFactor[i] = Math.round(factor[i]);
+      delta[i] = iFactor[i] / factor[i];
+    }
+  } while (!delta.every(d => iApprox < d && d < approx));
+
+  return iFactor;
 };
 
 /***/ }),
@@ -4260,13 +4409,19 @@ _genre_modifier_HClipper__WEBPACK_IMPORTED_MODULE_11__["HClipper"].use(seg, {
 });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
 console.log(seg.duration.toString());
+console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("P5").fraction.toString());
+console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M3").fraction.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M2").fraction.toString());
-console.log(_Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("C").getImaginaryBase().toString());
+var c3 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].DOM7.toChord("C");
+console.log(c3.ratio);
+console.log(c3.getImaginaryBase().toString());
 console.log(_Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"].random(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("2"), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 1), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 2)));
 console.log(new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](0.03, 4).div(2));
 console.log(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C4").getStability(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G3")));
 console.log(c1.getTendancy(c2));
 console.log(c1.add(c2).toString());
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").mul(2));
+console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").mul(3));
 
 /***/ }),
 

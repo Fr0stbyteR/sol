@@ -60,7 +60,7 @@ export const isNoteArray = (x: any): x is Note[] => {
     return Array.isArray(x)
         && x.every(el => el instanceof Note);
 };
-export class Note implements INote {
+export class Note implements INote, IComputable<Note>, IClonable<Note> {
     static REGEX = /^([b#]*)([a-gA-G])$/;
     enumNote: EnumNote;
     alteration: number;
@@ -101,6 +101,9 @@ export class Note implements INote {
     constructor(first?: EnumNote | INote | string | number, second?: number) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;
+        this.become(first, second);
+    }
+    become(first?: EnumNote | INote | string | number, second?: number) {
         if (first instanceof EnumNote) {
             this.enumNote = first;
             if (second) this.alteration = second;
@@ -152,41 +155,71 @@ export class Note implements INote {
     static ratioToOffset(ratio: number) {
         return Math.round(Math.log(ratio) / Math.log(Frequency.SEMITONE));
     }
+    static offsetToRatio(offset: number) {
+        return Frequency.SEMITONE ** offset;
+    }
     add(semitones: number): Note;
     add(interval: string | Interval): Note;
-    add(iIn: number | string | Interval | Note) {
-        if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+    add(noteIn: Note): Note
+    add(first: number | string | Interval | Note) {
+        if (typeof first === "number") return this.fromOffset(this.offset + first);
+        if (first instanceof Note) return this.become(first);
         let i: Interval;
-        if (typeof iIn === "string") i = new Interval(iIn);
-        else if (iIn instanceof Interval) i = iIn;
+        if (typeof first === "string") i = new Interval(first);
+        else if (first instanceof Interval) i = first;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(newEnumNote.offset - this.enumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
     }
+    static add(a: Note, b: Note) {
+        return a.clone().add(b);
+    }
     sub(semitones: number): Note;
     sub(interval: string | Interval): Note;
-    sub(iIn: number | string | Interval) {
-        if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+    sub(noteIn: Note): Note
+    sub(first: number | string | Interval | Note) {
+        if (typeof first === "number") return this.fromOffset(this.offset - first);
+        if (first instanceof Note) return this.become(first);
         let i: Interval;
-        if (typeof iIn === "string") i = new Interval(iIn);
-        else if (iIn instanceof Interval) i = iIn;
+        if (typeof first === "string") i = new Interval(first);
+        else if (first instanceof Interval) i = first;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
     }
-    mul(fIn: number) {
-        const d = Note.ratioToOffset(fIn);
-        return this.add(d);
+    static sub(a: Note, b: Note) {
+        return a.clone().sub(b);
     }
-    div(fIn: number) {
-        return this.mul(1 / fIn);
+    mul(fIn: number) {
+        return this.add(Note.ratioToOffset(fIn));
+    }
+    static mul(a: Note, b: number) {
+        return a.clone().mul(b);
+    }
+    div(fIn: number): Note;
+    div(noteIn: Note): number;
+    div(first: number | Note) {
+        if (first instanceof Note) return Note.offsetToRatio(this.offset - first.offset);
+        return this.mul(1 / first);
+    }
+    static div(a: Note, b: number): Note;
+    static div(a: Note, b: Note): number;
+    static div(a: Note, b: Note | number) {
+        if (typeof b === "number") return a.clone().div(b);
+        return a.clone().div(b);
     }
     equals(noteIn: object) {
         return isNote(noteIn)
             && this.enumNote.equals(noteIn.enumNote)
             && this.alteration === noteIn.alteration;
+    }
+    compareTo(that: Note): number {
+        return Note.compare(this, that);
+    }
+    static compare(x: Note, y: Note) {
+        return x.offset - y.offset;
     }
     getInterval(noteIn: INote) {
         const that = noteIn instanceof Note && noteIn.constructor === Note ? noteIn : new Note(noteIn);

@@ -60,11 +60,17 @@ seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(
 HClipper.use(seg, { start: new Duration(1, 8), end: new Duration(3, 8), mode: "clip" });
 seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
 console.log(seg.duration.toString());
+console.log(new Interval("P5").fraction.toString());
+console.log(new Interval("M3").fraction.toString());
 console.log(new Interval("M2").fraction.toString());
-console.log(EnumChord.MAJ.toChord("C").getImaginaryBase().toString());
+const c3 = EnumChord.DOM7.toChord("C");
+console.log(c3.ratio);
+console.log(c3.getImaginaryBase().toString());
 
 console.log(Duration.random(new Random("2"), new Duration(1, 4), new Duration(3, 1), new Duration(1, 2)));
 console.log(new Duration(0.03, 4).div(2));
 console.log(new Pitch("C4").getStability(new Pitch("G3")));
 console.log(c1.getTendancy(c2));
 console.log(c1.add(c2).toString());
+console.log(new Note("C").mul(2));
+console.log(new Note("C").mul(3));

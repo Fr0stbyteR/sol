@@ -242,7 +242,7 @@ export class Interval implements IInterval, IComputable<Interval> {
         return Frequency.getRatio(this.offset);
     }
     get fraction() {
-        return nearestFraction(this.ratio, Frequency.THRES_AUDIT);
+        return nearestFraction(this.ratio);
     }
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);

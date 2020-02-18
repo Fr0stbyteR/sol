@@ -1,3 +1,5 @@
+import { Frequency } from "./Frequency";
+
 export const precisionFactor = (x: number, e = 1): number => (Math.round(x * e) !== x * e ? precisionFactor(x, e * 10) : e);
 export const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 export const lcm = (a: number, b: number): number => a * (b / gcd(a, b));
@@ -61,14 +63,43 @@ export const getValueFromCurve = (t0: number, t1: number, t: number, exp: number
  * @param {number} [approx=17 / 16] Approximation ratio (> 1)
  * @returns {[number, number]} fraction tuple
  */
-export const nearestFraction = (v: number, approx: number = 17 / 16): [number, number] => {
-    let lastJ = 1;
-    for (let i = 1; ; i++) {
-        for (let j = lastJ; ; j++) {
-            const d = (j / i) / v;
-            if (d > approx) break;
-            if (d < approx && d > 1 / approx) return [i, j];
-            lastJ = j;
+export const nearestFraction = (v: number, approxIn: number = Frequency.THRES_AUDIT): [number, number] => {
+    let approx = approxIn;
+    let iApprox = 1 / approx;
+    if (iApprox > approx) [iApprox, approx] = [approx, iApprox];
+    let div = 0;
+    let ref: number;
+    let factor: number;
+    let iFactor: number;
+    let delta: number;
+    do {
+        ref = 1 / ++div;
+        factor = v / ref;
+        iFactor = Math.round(factor);
+        delta = iFactor / factor;
+    } while (approx < delta || delta < iApprox);
+    return [div, iFactor];
+};
+export const nearestFractions = (ratio: number[], approxIn: number = Frequency.THRES_AUDIT): number[] => {
+    if (ratio.length < 2) return ratio;
+    let approx = approxIn;
+    let iApprox = 1 / approx;
+    if (iApprox > approx) [iApprox, approx] = [approx, iApprox];
+    let div = 0;
+    let ref: number;
+    const factor: number[] = [];
+    const iFactor: number[] = [];
+    const delta: number[] = [];
+    do {
+        ref = ratio[0] / ++div;
+        factor[0] = div;
+        iFactor[0] = div;
+        delta[0] = 1;
+        for (let i = 1; i < ratio.length; i++) {
+            factor[i] = ratio[i] / ref;
+            iFactor[i] = Math.round(factor[i]);
+            delta[i] = iFactor[i] / factor[i];
         }
-    }
+    } while (!delta.every(d => iApprox < d && d < approx));
+    return iFactor;
 };

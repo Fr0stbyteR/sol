@@ -7,3 +7,7 @@ interface IComputable<T> {
     equals(x: object): boolean;
     compareTo(x: T): number;
 }
+interface IClonable<T> {
+    become(...args: any[]): T;
+    clone(): T;
+}
