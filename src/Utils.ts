@@ -60,7 +60,7 @@ export const getValueFromCurve = (t0: number, t1: number, t: number, exp: number
  * Get a fraction typle from a floating number.
  *
  * @param {number} v Floating number
- * @param {number} [approx=17 / 16] Approximation ratio (> 1)
+ * @param {number} [approx=Frequency.THRES_AUDIT] Approximation ratio (> 1)
  * @returns {[number, number]} fraction tuple
  */
 export const nearestFraction = (v: number, approxIn: number = Frequency.THRES_AUDIT): [number, number] => {

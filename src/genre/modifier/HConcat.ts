@@ -14,11 +14,11 @@ export class HConcatOne extends Modifier {
         });
         s1.duration.add(s2.duration);
         return s1;
-    }
+    };
 }
 
 export class HConcat extends Modifier {
     static use = (s1: null, segments: Segment[]) => {
         return segments.reduce((s1, s2) => HConcatOne.use(s1, s2));
-    }
+    };
 }

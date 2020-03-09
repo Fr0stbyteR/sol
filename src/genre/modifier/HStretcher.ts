@@ -20,5 +20,5 @@ export class HStretcher extends Modifier {
             s.automations.forEach(a => a.points.forEach(p => s.duration.clone().sub(p.offset.mul(-factor))));
         }
         return s;
-    }
+    };
 }

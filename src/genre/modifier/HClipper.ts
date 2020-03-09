@@ -34,7 +34,7 @@ export class HClipperRight extends Modifier {
             if ($oob !== -1) a.points = a.points.slice(0, $oob);
         });
         return s;
-    }
+    };
 }
 export class HClipperLeft extends Modifier {
     static use = (s: Segment, params: IHSidedClipperParams) => {
@@ -71,7 +71,7 @@ export class HClipperLeft extends Modifier {
             a.rewind(start);
         });
         return s;
-    }
+    };
 }
 interface IHClipperParams {
     start: Duration;
@@ -86,5 +86,5 @@ export class HClipper extends Modifier {
         if (end.compareTo(s.duration) !== 0) HClipperRight.use(s, { mode, duration: end });
         if (start.compareTo(new Duration(0, 4)) !== 0) HClipperLeft.use(s, { mode, duration: start });
         return s;
-    }
+    };
 }

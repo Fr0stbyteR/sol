@@ -6,7 +6,7 @@ export interface IInstrument {
     name: string;
     params: Record<string, Param>;
 }
-export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument) => Instrument);
+export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument)=> Instrument);
 export const isInstrument = (x: any): x is Instrument => {
     return x instanceof Instrument
         || (typeof x === "object"

@@ -30,5 +30,5 @@ export class Repeater extends Modifier {
             }
         }
         return HConcat.use(null, concat);
-    }
+    };
 }
