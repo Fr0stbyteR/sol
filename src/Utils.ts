@@ -1,4 +1,5 @@
 import { Frequency } from "./Frequency";
+import { Random } from "./genre/Random";
 
 export const precisionFactor = (x: number, e = 1): number => (Math.round(x * e) !== x * e ? precisionFactor(x, e * 10) : e);
 export const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
@@ -61,27 +62,11 @@ export const getValueFromCurve = (t0: number, t1: number, t: number, exp: number
  *
  * @param {number} v Floating number
  * @param {number} [approx=Frequency.THRES_AUDIT] Approximation ratio (> 1)
- * @returns {[number, number]} fraction tuple
+ * @returns {number[]} fraction tuple
  */
-export const nearestFraction = (v: number, approxIn: number = Frequency.THRES_AUDIT): [number, number] => {
-    let approx = approxIn;
-    let iApprox = 1 / approx;
-    if (iApprox > approx) [iApprox, approx] = [approx, iApprox];
-    let div = 0;
-    let ref: number;
-    let factor: number;
-    let iFactor: number;
-    let delta: number;
-    do {
-        ref = 1 / ++div;
-        factor = v / ref;
-        iFactor = Math.round(factor);
-        delta = iFactor / factor;
-    } while (approx < delta || delta < iApprox);
-    return [div, iFactor];
-};
+export const nearestFraction = (v: number, approxIn: number = Frequency.THRES_AUDIT): number[] => nearestFractions([1, v], approxIn);
 export const nearestFractions = (ratio: number[], approxIn: number = Frequency.THRES_AUDIT): number[] => {
-    if (ratio.length < 2) return ratio;
+    if (ratio.length < 2) return ratio.map(() => 1);
     let approx = approxIn;
     let iApprox = 1 / approx;
     if (iApprox > approx) [iApprox, approx] = [approx, iApprox];
@@ -102,4 +87,79 @@ export const nearestFractions = (ratio: number[], approxIn: number = Frequency.T
         }
     } while (!delta.every(d => iApprox < d && d < approx));
     return iFactor;
+};
+export const nearestReciprocal = (ratio: number, approxIn: number = Frequency.THRES_AUDIT) => nearestReciprocals([ratio, 1], approxIn);
+export const nearestReciprocals = (ratio: number[], approxIn: number = Frequency.THRES_AUDIT): number[] => {
+    if (ratio.length < 2) return ratio.map(() => 1);
+    let approx = approxIn;
+    let iApprox = 1 / approx;
+    if (iApprox > approx) [iApprox, approx] = [approx, iApprox];
+    let mul = 0;
+    let ref: number;
+    const factor: number[] = [];
+    const iFactor: number[] = [];
+    const delta: number[] = [];
+    do {
+        ref = ratio[0] * ++mul;
+        factor[0] = mul;
+        iFactor[0] = mul;
+        delta[0] = 1;
+        for (let i = 1; i < ratio.length; i++) {
+            factor[i] = ref / ratio[i];
+            iFactor[i] = Math.round(factor[i]);
+            delta[i] = iFactor[i] / factor[i];
+        }
+    } while (!delta.every(d => iApprox < d && d < approx));
+    return iFactor;
+};
+// eslint-disable-next-line arrow-parens
+export const permutations = <T = any>(array: T[]): T[][] => {
+    const { length } = array;
+    const result = [array.slice()];
+    const c = new Array(length).fill(0);
+    let i = 1;
+    let k: number;
+    let p: T;
+    while (i < length) {
+        if (c[i] < i) {
+            k = i % 2 && c[i];
+            const permutation = array.slice();
+            p = permutation[i];
+            permutation[i] = permutation[k];
+            permutation[k] = p;
+            c[i]++;
+            i = 1;
+            result.push(permutation);
+        } else {
+            c[i] = 0;
+            i++;
+        }
+    }
+    return result;
+};
+// eslint-disable-next-line arrow-parens
+export const permute = <T = any>(array: T[], random?: Random): T[] => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = random ? random.randint(0, i + 1) : ~~(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+};
+
+// eslint-disable-next-line arrow-parens
+export const combinations = <T = any>(array: T[]): T[][] => {
+    const { length } = array;
+    const helper = ($: number, current: T[], result: T[][]) => {
+        for (let i = $; i < length; i++) {
+            const next = current.slice().concat(array[i]);
+            result.push(next);
+            if ($ < length - 1) helper(i + 1, next, result);
+        }
+        return result;
+    };
+    return helper(0, [], []);
+};
+// eslint-disable-next-line arrow-parens
+export const randomCombination = <T = any>(array: T[], random?: Random): T[] => {
+    return array.filter(() => (random ? !!random.randint(0, 1) : Math.random() < 0.5));
 };

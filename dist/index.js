@@ -1460,9 +1460,9 @@ class Chord {
       this.base = first.base;
       this.intervals = first.intervals;
     } else if (typeof first === "string") {
-      var _isPitch = _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"].REGEX.exec(first);
+      var _isNote = _Note__WEBPACK_IMPORTED_MODULE_1__["Note"].REGEX.exec(first);
 
-      if (_isPitch) this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first);else this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);
+      if (_isNote) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"](first);else this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"](first);
     } else {
       this.base = first;
     }
@@ -1514,6 +1514,10 @@ class Chord {
 
   get ratio() {
     return Object(_Utils__WEBPACK_IMPORTED_MODULE_4__["nearestFractions"])([1, ...this.intervals.map(i => i.ratio)]);
+  }
+
+  get reciprocal() {
+    return Object(_Utils__WEBPACK_IMPORTED_MODULE_4__["nearestReciprocals"])([1, ...this.intervals.map(i => i.ratio)]);
   }
 
   removeDup() {
@@ -1610,12 +1614,16 @@ class Chord {
     return this;
   }
 
-  getEnumChord() {
+  get enumChord() {
     return EnumChord.byChord(this);
   }
 
-  getImaginaryBase() {
+  get imaginaryBase() {
     return this.base.div(this.ratio[0]);
+  }
+
+  get imaginaryVertex() {
+    return this.base.mul(this.reciprocal[0]);
   }
 
   add(first) {
@@ -1711,9 +1719,7 @@ class Chord {
   [_Symbol$iterator]() {
     var _this = this;
 
-    return (
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+    return (/*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, note;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -2398,6 +2404,10 @@ class Interval {
     return Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["nearestFraction"])(this.ratio);
   }
 
+  get reciprocal() {
+    return Object(_Utils__WEBPACK_IMPORTED_MODULE_0__["nearestReciprocal"])(this.ratio);
+  }
+
   get property() {
     return Interval.getPropertyFromOffset(this.onset, this.degree);
   }
@@ -2763,10 +2773,12 @@ class Note {
   }
 
   getStability(that) {
-    var _this$getInterval$fra = _slicedToArray(this.getInterval(that).fraction, 2),
-        d = _this$getInterval$fra[1];
+    var d = this.getDistance(that);
 
-    return 1 / d;
+    var _fraction = _slicedToArray(new _Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"](_Interval__WEBPACK_IMPORTED_MODULE_1__["Interval"].fromOffset(d)).fraction, 2),
+        f = _fraction[1];
+
+    return 1 / f;
   }
 
 }
@@ -3179,9 +3191,7 @@ class Scale {
   [_Symbol$iterator]() {
     var _this = this;
 
-    return (
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+    return (/*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, interval;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -3478,9 +3488,7 @@ class Tonality {
   [_Symbol$iterator]() {
     var _this = this;
 
-    return (
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+    return (/*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var i;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -3520,7 +3528,7 @@ class Tonality {
 /*!**********************!*\
   !*** ./src/Utils.ts ***!
   \**********************/
-/*! exports provided: precisionFactor, gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction, nearestFractions */
+/*! exports provided: precisionFactor, gcd, lcm, floorMod, isStringArray, isNumberArray, parseRoman, toRoman, getValueFromCurve, nearestFraction, nearestFractions, nearestReciprocal, nearestReciprocals, permutations, permute, combinations, randomCombination */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3536,6 +3544,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValueFromCurve", function() { return getValueFromCurve; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestFraction", function() { return nearestFraction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestFractions", function() { return nearestFractions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestReciprocal", function() { return nearestReciprocal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nearestReciprocals", function() { return nearestReciprocals; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "permutations", function() { return permutations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "permute", function() { return permute; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "combinations", function() { return combinations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "randomCombination", function() { return randomCombination; });
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 
 var precisionFactor = function precisionFactor(x) {
@@ -3605,12 +3619,17 @@ var getValueFromCurve = (t0, t1, t, exp) => t0 + (t1 - t0) * Math.pow(t, Math.po
  * Get a fraction typle from a floating number.
  *
  * @param {number} v Floating number
- * @param {number} [approx=17 / 16] Approximation ratio (> 1)
- * @returns {[number, number]} fraction tuple
+ * @param {number} [approx=Frequency.THRES_AUDIT] Approximation ratio (> 1)
+ * @returns {number[]} fraction tuple
  */
 
 var nearestFraction = function nearestFraction(v) {
   var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  return nearestFractions([1, v], approxIn);
+};
+var nearestFractions = function nearestFractions(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  if (ratio.length < 2) return ratio.map(() => 1);
   var approx = approxIn;
   var iApprox = 1 / approx;
 
@@ -3618,33 +3637,6 @@ var nearestFraction = function nearestFraction(v) {
     var _ref = [approx, iApprox];
     iApprox = _ref[0];
     approx = _ref[1];
-  }
-
-  var div = 0;
-  var ref;
-  var factor;
-  var iFactor;
-  var delta;
-
-  do {
-    ref = 1 / ++div;
-    factor = v / ref;
-    iFactor = Math.round(factor);
-    delta = iFactor / factor;
-  } while (approx < delta || delta < iApprox);
-
-  return [div, iFactor];
-};
-var nearestFractions = function nearestFractions(ratio) {
-  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
-  if (ratio.length < 2) return ratio;
-  var approx = approxIn;
-  var iApprox = 1 / approx;
-
-  if (iApprox > approx) {
-    var _ref2 = [approx, iApprox];
-    iApprox = _ref2[0];
-    approx = _ref2[1];
   }
 
   var div = 0;
@@ -3667,6 +3659,101 @@ var nearestFractions = function nearestFractions(ratio) {
   } while (!delta.every(d => iApprox < d && d < approx));
 
   return iFactor;
+};
+var nearestReciprocal = function nearestReciprocal(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  return nearestReciprocals([ratio, 1], approxIn);
+};
+var nearestReciprocals = function nearestReciprocals(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__["Frequency"].THRES_AUDIT;
+  if (ratio.length < 2) return ratio.map(() => 1);
+  var approx = approxIn;
+  var iApprox = 1 / approx;
+
+  if (iApprox > approx) {
+    var _ref2 = [approx, iApprox];
+    iApprox = _ref2[0];
+    approx = _ref2[1];
+  }
+
+  var mul = 0;
+  var ref;
+  var factor = [];
+  var iFactor = [];
+  var delta = [];
+
+  do {
+    ref = ratio[0] * ++mul;
+    factor[0] = mul;
+    iFactor[0] = mul;
+    delta[0] = 1;
+
+    for (var i = 1; i < ratio.length; i++) {
+      factor[i] = ref / ratio[i];
+      iFactor[i] = Math.round(factor[i]);
+      delta[i] = iFactor[i] / factor[i];
+    }
+  } while (!delta.every(d => iApprox < d && d < approx));
+
+  return iFactor;
+}; // eslint-disable-next-line arrow-parens
+
+var permutations = array => {
+  var length = array.length;
+  var result = [array.slice()];
+  var c = new Array(length).fill(0);
+  var i = 1;
+  var k;
+  var p;
+
+  while (i < length) {
+    if (c[i] < i) {
+      k = i % 2 && c[i];
+      var permutation = array.slice();
+      p = permutation[i];
+      permutation[i] = permutation[k];
+      permutation[k] = p;
+      c[i]++;
+      i = 1;
+      result.push(permutation);
+    } else {
+      c[i] = 0;
+      i++;
+    }
+  }
+
+  return result;
+}; // eslint-disable-next-line arrow-parens
+
+var permute = (array, random) => {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = random ? random.randint(0, i + 1) : ~~(Math.random() * (i + 1));
+    var _ref3 = [array[j], array[i]];
+    array[i] = _ref3[0];
+    array[j] = _ref3[1];
+  }
+
+  return array;
+}; // eslint-disable-next-line arrow-parens
+
+var combinations = array => {
+  var length = array.length;
+
+  var helper = ($, current, result) => {
+    for (var i = $; i < length; i++) {
+      var next = current.slice().concat(array[i]);
+      result.push(next);
+      if ($ < length - 1) helper(i + 1, next, result);
+    }
+
+    return result;
+  };
+
+  return helper(0, [], []);
+}; // eslint-disable-next-line arrow-parens
+
+var randomCombination = (array, random) => {
+  return array.filter(() => random ? !!random.randint(0, 1) : Math.random() < 0.5);
 };
 
 /***/ }),
@@ -4035,9 +4122,7 @@ class ChordProgression {
   [_Symbol$iterator]() {
     var _this = this;
 
-    return (
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+    return (/*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, chord;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -4373,7 +4458,7 @@ console.log(c.notes.toString());
 console.log(c.contains(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("#C1")));
 var c1 = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("E1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
 var c2 = new _Chord__WEBPACK_IMPORTED_MODULE_3__["Chord"](new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("B0"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("D1"), new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G1"));
-console.log(c1.getEnumChord());
+console.log(c1.enumChord);
 var s = _Scale__WEBPACK_IMPORTED_MODULE_4__["EnumScale"].MINOR;
 console.log(s.toString());
 console.log(new _Tonality__WEBPACK_IMPORTED_MODULE_5__["Tonality"]("C").toRelative().toString());
@@ -4412,9 +4497,12 @@ console.log(seg.duration.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("P5").fraction.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M3").fraction.toString());
 console.log(new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("M2").fraction.toString());
-var c3 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].DOM7.toChord("C");
-console.log(c3.ratio);
-console.log(c3.getImaginaryBase().toString());
+var C3 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].DOM7.toChord("C");
+console.log(C3.reciprocal);
+console.log(C3.imaginaryVertex.toString());
+var c3 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MIN.toChord("C");
+console.log(c3.reciprocal);
+console.log(c3.imaginaryVertex.toString());
 console.log(_Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"].random(new _genre_Random__WEBPACK_IMPORTED_MODULE_7__["Random"]("2"), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 4), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](3, 1), new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](1, 2)));
 console.log(new _Duration__WEBPACK_IMPORTED_MODULE_9__["Duration"](0.03, 4).div(2));
 console.log(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("C4").getStability(new _Pitch__WEBPACK_IMPORTED_MODULE_2__["Pitch"]("G3")));
@@ -4422,6 +4510,14 @@ console.log(c1.getTendancy(c2));
 console.log(c1.add(c2).toString());
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").mul(2));
 console.log(new _Note__WEBPACK_IMPORTED_MODULE_1__["Note"]("C").mul(3));
+var c5 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("C");
+var c4 = _Chord__WEBPACK_IMPORTED_MODULE_3__["EnumChord"].MAJ.toChord("G");
+var ii = new _Interval__WEBPACK_IMPORTED_MODULE_0__["Interval"]("P5");
+
+for (var i = 0; i < 12; i++) {
+  console.log(c4.toString() + ": " + c5.getStability(c4));
+  c4.base.add(ii);
+}
 
 /***/ }),
 

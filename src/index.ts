@@ -40,7 +40,7 @@ console.log(c.notes.toString());
 console.log(c.contains(new Pitch("#C1")));
 const c1 = new Chord(new Pitch("C1"), new Pitch("E1"), new Pitch("G1"));
 const c2 = new Chord(new Pitch("B0"), new Pitch("D1"), new Pitch("G1"));
-console.log(c1.getEnumChord());
+console.log(c1.enumChord);
 
 const s = EnumScale.MINOR;
 console.log(s.toString());
@@ -63,9 +63,12 @@ console.log(seg.duration.toString());
 console.log(new Interval("P5").fraction.toString());
 console.log(new Interval("M3").fraction.toString());
 console.log(new Interval("M2").fraction.toString());
-const c3 = EnumChord.DOM7.toChord("C");
-console.log(c3.ratio);
-console.log(c3.getImaginaryBase().toString());
+const C3 = EnumChord.DOM7.toChord("C");
+console.log(C3.ratio);
+console.log(C3.imaginaryBase.toString());
+const c3 = EnumChord.MIN.toChord("C");
+console.log(c3.reciprocal);
+console.log(c3.imaginaryVertex.toString());
 
 console.log(Duration.random(new Random("2"), new Duration(1, 4), new Duration(3, 1), new Duration(1, 2)));
 console.log(new Duration(0.03, 4).div(2));
@@ -74,3 +77,11 @@ console.log(c1.getTendancy(c2));
 console.log(c1.add(c2).toString());
 console.log(new Note("C").mul(2));
 console.log(new Note("C").mul(3));
+
+const c5 = EnumChord.MAJ.toChord("C");
+const c4 = EnumChord.MAJ.toChord("G");
+const ii = new Interval("P5");
+for (let i = 0; i < 12; i++) {
+    console.log(c4.toString() + ": " + c5.getStability(c4));
+    c4.base.add(ii);
+}

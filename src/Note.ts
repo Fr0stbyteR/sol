@@ -250,7 +250,8 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         return d === 0 || d > 2 ? 0 : 1 / d;
     }
     getStability(that: Note) {
-        const [, d] = this.getInterval(that).fraction;
-        return 1 / d;
+        const d = this.getDistance(that);
+        const [, f] = new Interval(Interval.fromOffset(d)).fraction;
+        return 1 / f;
     }
 }

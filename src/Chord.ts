@@ -2,7 +2,7 @@ import { Interval, isIntervalArray } from "./Interval";
 import { Note, isNoteArray, isNote, INote } from "./Note";
 import { Pitch, isPitchArray, isPitch, IPitch } from "./Pitch";
 import { Enum } from "./Enum";
-import { nearestFractions } from "./Utils";
+import { nearestFractions, nearestReciprocals } from "./Utils";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
@@ -112,9 +112,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
             this.base = first.base;
             this.intervals = first.intervals;
         } else if (typeof first === "string") {
-            const isPitch = Pitch.REGEX.exec(first);
-            if (isPitch) this.base = new Pitch(first);
-            else this.base = new Note(first);
+            const isNote = Note.REGEX.exec(first);
+            if (isNote) this.base = new Note(first);
+            else this.base = new Pitch(first);
         } else {
             this.base = first;
         }
@@ -150,6 +150,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     }
     get ratio() {
         return nearestFractions([1, ...this.intervals.map(i => i.ratio)]);
+    }
+    get reciprocal() {
+        return nearestReciprocals([1, ...this.intervals.map(i => i.ratio)]);
     }
     removeDup() {
         const { intervals } = this;
@@ -209,11 +212,14 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         }
         return this;
     }
-    getEnumChord() {
+    get enumChord() {
         return EnumChord.byChord(this);
     }
-    getImaginaryBase() {
+    get imaginaryBase() {
         return this.base.div(this.ratio[0]);
+    }
+    get imaginaryVertex() {
+        return this.base.mul(this.reciprocal[0]);
     }
     add(chordIn: Chord): Chord;
     add(noteIn: INote | Note[]): Chord;

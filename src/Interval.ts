@@ -1,4 +1,4 @@
-import { floorMod, nearestFraction } from "./Utils";
+import { floorMod, nearestFraction, nearestReciprocal } from "./Utils";
 import { Enum } from "./Enum";
 import { Frequency } from "./Frequency";
 
@@ -243,6 +243,9 @@ export class Interval implements IInterval, IComputable<Interval> {
     }
     get fraction() {
         return nearestFraction(this.ratio);
+    }
+    get reciprocal() {
+        return nearestReciprocal(this.ratio);
     }
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);
