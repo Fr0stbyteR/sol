@@ -12,6 +12,7 @@ import TimeCode from "./TimeCode";
 import TonalChord from "./TonalChord";
 import Tonality from "./Tonality";
 import Velocity from "./Velocity";
+import Random from "./genre/Random";
 
 export * as Articulation from "./Articulation";
 export * as Chord from "./Chord";
@@ -42,7 +43,8 @@ export default {
     TimeCode,
     TonalChord,
     Tonality,
-    Velocity
+    Velocity,
+    Random
 };
 /* eslint-disable no-console */
 /*
@@ -84,8 +86,8 @@ console.log(new Tonality("C").toNext().toString());
 
 console.log(EnumChordProgression.EPIC1.toString());
 
-console.log(new Random("1").randint(0, 100));
-
+*/
+/*
 const tn1 = new TrackNote({ pitch: new Pitch("C1"), duration: new Duration(1, 4), offset: new Duration(0, 4) });
 const tn2 = new TrackNote({ pitch: new Pitch("D1"), duration: new Duration(1, 4), offset: new Duration(1, 4) });
 const tn3 = new TrackNote({ pitch: new Pitch("E1"), duration: new Duration(1, 4), offset: new Duration(2, 4) });

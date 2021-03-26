@@ -15,6 +15,7 @@ const config = {
       type: "umd"
     }
   },
+  target: "node",
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,
@@ -25,10 +26,30 @@ const config = {
   }
 };
 
-const esmConfig = config;
-esmConfig.output.path = path.resolve(__dirname, "dist", "esm");
-esmConfig.output.library = { type: "module" };
-esmConfig.experiments = { outputModule: true };
+/** @type {import("webpack").Configuration} */
+const esmConfig = {
+  entry: "./src/index.ts",
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"]
+  },
+  output: {
+    path: path.resolve(__dirname, "dist", "esm"),
+    chunkFilename: "js/[chunkhash].js",
+    filename: "index.js",
+    library: {
+      type: "module"
+    }
+  },
+  module: {
+    rules: [{
+        test: /\.(ts|js)x?$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
+      }
+    ]
+  },
+  experiments: { outputModule: true }
+};
 
 module.exports = (env, argv) => {
   if (argv.mode === "development") {
