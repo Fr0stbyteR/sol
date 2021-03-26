@@ -1,5 +1,5 @@
-import { Modifier } from "./Modifier";
-import { Segment } from "../../track/Segment";
+import Modifier from "./Modifier";
+import Segment from "../../track/Segment";
 
 export class HStretcher extends Modifier {
     static use = (s: Segment, factor: number) => {
@@ -22,3 +22,5 @@ export class HStretcher extends Modifier {
         return s;
     };
 }
+
+export default HStretcher;

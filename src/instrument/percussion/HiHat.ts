@@ -1,5 +1,5 @@
-import { Instrument } from "../Instrument";
-import { Pitch } from "../../Pitch";
+import Instrument from "../Instrument";
+import Pitch from "../../Pitch";
 import { PERCUSSION, UNPITCHED, HAS_RANGE, HAT } from "../EnumInstrumentTag";
 
 export class HiHat extends Instrument {
@@ -8,3 +8,5 @@ export class HiHat extends Instrument {
     static MAX_PITCH = Pitch.fromFrequency(3000);
     static TAGS = [HAT, PERCUSSION, UNPITCHED, HAS_RANGE];
 }
+
+export default HiHat;

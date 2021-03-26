@@ -1,6 +1,6 @@
-import { Modifier } from "./Modifier";
-import { Segment } from "../../track/Segment";
-import { Duration } from "../../Duration";
+import Modifier from "./Modifier";
+import Segment from "../../track/Segment";
+import Duration from "../../Duration";
 
 interface IHSidedClipperParams {
     duration: Duration;
@@ -88,3 +88,5 @@ export class HClipper extends Modifier {
         return s;
     };
 }
+
+export default HClipper;

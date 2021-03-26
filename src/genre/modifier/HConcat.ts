@@ -1,5 +1,5 @@
-import { Modifier } from "./Modifier";
-import { Segment } from "../../track/Segment";
+import Modifier from "./Modifier";
+import Segment from "../../track/Segment";
 
 export class HConcatOne extends Modifier {
     static use = (s1: Segment, sIn2: Segment) => {
@@ -22,3 +22,5 @@ export class HConcat extends Modifier {
         return segments.reduce((s1, s2) => HConcatOne.use(s1, s2));
     };
 }
+
+export default HConcat;

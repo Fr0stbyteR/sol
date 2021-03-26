@@ -1,5 +1,5 @@
-import { Instrument } from "../Instrument";
-import { Pitch } from "../../Pitch";
+import Instrument from "../Instrument";
+import Pitch from "../../Pitch";
 import { KICK, DRUM, PERCUSSION, UNPITCHED, HAS_RANGE } from "../EnumInstrumentTag";
 
 export class BassDrum extends Instrument {
@@ -8,3 +8,5 @@ export class BassDrum extends Instrument {
     static MAX_PITCH = Pitch.fromFrequency(100);
     static TAGS = [KICK, DRUM, PERCUSSION, UNPITCHED, HAS_RANGE];
 }
+
+export default BassDrum;

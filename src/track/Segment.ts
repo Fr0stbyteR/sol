@@ -1,8 +1,8 @@
 import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
-import { TrackNote, isTrackNoteArray } from "./TrackNote";
-import { Automation, isAutomationArray } from "../effect/Automation";
-import { Duration, isDuration } from "../Duration";
-import { Pitch } from "../Pitch";
+import TrackNote, { isTrackNoteArray } from "./TrackNote";
+import Automation, { isAutomationArray } from "../effect/Automation";
+import Duration, { isDuration } from "../Duration";
+import Pitch from "../Pitch";
 
 export interface ISegment {
     instrument?: TConcreteInstrument;

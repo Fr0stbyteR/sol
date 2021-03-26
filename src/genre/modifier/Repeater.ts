@@ -1,9 +1,9 @@
-import { Modifier } from "./Modifier";
-import { Segment } from "../../track/Segment";
-import { HConcat } from "./HConcat";
-import { HStretcher } from "./HStretcher";
+import Modifier from "./Modifier";
+import Segment from "../../track/Segment";
+import HConcat from "./HConcat";
+import HStretcher from "./HStretcher";
 import { HClipperRight, HClipperLeft } from "./HClipper";
-import { Duration } from "../../Duration";
+import Duration from "../../Duration";
 
 export class Repeater extends Modifier {
     static use = (s: Segment, times: number) => {
@@ -32,3 +32,5 @@ export class Repeater extends Modifier {
         return HConcat.use(null, concat);
     };
 }
+
+export default Repeater;

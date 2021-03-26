@@ -1,5 +1,5 @@
-import { Instrument } from "../Instrument";
-import { Pitch } from "../../Pitch";
+import Instrument from "../Instrument";
+import Pitch from "../../Pitch";
 import { PERCUSSION, HAS_RANGE, TOM, PITCHED, DRUM } from "../EnumInstrumentTag";
 
 export class Tom extends Instrument {
@@ -8,3 +8,5 @@ export class Tom extends Instrument {
     static MAX_PITCH = Pitch.fromFrequency(300);
     static TAGS = [TOM, DRUM, PERCUSSION, PITCHED, HAS_RANGE];
 }
+
+export default Tom;

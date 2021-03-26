@@ -1,5 +1,7 @@
-import { Tom } from "./Tom";
+import Tom from "./Tom";
 
 export class MidHiTom extends Tom {
     static NAME = "MidHiTom";
 }
+
+export default MidHiTom;

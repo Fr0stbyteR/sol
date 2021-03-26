@@ -1,9 +1,9 @@
-import { Generator } from "./Generator";
-import { Random } from "../Random";
-import { Duration } from "../../Duration";
-import { Segment } from "../../track/Segment";
-import { TrackNote } from "../../track/TrackNote";
-import { Automation } from "../../effect/Automation";
+import Generator from "./Generator";
+import Random from "../Random";
+import Duration from "../../Duration";
+import Segment from "../../track/Segment";
+import TrackNote from "../../track/TrackNote";
+import Automation from "../../effect/Automation";
 
 export interface IRhythmGeneratorAParams {
     durationRange: [Duration, Duration];
@@ -124,3 +124,5 @@ export class RhythmGeneratorA extends Generator {
         }
     };
 }
+
+export default RhythmGeneratorA;

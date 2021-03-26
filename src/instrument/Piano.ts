@@ -1,5 +1,5 @@
-import { Instrument } from "./Instrument";
-import { Pitch } from "../Pitch";
+import Instrument from "./Instrument";
+import Pitch from "../Pitch";
 import { PITCHED, KEYBOARD, HAS_RANGE, ACOUSTIC } from "./EnumInstrumentTag";
 
 export class Piano extends Instrument {
@@ -8,3 +8,5 @@ export class Piano extends Instrument {
     static MAX_PITCH = new Pitch("C9");
     static TAGS = [PITCHED, KEYBOARD, HAS_RANGE, ACOUSTIC];
 }
+
+export default Piano;

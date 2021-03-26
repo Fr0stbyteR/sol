@@ -1,5 +1,5 @@
-import { Instrument } from "./Instrument";
-import { Pitch } from "../Pitch";
+import Instrument from "./Instrument";
+import Pitch from "../Pitch";
 import { PITCHED, STRING, PLUCKED, HAS_RANGE, ACOUSTIC } from "./EnumInstrumentTag";
 
 export class Yangqin extends Instrument {
@@ -8,3 +8,5 @@ export class Yangqin extends Instrument {
     static MAX_PITCH = new Pitch("e7");
     static TAGS = [PITCHED, STRING, PLUCKED, HAS_RANGE, ACOUSTIC];
 }
+
+export default Yangqin;

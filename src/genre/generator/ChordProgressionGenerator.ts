@@ -1,6 +1,6 @@
-import { Generator } from "./Generator";
-import { Random } from "../Random";
-import { Chord } from "../../Chord";
+import Generator from "./Generator";
+import Random from "../Random";
+import Chord from "../../Chord";
 
 export interface IChordProgressionGeneratorParams {
     stability: number;

@@ -1,13 +1,13 @@
-import { Scale } from "../../Scale";
-import { TimeCode } from "../../TimeCode";
-import { Segment } from "../../track/Segment";
-import { Pitch } from "../../Pitch";
-import { Duration } from "../../Duration";
-import { Interval } from "../../Interval";
-import { TrackChord } from "../../track/TrackChord";
-import { TrackNote } from "../../track/TrackNote";
-import { Random } from "../Random";
-import { Chord } from "../../Chord";
+import Scale from "../../Scale";
+import TimeCode from "../../TimeCode";
+import Segment from "../../track/Segment";
+import Pitch from "../../Pitch";
+import Duration from "../../Duration";
+import Interval from "../../Interval";
+import TrackChord from "../../track/TrackChord";
+import TrackNote from "../../track/TrackNote";
+import Random from "../Random";
+import Chord from "../../Chord";
 
 export interface IGeneratorParams {
     durationRange: [Duration, Duration];
@@ -28,3 +28,5 @@ export interface IGeneratorParams {
 export abstract class Generator {
     static use: (randomIn: Random, params?: Partial<IGeneratorParams>) => Segment;
 }
+
+export default Generator;
