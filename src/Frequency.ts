@@ -3,3 +3,5 @@ export class Frequency {
     static SEMITONE = 2 ** (1 / 12);
     static THRES_AUDIT = 2 ** (1 / 36);
 }
+
+export default Frequency;

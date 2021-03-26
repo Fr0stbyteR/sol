@@ -1,18 +1,20 @@
-const path = require('path');
+const path = require("path");
 
+/** @type {import("webpack").Configuration} */
 const config = {
-  entry: './src/index.ts',
+  entry: "./src/index.ts",
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: [".tsx", ".ts", ".js"]
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    chunkFilename: 'js/[chunkhash].js',
+    path: path.resolve(__dirname, "dist"),
+    chunkFilename: "js/[chunkhash].js",
+    filename: "index.js",
+    library: {
+      name: "Sol",
+      type: "umd"
+    }
   },
-  node: {
-    fs: 'empty'
-  },
-  target: 'node',
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,
@@ -20,17 +22,22 @@ const config = {
         exclude: /node_modules/,
       }
     ]
-  },
-  plugins: [
-  ]
+  }
 };
+
+const esmConfig = config;
+esmConfig.output.path = path.resolve(__dirname, "dist", "esm");
+esmConfig.output.library = { type: "module" };
+esmConfig.experiments = { outputModule: true };
+
 module.exports = (env, argv) => {
-  if (argv.mode === 'development') {
-    config.devtool = 'source-map';
-    config.output.filename = 'index.js';
+  if (argv.mode === "development") {
+    config.devtool = "source-map";
+    esmConfig.devtool = "source-map";
   }
-  if (argv.mode === 'production') {
-    config.output.filename = 'index.min.js';
+  if (argv.mode === "production") {
+    config.output.filename = "index.min.js";
+    esmConfig.output.filename = "index.min.js";
   }
-  return config;
+  return [config, esmConfig];
 };

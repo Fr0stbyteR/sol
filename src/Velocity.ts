@@ -30,7 +30,6 @@ export class Velocity implements IVelocity {
     constructor(velocityIn: number | IVelocity) {
         if (typeof velocityIn === "number") this.velocity = velocityIn;
         else this.velocity = velocityIn.velocity;
-        return this;
     }
     normalize() {
         return this.velocity / 128;
@@ -39,3 +38,5 @@ export class Velocity implements IVelocity {
         return new Velocity(this);
     }
 }
+
+export default Velocity;

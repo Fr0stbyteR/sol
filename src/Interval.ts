@@ -1,6 +1,6 @@
-import { floorMod } from "./Utils";
-import { Enum } from "./Enum";
-import { Frequency } from "./Frequency";
+import { floorMod } from "./utils";
+import Enum from "./Enum";
+import Frequency from "./Frequency";
 
 export interface IInterval {
     degree: number;
@@ -39,7 +39,6 @@ class EnumIntervalProperty extends Enum {
     private constructor(abbIn: TIntervalProperty) {
         super();
         this.abb = abbIn;
-        return this;
     }
     name() {
         return EnumIntervalProperty.abbMap[this.abb];
@@ -91,13 +90,10 @@ export class Interval implements IInterval {
     }
     /**
      * Returns Unison
-     * @memberof Interval
      */
     constructor();
     /**
      * Gives a new Interval instance (clone)
-     * @param {(IInterval)} intervalIn
-     * @memberof Interval
      */
     constructor(intervalIn: IInterval);
     /**
@@ -105,16 +101,10 @@ export class Interval implements IInterval {
      * @example
      * new Interval("d6");
      * @throws {SyntaxError} when parse failed
-     * @param {string} intervalIn
-     * @memberof Interval
      */
     constructor(intervalIn: string);
     /**
      * Creates an instance of Interval.
-     * @param {number} degreeIn
-     * @param {number} [onset]
-     * @param {number} [octave]
-     * @memberof Interval
      */
     constructor(degreeIn: number, onset?: number, octave?: number);
     constructor(first?: IInterval | string | number, second?: number, third?: number) {
@@ -122,15 +112,17 @@ export class Interval implements IInterval {
         this.onset = 0;
         this.octave = 0;
         if (isInterval(first)) {
-            this.constructor(first.degree, first.onset, first.octave);
+            this.fromInterval(first.degree, first.onset, first.octave);
         } else if (typeof first === "string") {
             this.fromString(first);
         } else if (typeof first === "number") {
-            this.degree = floorMod(first - 1, 7) + 1;
-            this.onset = second || 0;
-            this.octave = Math.floor((first - 1) / 7) + (third || 0);
+            this.fromInterval(first, second, third);
         }
-        return this;
+    }
+    protected fromInterval(degreeIn: number, onsetIn = 0, octaveIn = 0) {
+        this.degree = floorMod(degreeIn - 1, 7) + 1;
+        this.onset = onsetIn;
+        this.octave = Math.floor((degreeIn - 1) / 7) + octaveIn;
     }
     static fromString(nameIn: string): IInterval {
         const matched = Interval.REGEX.exec(nameIn);
@@ -245,3 +237,5 @@ export class Interval implements IInterval {
         return x.offset - y.offset;
     }
 }
+
+export default Interval;

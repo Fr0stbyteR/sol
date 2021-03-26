@@ -30,7 +30,6 @@ export class Param implements IParam {
         this._value = optionsIn.value;
         this.step = optionsIn.step;
         this.setRange(optionsIn.min, optionsIn.max);
-        return this;
     }
     get value(): number {
         return this._value;
@@ -65,9 +64,11 @@ export class Param implements IParam {
         const max = Math.max(minIn, maxIn);
         this._min = min;
         this._max = max;
-        this.value = this.value;
+        this.value = this._value;
     }
     clone() {
         return new Param(this);
     }
 }
+
+export default Param;

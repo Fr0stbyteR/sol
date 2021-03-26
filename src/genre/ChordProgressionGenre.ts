@@ -35,7 +35,6 @@ export class ChordProgressionGenre implements IChordProgressionGenre {
     constructor(genreIn?: IChordProgressionGenre) {
         const genre = genreIn || {};
         keys.forEach(k => this[k] = !!genre[k]);
-        return this;
     }
     and(genreIn: IChordProgressionGenre) {
         keys.forEach(k => this[k] = this[k] && genreIn[k]);
@@ -47,3 +46,5 @@ export class ChordProgressionGenre implements IChordProgressionGenre {
         return new ChordProgressionGenre(this);
     }
 }
+
+export default ChordProgressionGenre;

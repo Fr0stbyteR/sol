@@ -1,6 +1,6 @@
 import { EnumInstrumentTag, isEnumInstrumentTagArray } from "./EnumInstrumentTag";
-import { Pitch, isPitch } from "../Pitch";
-import { Param } from "../Param";
+import Pitch, { isPitch } from "../Pitch";
+import Param from "../Param";
 
 export interface IInstrument {
     name: string;
@@ -33,7 +33,6 @@ export abstract class Instrument implements IInstrument {
         for (const key in optionsIn.params) {
             this.params[key] = optionsIn.params[key].clone();
         }
-        return this;
     }
     getParamValue(path: string) {
         return this.params[path] ? this.params[path].value : null;
@@ -57,3 +56,5 @@ export abstract class Instrument implements IInstrument {
         return this.constructor.name;
     }
 }
+
+export default Instrument;

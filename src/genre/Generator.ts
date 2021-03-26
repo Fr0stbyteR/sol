@@ -1,9 +1,9 @@
-import { Scale } from "../Scale";
-import { TimeCode } from "../TimeCode";
-import { Segment } from "../track/Segment";
-import { Pitch } from "../Pitch";
-import { Duration } from "../Duration";
-import { Interval } from "../Interval";
+import Scale from "../Scale";
+import TimeCode from "../TimeCode";
+import Segment from "../track/Segment";
+import Pitch from "../Pitch";
+import Duration from "../Duration";
+import Interval from "../Interval";
 
 export interface IGeneratorConstraints {
     durationRange?: [Duration, Duration];
@@ -27,3 +27,5 @@ export const isSegment = (x: any): x is IGenerator => {
 export abstract class Generator implements IGenerator {
     use: (constraints: IGeneratorConstraints) => Segment = () => undefined;
 }
+
+export default Generator;

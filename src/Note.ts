@@ -1,6 +1,6 @@
-import { floorMod } from "./Utils";
-import { Interval, TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
-import { Enum } from "./Enum";
+import { floorMod } from "./utils";
+import Interval, { TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
+import Enum from "./Enum";
 
 type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export class EnumNote extends Enum {
@@ -24,7 +24,6 @@ export class EnumNote extends Enum {
     private constructor(offsetIn: TIntervalOffset) {
         super();
         this.offset = offsetIn;
-        return this;
     }
     static byOffset(offsetIn: number) {
         if (typeof offsetIn !== "number") return null;
@@ -65,20 +64,14 @@ export class Note implements INote {
     alteration: number;
     /**
      * Returns C
-     * @memberof Note
      */
     constructor()
     /**
      * New note
-     * @param {EnumNote} noteIn
-     * @param {number} [alteration]
-     * @memberof Note
      */
     constructor(noteIn: EnumNote, alteration?: number)
     /**
      * Gives a new Note instance (clone)
-     * @param {INote} noteIn
-     * @memberof Note
      */
     constructor(noteIn: INote)
     /**
@@ -86,15 +79,10 @@ export class Note implements INote {
      * @example
      * new Note("##E");
      * @throws {SyntaxError} when parse failed
-     * @param {string} noteIn
-     * @memberof Note
      */
     constructor(noteIn: string)
     /**
      * Creates an instance of Note.
-     * @param {number} offset
-     * @param {number} [alteration]
-     * @memberof Note
      */
     constructor(offset: number, alteration?: number)
     constructor(first?: EnumNote | INote | string | number, second?: number) {
@@ -111,7 +99,6 @@ export class Note implements INote {
         } else if (typeof first === "number") {
             this.fromOffset(first, second);
         }
-        return this;
     }
     static fromString(nameIn: string): INote {
         const matched = Note.REGEX.exec(nameIn);
@@ -194,3 +181,5 @@ export class Note implements INote {
         return new Note(this);
     }
 }
+
+export default Note;

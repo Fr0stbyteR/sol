@@ -1,5 +1,5 @@
 import { TimeCode } from "./TimeCode";
-import { gcd } from "./Utils";
+import { gcd } from "./utils";
 
 export interface IDuration {
     isAbsolute: boolean;
@@ -16,9 +16,21 @@ export const isDuration = (x: any): x is IDuration => {
         );
 };
 export class Duration implements IDuration {
-    isAbsolute: boolean; // Absolute duration is represented by seconds.
-    numerator: number; // Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
+    /**
+     * Absolute mode (use seconds or numerator/denominator)
+     */
+    isAbsolute: boolean;
+    /**
+     * Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
+     */
+    numerator: number;
+    /**
+     * Quarter note = 1/4, Whole note = 1/1, Quarter note triplet = 1/6
+     */
     denominator: number;
+    /**
+     * Absolute duration if in abs mode, in seconds
+     */
     seconds: number; // Absolute duration if in abs mode.
 
     constructor(secondsIn: number);
@@ -41,7 +53,6 @@ export class Duration implements IDuration {
             this.seconds = first;
             this.check();
         }
-        return this;
     }
     private get value() {
         return this.isAbsolute ? this.seconds : this.numerator / this.denominator;
@@ -142,3 +153,5 @@ export class Duration implements IDuration {
         return this.isAbsolute ? this.seconds + "s" : this.getBeats() + " beats";
     }
 }
+
+export default Duration;

@@ -1,7 +1,7 @@
-import { Scale, isScale, EnumScale } from "./Scale";
-import { Note, isNote } from "./Note";
-import { Chord } from "./Chord";
-import { Interval } from "./Interval";
+import Scale, { isScale, EnumScale } from "./Scale";
+import Note, { isNote } from "./Note";
+import Chord from "./Chord";
+import Interval from "./Interval";
 
 export interface ITonality {
     note: Note;
@@ -34,7 +34,6 @@ export class Tonality implements Iterable<Note>, ITonality {
             this.note = first;
             this.scale = second;
         }
-        return this;
     }
     add(intervalIn: Interval) {
         this.note.add(intervalIn);
@@ -110,3 +109,5 @@ export class Tonality implements Iterable<Note>, ITonality {
         };
     }
 }
+
+export default Tonality;

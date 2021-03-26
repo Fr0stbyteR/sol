@@ -71,3 +71,5 @@ export class EnumInstrument {
         return this.map[nameIn];
     }
 }
+
+export default EnumInstrument;

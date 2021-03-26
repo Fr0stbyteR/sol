@@ -1,4 +1,4 @@
-import { isNumberArray } from "./Utils";
+import { isNumberArray } from "./utils";
 
 interface IColor {
     t: number;
@@ -38,7 +38,6 @@ class Color implements IColor {
             this.d = d || 0;
             this.major = major || 0;
         }
-        return this;
     }
     toArray() {
         return [this.t, this.s, this.d, this.major];
@@ -64,3 +63,5 @@ class Color implements IColor {
         return new Color(this);
     }
 }
+
+export default Color;

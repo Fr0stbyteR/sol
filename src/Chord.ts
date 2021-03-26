@@ -1,7 +1,7 @@
-import { Interval, isIntervalArray } from "./Interval";
-import { Note, isNoteArray, isNote } from "./Note";
-import { Pitch, isPitchArray } from "./Pitch";
-import { Enum } from "./Enum";
+import Interval, { isIntervalArray } from "./Interval";
+import Note, { isNoteArray, isNote } from "./Note";
+import Pitch, { isPitchArray } from "./Pitch";
+import Enum from "./Enum";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
@@ -36,7 +36,6 @@ export class EnumChord extends Enum {
             this._name = first._name;
             this.intervals = first.intervals.map(i => i.clone());
         }
-        return this;
     }
     static byChord(chordIn: IChord) {
         return this.values<EnumChord>().find((enumChord) => {
@@ -82,22 +81,14 @@ export class Chord implements Iterable<Note>, IChord {
     isAbsolute: boolean;
     /**
      * Gives a new Chord instance (clone)
-     * @param {IChord} chordIn
-     * @memberof Chord
      */
     constructor(chordIn: IChord);
     /**
      * Construct chord by notes
-     * @param {(Note | Pitch | string)} base
-     * @param {(...Note[] | Pitch[])} notes
-     * @memberof Chord
      */
     constructor(base: Note | Pitch | string, ...notes: Note[] | Pitch[]);
     /**
      * Construct chord by intervals
-     * @param {Pitch} base
-     * @param {...Pitch[]} pitches
-     * @memberof Chord
      */
     constructor(base: Note | Pitch | string, ...intervals: Interval[] | string[]);
     constructor(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
@@ -127,7 +118,6 @@ export class Chord implements Iterable<Note>, IChord {
         } else {
             this.intervals = Interval.fromArray(...arrayIn).sort(Interval.compare);
         }
-        return this;
     }
     get size() {
         return this.intervals.length + 1;
@@ -206,3 +196,5 @@ export class Chord implements Iterable<Note>, IChord {
         };
     }
 }
+
+export default Chord;

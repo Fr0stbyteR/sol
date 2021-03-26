@@ -58,3 +58,5 @@ export const {
     PERCUSSION,
     VOICE
 } = EnumInstrumentTag;
+
+export default EnumInstrumentTag;

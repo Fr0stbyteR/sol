@@ -1,4 +1,4 @@
-import { ChordProgression } from "./ChordProgression";
+import ChordProgression from "./ChordProgression";
 
 export class EnumChordProgression {
     static PERFECT = new ChordProgression("IV V I");
@@ -12,3 +12,5 @@ export class EnumChordProgression {
     static EDM1 = new ChordProgression("IV I vi V");
     static EDM2 = new ChordProgression("IV V vi I");
 }
+
+export default EnumChordProgression;

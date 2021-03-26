@@ -1,5 +1,5 @@
-import { Param, isParam } from "../Param";
-import { isStringArray } from "../Utils";
+import Param, { isParam } from "../Param";
+import { isStringArray } from "../utils";
 
 export interface IEffect {
     name: string;
@@ -30,7 +30,6 @@ export class Effect implements IEffect {
         for (const key in optionsIn.params) {
             this.params[key] = optionsIn.params[key].clone();
         }
-        return this;
     }
     getParamValue(path: string) {
         return this.params[path] ? this.params[path].value : null;
@@ -42,3 +41,5 @@ export class Effect implements IEffect {
         return new Effect(this);
     }
 }
+
+export default Effect;

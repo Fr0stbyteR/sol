@@ -1,5 +1,5 @@
-import { Duration, isDuration } from "../Duration";
-import { TonalChord, isTonalChord } from "../TonalChord";
+import Duration, { isDuration } from "../Duration";
+import TonalChord, { isTonalChord } from "../TonalChord";
 
 export interface ITrackChord {
     duration: Duration;
@@ -21,9 +21,10 @@ export class TrackChord implements ITrackChord {
         this.duration = trackChordIn.duration.clone();
         this.offset = trackChordIn.offset.clone();
         this.chord = trackChordIn.chord.clone();
-        return this;
     }
     clone() {
         return new TrackChord(this);
     }
 }
+
+export default TrackChord;

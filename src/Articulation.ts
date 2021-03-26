@@ -32,9 +32,10 @@ export class Articulation implements IArticulation {
             this.velocity = first;
             this.length = lengthIn;
         }
-        return this;
     }
     clone() {
         return new Articulation(this);
     }
 }
+
+export default Articulation;

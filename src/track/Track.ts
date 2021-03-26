@@ -1,6 +1,6 @@
-import { TrackNote, isTrackNoteArray } from "./TrackNote";
-import { Effect, isEffectArray } from "../effect/Effect";
-import { Automation, isAutomationArray } from "../effect/Automation";
+import TrackNote, { isTrackNoteArray } from "./TrackNote";
+import Effect, { isEffectArray } from "../effect/Effect";
+import Automation, { isAutomationArray } from "../effect/Automation";
 import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
 
 export interface ITrack {
@@ -29,3 +29,5 @@ export class Track implements ITrack {
     automations: Automation[];
     output: Track;
 }
+
+export default Track;

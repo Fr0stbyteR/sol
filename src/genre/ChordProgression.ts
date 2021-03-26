@@ -1,6 +1,6 @@
-import { TonalChord, isTonalChord, isTonalChordArray } from "../TonalChord";
-import { isStringArray } from "../Utils";
-import { Tonality } from "../Tonality";
+import TonalChord, { isTonalChord, isTonalChordArray } from "../TonalChord";
+import { isStringArray } from "../utils";
+import Tonality from "../Tonality";
 
 export interface IChordProgression {
     chords: TonalChord[];
@@ -27,7 +27,6 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
         } else {
             this.chords = cp.chords.map(c => c.clone());
         }
-        return this;
     }
     getChords(tonalityIn: Tonality) {
         return this.chords.map(c => c.getChord(tonalityIn));
@@ -59,3 +58,5 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
         };
     }
 }
+
+export default ChordProgression;

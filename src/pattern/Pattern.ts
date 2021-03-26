@@ -23,3 +23,5 @@ export class Pattern implements IPattern {
         return new Pattern(this);
     }
 }
+
+export default Pattern;

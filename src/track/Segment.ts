@@ -31,9 +31,10 @@ export class Segment implements ISegment {
         this.notes = optionsIn.notes.map(e => e.clone());
         this.automations = optionsIn.automations.map(e => e.clone());
         this.duration = optionsIn.duration.clone();
-        return this;
     }
     clone() {
         return new Segment(this);
     }
 }
+
+export default Segment;

@@ -7,7 +7,6 @@ export class Enum {
         return (this as unknown as { [key: string]: T })[key];
     }
     protected constructor() {
-        return this;
     }
     name(): string {
         throw new Error("Method not implemented");
@@ -19,3 +18,5 @@ export class Enum {
         return this.name();
     }
 }
+
+export default Enum;

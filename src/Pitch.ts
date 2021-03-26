@@ -1,6 +1,6 @@
-import { Note, EnumNote, INote, isNote } from "./Note";
-import { Interval } from "./Interval";
-import { Frequency } from "./Frequency";
+import Note, { EnumNote, INote, isNote } from "./Note";
+import Interval from "./Interval";
+import Frequency from "./Frequency";
 
 export interface IPitch extends INote {
     octave: number;
@@ -27,20 +27,14 @@ export class Pitch extends Note implements IPitch {
 
     /**
      * Returns C0
-     * @memberof Pitch
      */
     constructor();
     /**
      * Gives a new Pitch instance (clone)
-     * @param {IPitch} pitchIn
-     * @memberof Pitch
      */
     constructor(pitchIn: IPitch);
     /**
      * Add octave info to a note
-     * @param {EnumNote | INote} noteIn
-     * @param {number} [octaveIn]
-     * @memberof Pitch
      */
     constructor(noteIn: EnumNote | INote, octaveIn?: number);
     /**
@@ -48,20 +42,14 @@ export class Pitch extends Note implements IPitch {
      * @example
      * new Pitch("##E5");
      * @throws {SyntaxError} when parse failed
-     * @param {string} pitchIn
-     * @memberof Note
      */
     constructor(pitchIn: string);
     /**
      * Creates an instance of Pitch with index
-     * @param {number} pitchIn
-     * @memberof Pitch
      */
     constructor(pitchIn: number);
     /**
      * Creates an instance of Pitch with index
-     * @param {number} pitchIn
-     * @memberof Pitch
      */
     constructor(first?: IPitch | EnumNote | INote | string | number, second?: number) {
         if (isPitch(first)) {
@@ -82,7 +70,6 @@ export class Pitch extends Note implements IPitch {
         } else {
             super();
         }
-        return this;
     }
     static fromString(nameIn: string): IPitch {
         const matched = Pitch.REGEX.exec(nameIn);
@@ -152,3 +139,5 @@ export class Pitch extends Note implements IPitch {
         return x.offset - y.offset;
     }
 }
+
+export default Pitch;

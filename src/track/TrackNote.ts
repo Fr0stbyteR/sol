@@ -1,7 +1,7 @@
-import { Pitch, isPitch } from "../Pitch";
-import { Velocity, isVelocity } from "../Velocity";
-import { Duration, isDuration } from "../Duration";
-import { Articulation, isArticulation } from "../Articulation";
+import Pitch, { isPitch } from "../Pitch";
+import Velocity, { isVelocity } from "../Velocity";
+import Duration, { isDuration } from "../Duration";
+import Articulation, { isArticulation } from "../Articulation";
 
 export interface ITrackNote {
     duration: Duration;
@@ -35,9 +35,10 @@ export class TrackNote implements ITrackNote {
         this.pitch = optionsIn.pitch.clone();
         this.velocity = optionsIn.velocity.clone();
         this.articulation = optionsIn.articulation.clone();
-        return this;
     }
     clone() {
         return new TrackNote(this);
     }
 }
+
+export default TrackNote;

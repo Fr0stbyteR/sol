@@ -1,5 +1,5 @@
-import { Genre } from "./Genre";
-import { Part } from "./form/Part";
+import Genre from "./Genre";
+import Part from "./form/Part";
 import { ChordProgressionGenre } from "./ChordProgressionGenre";
 
 // https://djtrauma.wordpress.com/2012/07/17/dubstep-song-structure/
@@ -36,3 +36,5 @@ export const EDM = new Genre({
         ];
     }
 });
+
+export default EDM;

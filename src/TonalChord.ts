@@ -1,7 +1,7 @@
-import { EnumChord, Chord } from "./Chord";
-import { parseRoman, toRoman } from "./Utils";
-import { Tonality } from "./Tonality";
-import { Interval } from "./Interval";
+import Chord, { EnumChord } from "./Chord";
+import { parseRoman, toRoman } from "./utils";
+import Tonality from "./Tonality";
+import Interval from "./Interval";
 
 export interface ITonalChord {
     alteration: number;
@@ -61,7 +61,6 @@ export class TonalChord implements ITonalChord {
             this.degree = first.degree;
             this.chord = first.chord.clone();
         }
-        return this;
     }
     getChord(tonalityIn: Tonality) {
         let chord: Chord;
@@ -94,3 +93,5 @@ export class TonalChord implements ITonalChord {
         return new TonalChord(this);
     }
 }
+
+export default TonalChord;

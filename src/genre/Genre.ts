@@ -1,6 +1,6 @@
-import { ChordProgressionGenre, isChordProgressionGenre } from "./ChordProgressionGenre";
-import { Tonality } from "../Tonality";
-import { ChordProgression } from "./ChordProgression";
+import ChordProgressionGenre, { isChordProgressionGenre } from "./ChordProgressionGenre";
+import Tonality from "../Tonality";
+import ChordProgression from "./ChordProgression";
 import { Form, Part } from "./form/Part";
 
 export interface IGenre {
@@ -26,6 +26,7 @@ export class Genre implements IGenre {
     getForm: () => Form;
     constructor(optionsIn: IGenre) {
         Object.assign(this, optionsIn);
-        return this;
     }
 }
+
+export default Genre;

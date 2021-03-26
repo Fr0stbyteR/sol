@@ -27,7 +27,6 @@ export class TimeCode implements ITimeCode {
             this.beatDuration = second || 4;
             this.bpm = third || 60;
         }
-        return this;
     }
 
     getAbsoluteDuration(beatsIn?: number) {
@@ -42,3 +41,5 @@ export class TimeCode implements ITimeCode {
         return new TimeCode(this);
     }
 }
+
+export default TimeCode;

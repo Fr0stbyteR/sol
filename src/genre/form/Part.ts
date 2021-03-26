@@ -1,4 +1,4 @@
-import { Duration, isDuration } from "../../Duration";
+import Duration, { isDuration } from "../../Duration";
 
 export type Form = IPart[];
 export interface IPart {
@@ -37,9 +37,10 @@ export class Part implements IPart {
                     ? new Duration(stepDuration, 1)
                     : stepDuration.clone();
         }
-        return this;
     }
     clone() {
         return new Part(this);
     }
 }
+
+export default Part;

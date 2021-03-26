@@ -21,12 +21,12 @@
         "allowUnreachableCode": false,
         "experimentalDecorators": true,
         "downlevelIteration": true
-      },
-      "include": [
+    },
+    "include": [
         "src/**/*"
-      ],
+    ],
     "exclude": [
-        "out",
+        "dist",
         "node_modules"
     ]
 }

@@ -1,4 +1,4 @@
-import { AutomationPoint, isAutomationPointArray } from "./AutomationPoint";
+import AutomationPoint, { isAutomationPointArray } from "./AutomationPoint";
 
 export interface IAutomation {
     path: string;
@@ -26,9 +26,10 @@ export class Automation implements IAutomation {
             this.path = first.path;
             this.points = first.points.map(e => e.clone());
         }
-        return this;
     }
     clone() {
         return new Automation(this);
     }
 }
+
+export default Automation;

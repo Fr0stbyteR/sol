@@ -1,4 +1,4 @@
-import { Duration, isDuration } from "../Duration";
+import Duration, { isDuration } from "../Duration";
 
 export interface IAutomationPoint {
     value: number;
@@ -31,9 +31,10 @@ export class AutomationPoint implements IAutomationPoint {
             this.offset = first.offset;
             this.exponent = first.exponent;
         }
-        return this;
     }
     clone() {
         return new AutomationPoint(this);
     }
 }
+
+export default AutomationPoint;
