@@ -1,5 +1,5 @@
 import TonalChord, { isTonalChord, isTonalChordArray } from "../TonalChord";
-import { isStringArray } from "../utils1";
+import { isStringArray } from "../utils";
 import Tonality from "../Tonality";
 
 export interface IChordProgression {

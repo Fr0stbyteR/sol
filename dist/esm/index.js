@@ -103,7 +103,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 var _Symbol$iterator;
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
@@ -337,11 +337,11 @@ class Chord {
   }
 
   get ratio() {
-    return (0,_utils1__WEBPACK_IMPORTED_MODULE_4__.nearestFractions)([1, ...this.intervals.map(i => i.ratio)]);
+    return (0,_utils__WEBPACK_IMPORTED_MODULE_4__.nearestFractions)([1, ...this.intervals.map(i => i.ratio)]);
   }
 
   get reciprocal() {
-    return (0,_utils1__WEBPACK_IMPORTED_MODULE_4__.nearestReciprocals)([1, ...this.intervals.map(i => i.ratio)]);
+    return (0,_utils__WEBPACK_IMPORTED_MODULE_4__.nearestReciprocals)([1, ...this.intervals.map(i => i.ratio)]);
   }
 
   removeDup() {
@@ -624,7 +624,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isColor": () => (/* binding */ isColor),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -647,7 +647,7 @@ class Color {
       this.s = first.s;
       this.d = first.d;
       this.major = first.major;
-    } else if ((0,_utils1__WEBPACK_IMPORTED_MODULE_0__.isNumberArray)(first)) {
+    } else if ((0,_utils__WEBPACK_IMPORTED_MODULE_0__.isNumberArray)(first)) {
       this.fromArray(first);
     } else {
       this.t = first || 0;
@@ -699,7 +699,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Duration": () => (/* binding */ Duration),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -873,8 +873,8 @@ class Duration {
 
   simplify() {
     if (this.numerator === 0) return this;
-    var f = Math.max((0,_utils1__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.numerator), (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.denominator));
-    var $gcd = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator * f, this.denominator * f) / f;
+    var f = Math.max((0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.numerator), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.denominator));
+    var $gcd = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator * f, this.denominator * f) / f;
 
     if ($gcd !== 1) {
       this.denominator /= $gcd;
@@ -1000,7 +1000,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Interval": () => (/* binding */ Interval),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1077,7 +1077,7 @@ _defineProperty(EnumIntervalProperty, "abbMap", {
 
 class Interval {
   static getOffsetFromProperty(propertyIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (propertyIn.equals(EnumIntervalProperty.PERFECT)) return 0;
@@ -1094,7 +1094,7 @@ class Interval {
   }
 
   static getPropertyFromOffset(onsetIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (onsetIn === 0) return EnumIntervalProperty.PERFECT;
@@ -1111,7 +1111,7 @@ class Interval {
   }
 
   static getOffsetFromDegree(degreeIn) {
-    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
+    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
   }
   /**
    * Returns Unison
@@ -1141,7 +1141,7 @@ class Interval {
   fromInterval(degreeIn) {
     var onsetIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var octaveIn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    this.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1;
+    this.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1;
     this.onset = onsetIn;
     this.octave = Math.floor((degreeIn - 1) / 7) + octaveIn;
   }
@@ -1177,11 +1177,11 @@ class Interval {
     var octave = Math.floor(offsetIn / 12);
 
     for (var i = 0; i < DEGREE_TO_OFFSET.length; i++) {
-      if (DEGREE_TO_OFFSET[i] === (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)) {
+      if (DEGREE_TO_OFFSET[i] === (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)) {
         degree = i + 1;
         onset = 0;
         break;
-      } else if (DEGREE_TO_OFFSET[i] === (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12) + 1) {
+      } else if (DEGREE_TO_OFFSET[i] === (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12) + 1) {
         degree = i + 1;
         onset = -1;
         break;
@@ -1218,7 +1218,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree + iIn.degree - 1 - 1, 7) + 1;
+    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree + iIn.degree - 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
     i.octave = this.octave + iIn.octave + Math.floor((this.degree + iIn.degree - 1 - 1) / 7);
     this.degree = i.degree;
@@ -1237,7 +1237,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - iIn.degree + 1 - 1, 7) + 1;
+    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - iIn.degree + 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave - (iIn.offset - 12 * iIn.octave) - Interval.getOffsetFromDegree(this.degree - iIn.degree + 1);
     i.octave = this.octave - iIn.octave + Math.floor((this.degree - iIn.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -1268,7 +1268,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
+    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
     i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
     i.octave = 0 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -1283,7 +1283,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
+    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
     i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
     i.octave = 1 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -1293,7 +1293,7 @@ class Interval {
   }
 
   get offset() {
-    return DEGREE_TO_OFFSET[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+    return DEGREE_TO_OFFSET[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
   }
 
   get ratio() {
@@ -1301,11 +1301,11 @@ class Interval {
   }
 
   get fraction() {
-    return (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.nearestFraction)(this.ratio);
+    return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.nearestFraction)(this.ratio);
   }
 
   get reciprocal() {
-    return (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.nearestReciprocal)(this.ratio);
+    return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.nearestReciprocal)(this.ratio);
   }
 
   get property() {
@@ -1352,7 +1352,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Note": () => (/* binding */ Note),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
@@ -1413,14 +1413,14 @@ class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__.default {
 
   static byOffset(offsetIn) {
     if (typeof offsetIn !== "number") return null;
-    var name = EnumNote.offsetMap[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)];
+    var name = EnumNote.offsetMap[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with offset ".concat(offsetIn, "."));
   }
 
   static byIndex(indexIn) {
     if (typeof indexIn !== "number") return null;
-    var name = EnumNote.indexes[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(indexIn, 7)];
+    var name = EnumNote.indexes[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(indexIn, 7)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with index ".concat(indexIn, "."));
   }
@@ -1547,7 +1547,7 @@ class Note {
   }
 
   static fromOffset(offsetIn, alterationIn) {
-    var note = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12);
+    var note = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12);
     var offset = 11;
 
     for (var i = _Interval__WEBPACK_IMPORTED_MODULE_1__.DEGREE_TO_OFFSET.length - 1; i >= 0; i--) {
@@ -1592,7 +1592,7 @@ class Note {
     var i;
     if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
-    this.alteration += i.offset - 12 * i.octave - (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(newEnumNote.offset - this.enumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(newEnumNote.offset - this.enumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
@@ -1607,7 +1607,7 @@ class Note {
     var i;
     if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
-    this.alteration += i.offset - 12 * i.octave - (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.enumNote.offset - newEnumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.enumNote.offset - newEnumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
@@ -2027,7 +2027,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 var _Symbol$iterator;
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
@@ -2111,7 +2111,7 @@ class EnumScale {
 
 }
 var isScale = x => {
-  return x instanceof Scale || typeof x === "object" && (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
+  return x instanceof Scale || typeof x === "object" && (0,_utils__WEBPACK_IMPORTED_MODULE_1__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
 };
 _Symbol$iterator = Symbol.iterator;
 class Scale {
@@ -2174,7 +2174,7 @@ class Scale {
 
   getIntervalFromDegree(degreeIn) {
     return this.intervals.find(interval => {
-      return (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
+      return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
     });
   }
 
@@ -2338,7 +2338,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
-/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -2366,7 +2366,7 @@ class TonalChord {
         var s = matched[1];
         this.alteration = s === "#" ? 1 : s === "b" ? -1 : 0;
         s = matched[2];
-        var p = (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.parseRoman)(s);
+        var p = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.parseRoman)(s);
         if (p !== 0 && p > 7 && p < -7) throw new Error("Roman number too large for degree.");
         this.degree = Math.abs(p);
         s = matched[3];
@@ -2405,7 +2405,7 @@ class TonalChord {
     var s = "";
     if (this.alteration === 1) s = "#";else if (this.alteration === -1) s = "b";
     if (!this.chord) return s + this.degree;
-    s += (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.toRoman)(this.degree * (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN) ? -1 : 1));
+    s += (0,_utils__WEBPACK_IMPORTED_MODULE_1__.toRoman)(this.degree * (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN) ? -1 : 1));
 
     if (!this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MAJ) && !this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN)) {
       if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.AUG)) s += "+";else if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.AUG)) s += "-";else s += this.chord.name().toLowerCase();
@@ -2730,10 +2730,10 @@ class Velocity {
 
 /***/ }),
 
-/***/ "./src/utils1.ts":
-/*!***********************!*\
-  !*** ./src/utils1.ts ***!
-  \***********************/
+/***/ "./src/utils.ts":
+/*!**********************!*\
+  !*** ./src/utils.ts ***!
+  \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);

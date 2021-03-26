@@ -1,6 +1,6 @@
 import AutomationPoint, { isAutomationPointArray } from "./AutomationPoint";
 import { Duration } from "../Duration";
-import { getValueFromCurve } from "../utils1";
+import { getValueFromCurve } from "../utils";
 
 export interface IAutomation {
     path: string;

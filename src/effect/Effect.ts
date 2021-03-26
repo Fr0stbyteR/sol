@@ -1,5 +1,5 @@
 import Param, { isParam } from "../Param";
-import { isStringArray } from "../utils1";
+import { isStringArray } from "../utils";
 
 export interface IEffect {
     name: string;

@@ -1,4 +1,4 @@
-import { floorMod, nearestFraction, nearestReciprocal } from "./utils1";
+import { floorMod, nearestFraction, nearestReciprocal } from "./utils";
 import Enum from "./Enum";
 import Frequency from "./Frequency";
 

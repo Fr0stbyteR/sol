@@ -1,4 +1,4 @@
-import { floorMod } from "./utils1";
+import { floorMod } from "./utils";
 import Interval, { TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
 import Enum from "./Enum";
 import Frequency from "./Frequency";

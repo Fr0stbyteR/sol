@@ -2,7 +2,7 @@ import Interval, { isIntervalArray } from "./Interval";
 import Note, { isNoteArray, isNote, INote } from "./Note";
 import Pitch, { isPitchArray, isPitch, IPitch } from "./Pitch";
 import Enum from "./Enum";
-import { nearestFractions, nearestReciprocals } from "./utils1";
+import { nearestFractions, nearestReciprocals } from "./utils";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {

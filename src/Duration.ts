@@ -1,5 +1,5 @@
 import { TimeCode } from "./TimeCode";
-import { gcd, precisionFactor } from "./utils1";
+import { gcd, precisionFactor } from "./utils";
 import Random from "./genre/Random";
 
 export interface IDuration {

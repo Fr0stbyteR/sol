@@ -1,4 +1,4 @@
-import { isNumberArray } from "./utils1";
+import { isNumberArray } from "./utils";
 
 interface IColor {
     t: number;

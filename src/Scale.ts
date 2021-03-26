@@ -1,5 +1,5 @@
 import Interval, { isIntervalArray } from "./Interval";
-import { isStringArray, floorMod } from "./utils1";
+import { isStringArray, floorMod } from "./utils";
 
 export class EnumScale {
     static get MAJOR() { return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }

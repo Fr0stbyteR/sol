@@ -1,5 +1,5 @@
 import Chord, { EnumChord } from "./Chord";
-import { parseRoman, toRoman } from "./utils1";
+import { parseRoman, toRoman } from "./utils";
 import Tonality from "./Tonality";
 import Interval from "./Interval";
 
