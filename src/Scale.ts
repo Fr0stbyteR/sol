@@ -1,5 +1,5 @@
 import Interval, { isIntervalArray } from "./Interval";
-import { isStringArray, floorMod } from "./utils";
+import { isStringArray, floorMod } from "./utils1";
 
 export class EnumScale {
     static get MAJOR() { return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
@@ -102,7 +102,7 @@ export class Scale implements Iterable<Interval>, IScale {
         return this.scaleName;
     }
     toString() {
-        let s = this.scaleName ? `Scale "${this.scaleName}" :{` : "Scale :{";
+        let s = this.scaleName ? `Scale "${this.scaleName}": {` : "Scale :{";
         for (let i = 0; i < this.intervals.length; i++) {
             const sI = this.intervals[i].toString();
             const sN = this.degreeNames[i];
@@ -115,21 +115,10 @@ export class Scale implements Iterable<Interval>, IScale {
     clone() {
         return new Scale(this);
     }
-    [Symbol.iterator](): Iterator<Interval> {
-        const o = this;
-        let i = -1;
-        return {
-            next() {
-                let value: Interval;
-                let done = true;
-                if (i < o.intervals.length) {
-                    value = o.intervals[i];
-                    i++;
-                    done = false;
-                }
-                return { value, done };
-            }
-        };
+    * [Symbol.iterator](): Iterator<Interval> {
+        for (const interval of this.intervals) {
+            yield interval;
+        }
     }
 }
 

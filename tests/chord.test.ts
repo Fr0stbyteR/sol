@@ -17,5 +17,5 @@ test("Chord 1 contains", () => {
 });
 
 test("Major Chord", () => {
-    expect(cmaj.getEnumChord().name()).toBe("MAJ");
+    expect(cmaj.enumChord.name()).toBe("MAJ");
 });

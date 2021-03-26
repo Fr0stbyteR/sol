@@ -4,9 +4,9 @@ import Param from "../Param";
 
 export interface IInstrument {
     name: string;
-    params: { [key: string]: Param };
+    params: Record<string, Param>;
 }
-export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument) => Instrument);
+export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument)=> Instrument);
 export const isInstrument = (x: any): x is Instrument => {
     return x instanceof Instrument
         || (typeof x === "object"
@@ -25,7 +25,7 @@ export abstract class Instrument implements IInstrument {
     static MIN_PITCH?: Pitch;
     static MAX_PITCH?: Pitch;
     name: string; // instrument instance name
-    params: { [key: string]: Param };
+    params: Record<string, Param>;
 
     constructor(optionsIn: IInstrument) {
         this.name = optionsIn.name;

@@ -1,4 +1,4 @@
-import { floorMod } from "./utils";
+import { floorMod, nearestFraction, nearestReciprocal } from "./utils1";
 import Enum from "./Enum";
 import Frequency from "./Frequency";
 
@@ -24,7 +24,7 @@ type TIntervalPropertyValue = "PERFECT" | "MAJOR" | "MINOR" | "AUGMENTED" | "DIM
 export const DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 class EnumIntervalProperty extends Enum {
     protected static indexes = ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"];
-    private static abbMap: { [key: string]: TIntervalPropertyValue } = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
+    private static abbMap: Record<string, TIntervalPropertyValue> = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
     static get PERFECT() { return new EnumIntervalProperty("P"); }
     static get MAJOR() { return new EnumIntervalProperty("M"); }
     static get MINOR() { return new EnumIntervalProperty("m"); }
@@ -52,7 +52,7 @@ class EnumIntervalProperty extends Enum {
     }
 }
 
-export class Interval implements IInterval {
+export class Interval implements IInterval, IComputable<Interval> {
     private static REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
     degree: number;
     onset: number;
@@ -171,11 +171,14 @@ export class Interval implements IInterval {
         const i = { degree: 0, onset: 0, octave: 0 };
         i.degree = floorMod(this.degree + iIn.degree - 1 - 1, 7) + 1;
         i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
-        i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
+        i.octave = this.octave + iIn.octave + Math.floor((this.degree + iIn.degree - 1 - 1) / 7);
         this.degree = i.degree;
         this.onset = i.onset;
         this.octave = i.octave;
         return this;
+    }
+    static add(a: Interval, b: Interval) {
+        return a.clone().add(b);
     }
     sub(iIn: Interval) {
         const i = { degree: 0, onset: 0, octave: 0 };
@@ -186,6 +189,21 @@ export class Interval implements IInterval {
         this.onset = i.onset;
         this.octave = i.octave;
         return this;
+    }
+    static sub(a: Interval, b: Interval) {
+        return a.clone().sub(b);
+    }
+    equals(intervalIn: object) {
+        return isInterval(intervalIn)
+            && this.degree === intervalIn.degree
+            && this.onset === intervalIn.onset
+            && this.octave === intervalIn.octave;
+    }
+    compareTo(iIn: Interval) {
+        return Interval.compare(this, iIn);
+    }
+    static compare(x: Interval, y: Interval) {
+        return x.offset - y.offset;
     }
     reverse() {
         const i = { degree: 0, onset: 0, octave: 0 };
@@ -211,19 +229,19 @@ export class Interval implements IInterval {
         return DEGREE_TO_OFFSET[floorMod(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
     }
     get ratio() {
-        return Frequency.SEMITONE ** this.offset;
+        return Frequency.getRatio(this.offset);
+    }
+    get fraction() {
+        return nearestFraction(this.ratio);
+    }
+    get reciprocal() {
+        return nearestReciprocal(this.ratio);
     }
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);
     }
     static fromArray(...arrayIn: (string | IInterval)[]) {
         return arrayIn.map(e => new Interval(e as any));
-    }
-    equals(intervalIn: object) {
-        return isInterval(intervalIn)
-            && this.degree === intervalIn.degree
-            && this.onset === intervalIn.onset
-            && this.octave === intervalIn.octave;
     }
     toString() {
         const sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
@@ -232,9 +250,6 @@ export class Interval implements IInterval {
     }
     clone() {
         return new Interval(this);
-    }
-    static compare(x: Interval, y: Interval) {
-        return x.offset - y.offset;
     }
 }
 

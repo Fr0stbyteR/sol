@@ -1,10 +1,10 @@
 export class Enum {
     protected static indexes: string[] = [];
     static values<T extends Enum>(): T[] {
-        return this.indexes.map(key => (this as unknown as { [key: string]: T })[key]);
+        return this.indexes.map(key => (this as unknown as Record<string, T>)[key]);
     }
     static valueOf<T extends Enum>(key: string): T {
-        return (this as unknown as { [key: string]: T })[key];
+        return (this as unknown as Record<string, T>)[key];
     }
     protected constructor() {
     }

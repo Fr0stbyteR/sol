@@ -4,11 +4,11 @@
         "es6": true
     },
     "settings": {
-    "import/resolver": {
-        "node": {
-            "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+            }
         }
-    }
     },
     "extends": [
         "airbnb-base",
@@ -24,9 +24,10 @@
         "jsx": true,
         "useJSXTextNode": true
     },
+    "ignorePatterns": ["lib.*.d.ts"],
     "rules": {
-        "arrow-body-style": "off",
         "array-callback-return": "warn",
+        "arrow-body-style": "off",
         "arrow-parens": ["warn", "as-needed", { "requireForBlockBody": true }],
         "class-methods-use-this": "off",
         "comma-dangle": ["error", "never"],
@@ -95,7 +96,7 @@
         "no-param-reassign": ["error", { "props": false }],
         "no-plusplus": "off",
         "no-prototype-builtins": "off",
-        "no-redeclare": "off",
+        "no-redeclare": ["warn", { "builtinGlobals": false }],
         "no-regex-spaces": "warn",
         "no-restricted-globals": "off",
         "no-restricted-properties": [
@@ -179,13 +180,19 @@
         "@typescript-eslint/explicit-member-accessibility": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-empty-interface": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/prefer-interface": "off",
         "@typescript-eslint/no-array-constructor": "warn",
         "@typescript-eslint/no-namespace": "error",
-        "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": [
+            "warn",
+            {
+                "functions": false,
+                "classes": false,
+                "variables": false,
+                "typedefs": false
+            }
+        ],
         "@typescript-eslint/no-unused-expressions": [
             "error",
             {

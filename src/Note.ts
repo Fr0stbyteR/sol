@@ -1,11 +1,12 @@
-import { floorMod } from "./utils";
+import { floorMod } from "./utils1";
 import Interval, { TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
 import Enum from "./Enum";
+import Frequency from "./Frequency";
 
 type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export class EnumNote extends Enum {
     protected static indexes: TEnumNoteValue[] = ["C", "D", "E", "F", "G", "A", "B"];
-    private static offsetMap: { [key: number]: TEnumNoteValue } = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
+    private static offsetMap: Record<string, TEnumNoteValue> = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
     static get C() { return new EnumNote(0); }
     static get D() { return new EnumNote(2); }
     static get E() { return new EnumNote(4); }
@@ -58,7 +59,7 @@ export const isNoteArray = (x: any): x is Note[] => {
     return Array.isArray(x)
         && x.every(el => el instanceof Note);
 };
-export class Note implements INote {
+export class Note implements INote, IComputable<Note>, IClonable<Note> {
     static REGEX = /^([b#]*)([a-gA-G])$/;
     enumNote: EnumNote;
     alteration: number;
@@ -88,6 +89,9 @@ export class Note implements INote {
     constructor(first?: EnumNote | INote | string | number, second?: number) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;
+        this.become(first, second);
+    }
+    become(first?: EnumNote | INote | string | number, second?: number) {
         if (first instanceof EnumNote) {
             this.enumNote = first;
             if (second) this.alteration = second;
@@ -99,6 +103,7 @@ export class Note implements INote {
         } else if (typeof first === "number") {
             this.fromOffset(first, second);
         }
+        return this;
     }
     static fromString(nameIn: string): INote {
         const matched = Note.REGEX.exec(nameIn);
@@ -135,38 +140,85 @@ export class Note implements INote {
         this.alteration = alteration;
         return this;
     }
-    add(iIn: number | string | Interval) {
-        if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+    static ratioToOffset(ratio: number) {
+        return Math.round(Math.log(ratio) / Math.log(Frequency.SEMITONE));
+    }
+    static offsetToRatio(offset: number) {
+        return Frequency.SEMITONE ** offset;
+    }
+    add(semitones: number): Note;
+    add(interval: string | Interval): Note;
+    add(noteIn: Note): Note
+    add(first: number | string | Interval | Note) {
+        if (typeof first === "number") return this.fromOffset(this.offset + first);
+        if (first instanceof Note) return this.become(first);
         let i: Interval;
-        if (typeof iIn === "string") i = new Interval(iIn);
-        else if (iIn instanceof Interval) i = iIn;
+        if (typeof first === "string") i = new Interval(first);
+        else if (first instanceof Interval) i = first;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(newEnumNote.offset - this.enumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
     }
-    sub(iIn: number | string | Interval) {
-        if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+    static add(a: Note, b: Note) {
+        return a.clone().add(b);
+    }
+    sub(semitones: number): Note;
+    sub(interval: string | Interval): Note;
+    sub(noteIn: Note): Note
+    sub(first: number | string | Interval | Note) {
+        if (typeof first === "number") return this.fromOffset(this.offset - first);
+        if (first instanceof Note) return this.become(first);
         let i: Interval;
-        if (typeof iIn === "string") i = new Interval(iIn);
-        else if (iIn instanceof Interval) i = iIn;
+        if (typeof first === "string") i = new Interval(first);
+        else if (first instanceof Interval) i = first;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
         return this;
+    }
+    static sub(a: Note, b: Note) {
+        return a.clone().sub(b);
+    }
+    mul(fIn: number) {
+        return this.add(Note.ratioToOffset(fIn));
+    }
+    static mul(a: Note, b: number) {
+        return a.clone().mul(b);
+    }
+    div(fIn: number): Note;
+    div(noteIn: Note): number;
+    div(first: number | Note) {
+        if (first instanceof Note) return Note.offsetToRatio(this.offset - first.offset);
+        return this.mul(1 / first);
+    }
+    static div(a: Note, b: number): Note;
+    static div(a: Note, b: Note): number;
+    static div(a: Note, b: Note | number) {
+        if (typeof b === "number") return a.clone().div(b);
+        return a.clone().div(b);
     }
     equals(noteIn: object) {
         return isNote(noteIn)
             && this.enumNote.equals(noteIn.enumNote)
             && this.alteration === noteIn.alteration;
     }
+    compareTo(that: Note): number {
+        return Note.compare(this, that);
+    }
+    static compare(x: Note, y: Note) {
+        return x.offset - y.offset;
+    }
     getInterval(noteIn: INote) {
-        if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");
-        const that = noteIn instanceof Note ? noteIn : new Note(noteIn);
+        const that = noteIn instanceof Note && noteIn.constructor === Note ? noteIn : new Note(noteIn);
         const degree = that.enumNote.index - this.enumNote.index + 1;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;
         return new Interval(degree, onset, octave);
+    }
+    getDistance(that: Note) {
+        const distance = Math.abs(this.offset - that.offset);
+        return distance > 6 ? 12 - distance : distance;
     }
     get offset() {
         return this.enumNote.offset + this.alteration;
@@ -179,6 +231,16 @@ export class Note implements INote {
     }
     clone() {
         return new Note(this);
+    }
+
+    getTendancy(that: Note) {
+        const d = this.getDistance(that);
+        return d === 0 || d > 2 ? 0 : 1 / d;
+    }
+    getStability(that: Note) {
+        const d = this.getDistance(that);
+        const [, f] = new Interval(Interval.fromOffset(d)).fraction;
+        return 1 / f;
     }
 }
 

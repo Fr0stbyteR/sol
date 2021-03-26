@@ -16,7 +16,7 @@ export const isPitchArray = (x: any): x is Pitch[] => {
     return Array.isArray(x)
         && x.every(el => el instanceof Pitch);
 };
-export class Pitch extends Note implements IPitch {
+export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable<Pitch> {
     static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
     static fromFrequency(f: number) {
         return new Pitch(69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));
@@ -52,24 +52,32 @@ export class Pitch extends Note implements IPitch {
      * Creates an instance of Pitch with index
      */
     constructor(first?: IPitch | EnumNote | INote | string | number, second?: number) {
+        super();
+        this.become(first, second);
+    }
+    become(first?: IPitch | EnumNote | INote | string | number, second?: number) {
         if (isPitch(first)) {
-            super(first);
+            super.become(first);
             this.octave = first.octave;
         } else if (first instanceof EnumNote) {
-            super(first);
+            super.become(first);
             this.octave = second || 0;
         } else if (isNote(first)) {
-            super(first);
+            super.become(first);
             this.octave = second || 0;
         } else if (typeof first === "string") {
-            super();
+            super.become();
             this.fromString(first);
         } else if (typeof first === "number") {
-            super(first);
+            super.become(first);
             this.octave = Math.floor(first / 12 - 1);
         } else {
-            super();
+            super.become();
         }
+        return this;
+    }
+    get frequency() {
+        return Frequency.A440 * 2 ** ((this.offset - 69) / 12);
     }
     static fromString(nameIn: string): IPitch {
         const matched = Pitch.REGEX.exec(nameIn);
@@ -94,34 +102,75 @@ export class Pitch extends Note implements IPitch {
         this.octave = octave;
         return this;
     }
-    add(iIn: number | string | Interval) {
+    add(semitones: number): Pitch;
+    add(interval: string | Interval): Pitch;
+    add(pitchIn: Pitch): Pitch;
+    add(iIn: number | string | Interval | Pitch) {
         if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+        if (iIn instanceof Pitch) return this.mul(1 + iIn.frequency / this.frequency);
         let i: Interval;
         if (typeof iIn === "string") i = new Interval(iIn);
         else if (iIn instanceof Interval) i = iIn;
         this.octave += Math.floor((this.enumNote.index + i.degree - 1) / 7) + i.octave;
         return super.add(i);
     }
-    sub(iIn: number | string | Interval) {
+    static add(a: Pitch, b: Pitch) {
+        return a.clone().add(b);
+    }
+    sub(semitones: number): Pitch;
+    sub(interval: string | Interval): Pitch;
+    sub(pitchIn: Pitch): Pitch;
+    sub(iIn: number | string | Interval | Pitch) {
         if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+        if (iIn instanceof Pitch) return this.mul(1 - iIn.frequency / this.frequency);
         let i: Interval;
         if (typeof iIn === "string") i = new Interval(iIn);
         else if (iIn instanceof Interval) i = iIn;
         this.octave += Math.floor((this.enumNote.index - i.degree + 1) / 7) - i.octave;
         return super.sub(i);
     }
+    static sub(a: Pitch, b: Pitch) {
+        return a.clone().sub(b);
+    }
+    mul(fIn: number): Pitch {
+        const d = Note.ratioToOffset(fIn);
+        return this.add(d);
+    }
+    static mul(a: Pitch, b: number) {
+        return a.clone().mul(b);
+    }
+    div(pitchIn: Pitch): number;
+    div(fIn: number): Pitch;
+    div(first: number | Pitch) {
+        if (first instanceof Pitch) return this.frequency / first.frequency;
+        return this.mul(1 / first);
+    }
+    static div(a: Pitch, b: number): Pitch;
+    static div(a: Pitch, b: Pitch): number;
+    static div(a: Pitch, b: Pitch | number) {
+        if (typeof b === "number") return a.clone().div(b);
+        return a.clone().div(b);
+    }
     equals(pitchIn: object) {
         return super.equals(pitchIn)
             && isPitch(pitchIn)
             && this.octave === pitchIn.octave;
     }
-    getInterval(pitchIn: IPitch) {
-        if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
-        const that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
-        const degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
+    compareTo(pitchIn: Pitch) {
+        return Pitch.compare(this, pitchIn);
+    }
+    static compare(x: Pitch, y: Pitch) {
+        return x.offset - y.offset;
+    }
+    getInterval(pitchIn: INote) {
+        const that = pitchIn instanceof Pitch ? pitchIn : isPitch(pitchIn) ? new Pitch(pitchIn) : new Pitch(pitchIn, this.octave);
+        const degree = that.enumNote.index - this.enumNote.index + 1 + (that.octave - this.octave) * 7;
         const onset = that.offset - this.offset - Interval.getOffsetFromDegree(degree);
         const octave = 0;
         return new Interval(degree, onset, octave);
+    }
+    getDistance(that: Pitch) {
+        return Math.abs(this.offset - that.offset);
     }
     get offset() {
         return this.enumNote.offset + this.alteration + 12 * (this.octave + 1);
@@ -135,8 +184,12 @@ export class Pitch extends Note implements IPitch {
     clone(): Pitch {
         return new Pitch(this);
     }
-    static compare(x: Pitch, y: Pitch) {
-        return x.offset - y.offset;
+
+    getTendancy(that: Pitch) {
+        return super.getTendancy(that);
+    }
+    getStability(that: Pitch) {
+        return super.getStability(that);
     }
 }
 

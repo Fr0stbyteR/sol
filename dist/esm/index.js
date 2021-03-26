@@ -76,6 +76,10 @@ class Articulation {
     return new Articulation(this);
   }
 
+  toString() {
+    return "Art: [Vel: ".concat(this.velocity, " Len: ").concat(this.length, "]");
+  }
+
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Articulation);
 
@@ -99,9 +103,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 var _Symbol$iterator;
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -203,12 +223,16 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__.default {
     return EnumChord[chordIn];
   }
 
+  toChord(base) {
+    return new Chord(base, ...this.intervals);
+  }
+
   name() {
     return this._name;
   }
 
   equals(chordIn) {
-    return "intervals" in chordIn && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(chordIn.intervals) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+    return isChord(chordIn) && "intervals" in chordIn && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(chordIn.intervals) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
   }
 
   clone() {
@@ -220,7 +244,7 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__.default {
 _defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
 
 var isChord = x => {
-  return x instanceof Chord || typeof x === "object" && (0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNote)(x.base) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals) && typeof x.isAbsolute === "boolean";
+  return x instanceof Chord || typeof x === "object" && (0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNote)(x.base) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
 };
 var isChordArray = x => {
   return Array.isArray(x) && x.every(e => e instanceof Chord);
@@ -245,33 +269,33 @@ class Chord {
 
     _defineProperty(this, "intervals", void 0);
 
-    _defineProperty(this, "isAbsolute", void 0);
-
     this.base = null;
     this.intervals = [];
-    this.isAbsolute = false;
-
-    if (isChord(first)) {
-      this.base = first.base;
-      this.intervals = first.intervals;
-      this.isAbsolute = first.isAbsolute;
-    } else if (typeof first === "string") {
-      var isPitch = _Pitch__WEBPACK_IMPORTED_MODULE_2__.default.REGEX.exec(first);
-      if (isPitch) this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(first);else this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__.default(first);
-    } else {
-      this.base = first;
-    }
-
-    this.isAbsolute = true;
 
     for (var _len2 = arguments.length, arrayIn = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
       arrayIn[_key2 - 1] = arguments[_key2];
     }
 
-    if (arrayIn.find(e => e instanceof _Note__WEBPACK_IMPORTED_MODULE_1__.default && !(e instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__.default))) this.isAbsolute = false;
-    if (!this.isAbsolute) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__.default(this.base);
+    this.become(first, ...arrayIn);
+  }
 
-    if ((0,_Pitch__WEBPACK_IMPORTED_MODULE_2__.isPitchArray)(arrayIn) && this.isAbsolute) {
+  become(first) {
+    if (isChord(first)) {
+      this.base = first.base;
+      this.intervals = first.intervals;
+    } else if (typeof first === "string") {
+      var _isNote = _Note__WEBPACK_IMPORTED_MODULE_1__.default.REGEX.exec(first);
+
+      if (_isNote) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__.default(first);else this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(first);
+    } else {
+      this.base = first;
+    }
+
+    for (var _len3 = arguments.length, arrayIn = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      arrayIn[_key3 - 1] = arguments[_key3];
+    }
+
+    if ((0,_Pitch__WEBPACK_IMPORTED_MODULE_2__.isPitchArray)(arrayIn)) {
       this.intervals = arrayIn.sort(_Pitch__WEBPACK_IMPORTED_MODULE_2__.default.compare).map(pitch => this.base.getInterval(pitch));
     } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNoteArray)(arrayIn)) {
       this.intervals = arrayIn.map(note => this.base.getInterval(note));
@@ -280,6 +304,8 @@ class Chord {
     } else {
       this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(...arrayIn).sort(_Interval__WEBPACK_IMPORTED_MODULE_0__.default.compare);
     }
+
+    return this;
   }
 
   get size() {
@@ -290,8 +316,72 @@ class Chord {
     return [this.base, ...this.intervals.map(i => this.base.clone().add(i))];
   }
 
+  set notes(notesIn) {
+    if (!notesIn.length) return;
+
+    var _notesIn = _toArray(notesIn),
+        first = _notesIn[0],
+        arrayIn = _notesIn.slice(1);
+
+    this.base = first;
+
+    if ((0,_Pitch__WEBPACK_IMPORTED_MODULE_2__.isPitchArray)(arrayIn)) {
+      this.intervals = arrayIn.sort(_Pitch__WEBPACK_IMPORTED_MODULE_2__.default.compare).map(pitch => this.base.getInterval(pitch));
+    } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNoteArray)(arrayIn)) {
+      this.intervals = arrayIn.map(note => this.base.getInterval(note));
+    }
+  }
+
+  get isAbsolute() {
+    return this.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__.default;
+  }
+
+  get ratio() {
+    return (0,_utils1__WEBPACK_IMPORTED_MODULE_4__.nearestFractions)([1, ...this.intervals.map(i => i.ratio)]);
+  }
+
+  get reciprocal() {
+    return (0,_utils1__WEBPACK_IMPORTED_MODULE_4__.nearestReciprocals)([1, ...this.intervals.map(i => i.ratio)]);
+  }
+
+  removeDup() {
+    var intervals = this.intervals;
+    this.intervals = intervals.filter((i0, i) => {
+      var offset = i0.offset;
+      if (offset === 0) return false;
+      if (intervals.findIndex(i1 => i1 === i0 || i1.offset === offset) === i) return true;
+      return false;
+    });
+  }
+
+  reorder() {
+    this.intervals = this.intervals.sort(_Interval__WEBPACK_IMPORTED_MODULE_0__.default.compare);
+
+    if (this.intervals.length && this.intervals[0].offset < 0) {
+      var d = this.intervals[0].reverse();
+
+      for (var i = 1; i < this.intervals.length; i++) {
+        this.intervals[i].add(d);
+      }
+    }
+  }
+
   contains(noteIn) {
-    return !!this.notes.find(note => noteIn.equals(note));
+    var _iterator = _createForOfIteratorHelper(this.notes),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var note = _step.value;
+        if (noteIn.equals(note)) return true;
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    return false;
   }
 
   inverseUp() {
@@ -338,12 +428,89 @@ class Chord {
     return this;
   }
 
-  getEnumChord() {
+  get enumChord() {
     return EnumChord.byChord(this);
   }
 
+  get imaginaryBase() {
+    return this.base.div(this.ratio[0]);
+  }
+
+  get imaginaryVertex() {
+    return this.base.mul(this.reciprocal[0]);
+  }
+
+  add(first) {
+    if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_0__.default) {
+      this.intervals.push(first);
+    } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNote)(first)) {
+      this.intervals.push(this.base.getInterval(first));
+    } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNoteArray)(first)) {
+      this.intervals.push(...first.map(p => this.base.getInterval(p)));
+    } else {
+      var d = this.base.getInterval(first.base);
+
+      var _iterator2 = _createForOfIteratorHelper(first.intervals),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var interval = _step2.value;
+          this.intervals.push(d.clone().add(interval));
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+    }
+
+    this.reorder();
+    return this;
+  }
+
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
+  sub(first) {
+    if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_0__.default) {
+      this.intervals = this.intervals.filter(i0 => !i0.equals(first));
+    } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNote)(first)) {
+      var that = first instanceof _Note__WEBPACK_IMPORTED_MODULE_1__.default ? first : (0,_Pitch__WEBPACK_IMPORTED_MODULE_2__.isPitch)(first) ? new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(first) : new _Note__WEBPACK_IMPORTED_MODULE_1__.default(first);
+      var notes = this.notes.filter(n0 => !that.equals(n0));
+      if (!notes.length) return null;
+      this.notes = notes;
+    } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_1__.isNoteArray)(first)) {
+      var _notes = this.notes;
+      first.forEach(n => {
+        var that = n instanceof _Note__WEBPACK_IMPORTED_MODULE_1__.default ? n : (0,_Pitch__WEBPACK_IMPORTED_MODULE_2__.isPitch)(n) ? new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(n) : new _Note__WEBPACK_IMPORTED_MODULE_1__.default(n);
+        _notes = this.notes.filter(n0 => !that.equals(n0));
+      });
+      if (!_notes.length) return null;
+      this.notes = _notes;
+    } else {
+      this.sub(first.notes);
+    }
+
+    this.reorder();
+    return this;
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  compareTo(that) {
+    return Chord.compare(this, that);
+  }
+
+  static compare(x, y) {
+    return x.intervals.length - y.intervals.length;
+  }
+
   equals(chordIn) {
-    return isChord(chordIn) && chordIn.isAbsolute === this.isAbsolute && chordIn.base.equals(this.base) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
+    return isChord(chordIn) && chordIn.base.equals(this.base) && chordIn.intervals.length === this.intervals.length && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
   }
 
   toString() {
@@ -355,26 +522,90 @@ class Chord {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    var _this = this;
 
-        if (i < o.intervals.length) {
-          value = i === -1 ? o.base : o.base.clone().add(o.intervals[i]);
-          i++;
-          done = false;
+    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var _iterator3, _step3, note;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _iterator3 = _createForOfIteratorHelper(_this.notes);
+              _context.prev = 1;
+
+              _iterator3.s();
+
+            case 3:
+              if ((_step3 = _iterator3.n()).done) {
+                _context.next = 9;
+                break;
+              }
+
+              note = _step3.value;
+              _context.next = 7;
+              return note;
+
+            case 7:
+              _context.next = 3;
+              break;
+
+            case 9:
+              _context.next = 14;
+              break;
+
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](1);
+
+              _iterator3.e(_context.t0);
+
+            case 14:
+              _context.prev = 14;
+
+              _iterator3.f();
+
+              return _context.finish(14);
+
+            case 17:
+            case "end":
+              return _context.stop();
+          }
         }
+      }, _callee, null, [[1, 11, 14, 17]]);
+    })();
+  }
 
-        return {
-          value,
-          done
-        };
+  getTendancy(that) {
+    var m = [];
+    var notes = this.notes;
+    var $notes = that.notes;
+
+    for (var i = 0; i < $notes.length; i++) {
+      m[i] = [];
+
+      for (var j = 0; j < notes.length; j++) {
+        m[i][j] = notes[j].getTendancy($notes[i]);
       }
+    }
 
-    };
+    return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
+  }
+
+  getStability(that) {
+    var m = [];
+    var notes = this.notes;
+    var $notes = that.notes;
+
+    for (var i = 0; i < $notes.length; i++) {
+      m[i] = [];
+
+      for (var j = 0; j < notes.length; j++) {
+        m[i][j] = notes[j].getStability($notes[i]);
+      }
+    }
+
+    return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
   }
 
 }
@@ -393,7 +624,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isColor": () => (/* binding */ isColor),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -416,7 +647,7 @@ class Color {
       this.s = first.s;
       this.d = first.d;
       this.major = first.major;
-    } else if ((0,_utils__WEBPACK_IMPORTED_MODULE_0__.isNumberArray)(first)) {
+    } else if ((0,_utils1__WEBPACK_IMPORTED_MODULE_0__.isNumberArray)(first)) {
       this.fromArray(first);
     } else {
       this.t = first || 0;
@@ -468,7 +699,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Duration": () => (/* binding */ Duration),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -546,58 +777,89 @@ class Duration {
   }
 
   add(durationIn) {
-    if (this.denominator === durationIn.denominator) this.numerator += durationIn.numerator;else {
-      this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
-      this.denominator *= durationIn.denominator;
+    if (this.isAbsolute && durationIn.isAbsolute) {
+      this.seconds += durationIn.seconds;
+    } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+      if (this.denominator === durationIn.denominator) {
+        this.numerator += durationIn.numerator;
+      } else {
+        this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
+        this.denominator *= durationIn.denominator;
+      }
+
+      this.simplify();
+    } else {
+      throw new Error("Cannot operate between absolute and relative duration.");
     }
-    this.simplify().check();
-    return this;
+
+    return this.check();
+  }
+
+  static add(a, b) {
+    return a.clone().add(b);
   }
 
   sub(durationIn) {
-    if (this.denominator === durationIn.denominator) this.numerator -= durationIn.numerator;else {
-      this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
-      this.denominator *= durationIn.denominator;
+    if (this.isAbsolute && durationIn.isAbsolute) {
+      this.seconds -= durationIn.seconds;
+    } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+      if (this.denominator === durationIn.denominator) {
+        this.numerator -= durationIn.numerator;
+      } else {
+        this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
+        this.denominator *= durationIn.denominator;
+      }
+
+      this.simplify();
+    } else {
+      throw new Error("Cannot operate between absolute and relative duration.");
     }
-    this.simplify().check();
-    return this;
+
+    return this.check();
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
   }
 
   mul(f) {
-    this.numerator *= f;
-    this.simplify().check();
-    return this;
-  }
-
-  div(f) {
-    this.numerator /= f;
-    this.simplify().check();
-    return this;
-  }
-
-  simplify() {
-    var _gcd = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator, this.denominator);
-
-    if (_gcd > 1) {
-      this.denominator /= _gcd;
-      this.numerator /= _gcd;
-    }
-
-    return this;
-  }
-
-  check() {
     if (this.isAbsolute) {
-      if (this.numerator <= 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+      this.seconds *= f;
     } else {
-      if (this.seconds <= 0) throw new Error("Duration should have positive value.");
+      this.numerator *= f;
+      this.simplify();
     }
 
-    return this;
+    return this.check();
   }
 
-  clone() {
-    return new Duration(this);
+  static mul(a, b) {
+    return a.clone().mul(b);
+  }
+
+  div(first) {
+    if (typeof first === "number") {
+      if (this.isAbsolute) {
+        this.seconds /= first;
+      } else {
+        this.denominator *= first;
+        this.simplify();
+      }
+
+      return this.check();
+    }
+
+    if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
+    throw new Error("Cannot operate between absolute and relative duration.");
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
+  }
+
+  equals(durationIn) {
+    return isDuration(durationIn) && this.compareTo(durationIn) === 0;
   }
 
   compareTo(that) {
@@ -609,8 +871,39 @@ class Duration {
     return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
   }
 
-  equals(durationIn) {
-    return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+  simplify() {
+    if (this.numerator === 0) return this;
+    var f = Math.max((0,_utils1__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.numerator), (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.denominator));
+    var $gcd = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator * f, this.denominator * f) / f;
+
+    if ($gcd !== 1) {
+      this.denominator /= $gcd;
+      this.numerator /= $gcd;
+    }
+
+    return this;
+  }
+
+  check() {
+    /*
+    if (this.isAbsolute) {
+        if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+    } else {
+        if (this.seconds < 0) throw new Error("Duration should have positive value.");
+    }
+    */
+    return this;
+  }
+
+  clone() {
+    return new Duration(this);
+  }
+
+  static random(randomIn, min, max, step) {
+    if (min.equals(max)) return min.clone();
+    var d = max.clone().sub(min);
+    var steps = randomIn.randint(0, ~~d.div(step));
+    return min.clone().add(step.clone().mul(steps));
   }
 
   toString() {
@@ -687,6 +980,8 @@ _defineProperty(Frequency, "SEMITONE", Math.pow(2, 1 / 12));
 
 _defineProperty(Frequency, "THRES_AUDIT", Math.pow(2, 1 / 36));
 
+_defineProperty(Frequency, "getRatio", d => Math.pow(2, d / 12));
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Frequency);
 
 /***/ }),
@@ -705,7 +1000,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Interval": () => (/* binding */ Interval),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -782,7 +1077,7 @@ _defineProperty(EnumIntervalProperty, "abbMap", {
 
 class Interval {
   static getOffsetFromProperty(propertyIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (propertyIn.equals(EnumIntervalProperty.PERFECT)) return 0;
@@ -799,7 +1094,7 @@ class Interval {
   }
 
   static getPropertyFromOffset(onsetIn, degreeIn) {
-    var degree = typeof degreeIn === "number" ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
+    var degree = typeof degreeIn === "number" ? (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1 : 1;
 
     if (degree === 1 || degree === 4 || degree === 5) {
       if (onsetIn === 0) return EnumIntervalProperty.PERFECT;
@@ -816,7 +1111,7 @@ class Interval {
   }
 
   static getOffsetFromDegree(degreeIn) {
-    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
+    return typeof degreeIn === "number" ? DEGREE_TO_OFFSET[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7)] + 12 * Math.floor((degreeIn - 1) / 7) : 0;
   }
   /**
    * Returns Unison
@@ -846,7 +1141,7 @@ class Interval {
   fromInterval(degreeIn) {
     var onsetIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var octaveIn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    this.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1;
+    this.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(degreeIn - 1, 7) + 1;
     this.onset = onsetIn;
     this.octave = Math.floor((degreeIn - 1) / 7) + octaveIn;
   }
@@ -882,11 +1177,11 @@ class Interval {
     var octave = Math.floor(offsetIn / 12);
 
     for (var i = 0; i < DEGREE_TO_OFFSET.length; i++) {
-      if (DEGREE_TO_OFFSET[i] === (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)) {
+      if (DEGREE_TO_OFFSET[i] === (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)) {
         degree = i + 1;
         onset = 0;
         break;
-      } else if (DEGREE_TO_OFFSET[i] === (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12) + 1) {
+      } else if (DEGREE_TO_OFFSET[i] === (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12) + 1) {
         degree = i + 1;
         onset = -1;
         break;
@@ -923,13 +1218,17 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree + iIn.degree - 1 - 1, 7) + 1;
+    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree + iIn.degree - 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave + iIn.offset - 12 * iIn.octave - Interval.getOffsetFromDegree(this.degree + iIn.degree - 1);
-    i.octave = this.octave + iIn.octave + (this.degree + iIn.degree - 1 - 1) / 7;
+    i.octave = this.octave + iIn.octave + Math.floor((this.degree + iIn.degree - 1 - 1) / 7);
     this.degree = i.degree;
     this.onset = i.onset;
     this.octave = i.octave;
     return this;
+  }
+
+  static add(a, b) {
+    return a.clone().add(b);
   }
 
   sub(iIn) {
@@ -938,7 +1237,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - iIn.degree + 1 - 1, 7) + 1;
+    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - iIn.degree + 1 - 1, 7) + 1;
     i.onset = this.offset - 12 * this.octave - (iIn.offset - 12 * iIn.octave) - Interval.getOffsetFromDegree(this.degree - iIn.degree + 1);
     i.octave = this.octave - iIn.octave + Math.floor((this.degree - iIn.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -947,13 +1246,29 @@ class Interval {
     return this;
   }
 
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  equals(intervalIn) {
+    return isInterval(intervalIn) && this.degree === intervalIn.degree && this.onset === intervalIn.onset && this.octave === intervalIn.octave;
+  }
+
+  compareTo(iIn) {
+    return Interval.compare(this, iIn);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
+  }
+
   reverse() {
     var i = {
       degree: 0,
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
+    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
     i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
     i.octave = 0 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -968,7 +1283,7 @@ class Interval {
       onset: 0,
       octave: 0
     };
-    i.degree = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
+    i.degree = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(1 - this.degree, 7) + 1;
     i.onset = 0 - (this.offset - 12 * this.octave) - Interval.getOffsetFromDegree(1 - this.degree + 1);
     i.octave = 1 - this.octave + Math.floor((1 - this.degree + 1 - 1) / 7);
     this.degree = i.degree;
@@ -978,11 +1293,19 @@ class Interval {
   }
 
   get offset() {
-    return DEGREE_TO_OFFSET[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
+    return DEGREE_TO_OFFSET[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.degree - 1, 7)] + 12 * Math.floor((this.degree - 1) / 7) + this.onset + 12 * this.octave;
   }
 
   get ratio() {
-    return Math.pow(_Frequency__WEBPACK_IMPORTED_MODULE_2__.default.SEMITONE, this.offset);
+    return _Frequency__WEBPACK_IMPORTED_MODULE_2__.default.getRatio(this.offset);
+  }
+
+  get fraction() {
+    return (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.nearestFraction)(this.ratio);
+  }
+
+  get reciprocal() {
+    return (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.nearestReciprocal)(this.ratio);
   }
 
   get property() {
@@ -997,10 +1320,6 @@ class Interval {
     return arrayIn.map(e => new Interval(e));
   }
 
-  equals(intervalIn) {
-    return isInterval(intervalIn) && this.degree === intervalIn.degree && this.onset === intervalIn.onset && this.octave === intervalIn.octave;
-  }
-
   toString() {
     var sOnset = this.property ? this.property.abb : (this.onset > 0 ? "+" : "") + this.onset.toString() + "_";
     var sOctave = this.octave > 0 ? "+" + this.octave : this.octave < 0 ? this.octave : "";
@@ -1009,10 +1328,6 @@ class Interval {
 
   clone() {
     return new Interval(this);
-  }
-
-  static compare(x, y) {
-    return x.offset - y.offset;
   }
 
 }
@@ -1037,10 +1352,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Note": () => (/* binding */ Note),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
+/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -1084,14 +1413,14 @@ class EnumNote extends _Enum__WEBPACK_IMPORTED_MODULE_2__.default {
 
   static byOffset(offsetIn) {
     if (typeof offsetIn !== "number") return null;
-    var name = EnumNote.offsetMap[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)];
+    var name = EnumNote.offsetMap[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with offset ".concat(offsetIn, "."));
   }
 
   static byIndex(indexIn) {
     if (typeof indexIn !== "number") return null;
-    var name = EnumNote.indexes[(0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(indexIn, 7)];
+    var name = EnumNote.indexes[(0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(indexIn, 7)];
     if (name) return EnumNote[name];
     throw new SyntaxError("No such note with index ".concat(indexIn, "."));
   }
@@ -1176,7 +1505,10 @@ class Note {
 
     this.enumNote = EnumNote.C;
     this.alteration = 0;
+    this.become(first, second);
+  }
 
+  become(first, second) {
     if (first instanceof EnumNote) {
       this.enumNote = first;
       if (second) this.alteration = second;
@@ -1188,6 +1520,8 @@ class Note {
     } else if (typeof first === "number") {
       this.fromOffset(first, second);
     }
+
+    return this;
   }
 
   static fromString(nameIn) {
@@ -1213,7 +1547,7 @@ class Note {
   }
 
   static fromOffset(offsetIn, alterationIn) {
-    var note = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12);
+    var note = (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(offsetIn, 12);
     var offset = 11;
 
     for (var i = _Interval__WEBPACK_IMPORTED_MODULE_1__.DEGREE_TO_OFFSET.length - 1; i >= 0; i--) {
@@ -1244,37 +1578,85 @@ class Note {
     return this;
   }
 
-  add(iIn) {
-    if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+  static ratioToOffset(ratio) {
+    return Math.round(Math.log(ratio) / Math.log(_Frequency__WEBPACK_IMPORTED_MODULE_3__.default.SEMITONE));
+  }
+
+  static offsetToRatio(offset) {
+    return Math.pow(_Frequency__WEBPACK_IMPORTED_MODULE_3__.default.SEMITONE, offset);
+  }
+
+  add(first) {
+    if (typeof first === "number") return this.fromOffset(this.offset + first);
+    if (first instanceof Note) return this.become(first);
     var i;
-    if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = iIn;
+    if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
-    this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(newEnumNote.offset - this.enumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(newEnumNote.offset - this.enumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
   }
 
-  sub(iIn) {
-    if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
+  sub(first) {
+    if (typeof first === "number") return this.fromOffset(this.offset - first);
+    if (first instanceof Note) return this.become(first);
     var i;
-    if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = iIn;
+    if (typeof first === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(first);else if (first instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = first;
     var newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
-    this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.enumNote.offset - newEnumNote.offset, 12);
+    this.alteration += i.offset - 12 * i.octave - (0,_utils1__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.enumNote.offset - newEnumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
+  }
+
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  mul(fIn) {
+    return this.add(Note.ratioToOffset(fIn));
+  }
+
+  static mul(a, b) {
+    return a.clone().mul(b);
+  }
+
+  div(first) {
+    if (first instanceof Note) return Note.offsetToRatio(this.offset - first.offset);
+    return this.mul(1 / first);
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
   }
 
   equals(noteIn) {
     return isNote(noteIn) && this.enumNote.equals(noteIn.enumNote) && this.alteration === noteIn.alteration;
   }
 
+  compareTo(that) {
+    return Note.compare(this, that);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
+  }
+
   getInterval(noteIn) {
-    if (!isNote(noteIn)) throw new TypeError("Cannot get Interval with other object than Note");
-    var that = noteIn instanceof Note ? noteIn : new Note(noteIn);
+    var that = noteIn instanceof Note && noteIn.constructor === Note ? noteIn : new Note(noteIn);
     var degree = that.enumNote.index - this.enumNote.index + 1;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__.default.getOffsetFromDegree(degree);
     var octave = 0;
     return new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(degree, onset, octave);
+  }
+
+  getDistance(that) {
+    var distance = Math.abs(this.offset - that.offset);
+    return distance > 6 ? 12 - distance : distance;
   }
 
   get offset() {
@@ -1295,6 +1677,20 @@ class Note {
 
   clone() {
     return new Note(this);
+  }
+
+  getTendancy(that) {
+    var d = this.getDistance(that);
+    return d === 0 || d > 2 ? 0 : 1 / d;
+  }
+
+  getStability(that) {
+    var d = this.getDistance(that);
+
+    var _Interval$fraction = _slicedToArray(new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(_Interval__WEBPACK_IMPORTED_MODULE_1__.default.fromOffset(d)).fraction, 2),
+        f = _Interval$fraction[1];
+
+    return 1 / f;
   }
 
 }
@@ -1435,41 +1831,38 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
    * Creates an instance of Pitch with index
    */
   constructor(first, second) {
+    super();
+
+    _defineProperty(this, "octave", void 0);
+
+    this.become(first, second);
+  }
+
+  become(first, second) {
     if (isPitch(first)) {
-      super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      super.become(first);
       this.octave = first.octave;
     } else if (first instanceof _Note__WEBPACK_IMPORTED_MODULE_0__.EnumNote) {
-      super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      super.become(first);
       this.octave = second || 0;
     } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_0__.isNote)(first)) {
-      super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      super.become(first);
       this.octave = second || 0;
     } else if (typeof first === "string") {
-      super();
-
-      _defineProperty(this, "octave", void 0);
-
+      super.become();
       this.fromString(first);
     } else if (typeof first === "number") {
-      super(first);
-
-      _defineProperty(this, "octave", void 0);
-
+      super.become(first);
       this.octave = Math.floor(first / 12 - 1);
     } else {
-      super();
-
-      _defineProperty(this, "octave", void 0);
+      super.become();
     }
+
+    return this;
+  }
+
+  get frequency() {
+    return _Frequency__WEBPACK_IMPORTED_MODULE_2__.default.A440 * Math.pow(2, (this.offset - 69) / 12);
   }
 
   static fromString(nameIn) {
@@ -1513,31 +1906,71 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
 
   add(iIn) {
     if (typeof iIn === "number") return this.fromOffset(this.offset + iIn);
+    if (iIn instanceof Pitch) return this.mul(1 + iIn.frequency / this.frequency);
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = iIn;
     this.octave += Math.floor((this.enumNote.index + i.degree - 1) / 7) + i.octave;
     return super.add(i);
   }
 
+  static add(a, b) {
+    return a.clone().add(b);
+  }
+
   sub(iIn) {
     if (typeof iIn === "number") return this.fromOffset(this.offset - iIn);
+    if (iIn instanceof Pitch) return this.mul(1 - iIn.frequency / this.frequency);
     var i;
     if (typeof iIn === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(iIn);else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = iIn;
     this.octave += Math.floor((this.enumNote.index - i.degree + 1) / 7) - i.octave;
     return super.sub(i);
   }
 
+  static sub(a, b) {
+    return a.clone().sub(b);
+  }
+
+  mul(fIn) {
+    var d = _Note__WEBPACK_IMPORTED_MODULE_0__.default.ratioToOffset(fIn);
+    return this.add(d);
+  }
+
+  static mul(a, b) {
+    return a.clone().mul(b);
+  }
+
+  div(first) {
+    if (first instanceof Pitch) return this.frequency / first.frequency;
+    return this.mul(1 / first);
+  }
+
+  static div(a, b) {
+    if (typeof b === "number") return a.clone().div(b);
+    return a.clone().div(b);
+  }
+
   equals(pitchIn) {
     return super.equals(pitchIn) && isPitch(pitchIn) && this.octave === pitchIn.octave;
   }
 
+  compareTo(pitchIn) {
+    return Pitch.compare(this, pitchIn);
+  }
+
+  static compare(x, y) {
+    return x.offset - y.offset;
+  }
+
   getInterval(pitchIn) {
-    if (!isPitch(pitchIn)) throw new TypeError("Cannot get Interval with other object than Pitch");
-    var that = pitchIn instanceof Pitch ? pitchIn : new Pitch(pitchIn);
-    var degree = that.enumNote.index - this.enumNote.index + 1 + (pitchIn.octave - this.octave) * 7;
+    var that = pitchIn instanceof Pitch ? pitchIn : isPitch(pitchIn) ? new Pitch(pitchIn) : new Pitch(pitchIn, this.octave);
+    var degree = that.enumNote.index - this.enumNote.index + 1 + (that.octave - this.octave) * 7;
     var onset = that.offset - this.offset - _Interval__WEBPACK_IMPORTED_MODULE_1__.default.getOffsetFromDegree(degree);
     var octave = 0;
     return new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(degree, onset, octave);
+  }
+
+  getDistance(that) {
+    return Math.abs(this.offset - that.offset);
   }
 
   get offset() {
@@ -1560,8 +1993,12 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
     return new Pitch(this);
   }
 
-  static compare(x, y) {
-    return x.offset - y.offset;
+  getTendancy(that) {
+    return super.getTendancy(that);
+  }
+
+  getStability(that) {
+    return super.getStability(that);
   }
 
 }
@@ -1590,8 +2027,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 var _Symbol$iterator;
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -1668,7 +2111,7 @@ class EnumScale {
 
 }
 var isScale = x => {
-  return x instanceof Scale || typeof x === "object" && (0,_utils__WEBPACK_IMPORTED_MODULE_1__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
+  return x instanceof Scale || typeof x === "object" && (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
 };
 _Symbol$iterator = Symbol.iterator;
 class Scale {
@@ -1731,7 +2174,7 @@ class Scale {
 
   getIntervalFromDegree(degreeIn) {
     return this.intervals.find(interval => {
-      return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
+      return (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
     });
   }
 
@@ -1748,7 +2191,7 @@ class Scale {
   }
 
   toString() {
-    var s = this.scaleName ? "Scale \"".concat(this.scaleName, "\" :{") : "Scale :{";
+    var s = this.scaleName ? "Scale \"".concat(this.scaleName, "\": {") : "Scale :{";
 
     for (var i = 0; i < this.intervals.length; i++) {
       var sI = this.intervals[i].toString();
@@ -1766,26 +2209,58 @@ class Scale {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    var _this = this;
 
-        if (i < o.intervals.length) {
-          value = o.intervals[i];
-          i++;
-          done = false;
+    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var _iterator, _step, interval;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _iterator = _createForOfIteratorHelper(_this.intervals);
+              _context.prev = 1;
+
+              _iterator.s();
+
+            case 3:
+              if ((_step = _iterator.n()).done) {
+                _context.next = 9;
+                break;
+              }
+
+              interval = _step.value;
+              _context.next = 7;
+              return interval;
+
+            case 7:
+              _context.next = 3;
+              break;
+
+            case 9:
+              _context.next = 14;
+              break;
+
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](1);
+
+              _iterator.e(_context.t0);
+
+            case 14:
+              _context.prev = 14;
+
+              _iterator.f();
+
+              return _context.finish(14);
+
+            case 17:
+            case "end":
+              return _context.stop();
+          }
         }
-
-        return {
-          value,
-          done
-        };
-      }
-
-    };
+      }, _callee, null, [[1, 11, 14, 17]]);
+    })();
   }
 
 }
@@ -1863,7 +2338,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _utils1__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils1 */ "./src/utils1.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -1891,7 +2366,7 @@ class TonalChord {
         var s = matched[1];
         this.alteration = s === "#" ? 1 : s === "b" ? -1 : 0;
         s = matched[2];
-        var p = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.parseRoman)(s);
+        var p = (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.parseRoman)(s);
         if (p !== 0 && p > 7 && p < -7) throw new Error("Roman number too large for degree.");
         this.degree = Math.abs(p);
         s = matched[3];
@@ -1930,7 +2405,7 @@ class TonalChord {
     var s = "";
     if (this.alteration === 1) s = "#";else if (this.alteration === -1) s = "b";
     if (!this.chord) return s + this.degree;
-    s += (0,_utils__WEBPACK_IMPORTED_MODULE_1__.toRoman)(this.degree * (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN) ? -1 : 1));
+    s += (0,_utils1__WEBPACK_IMPORTED_MODULE_1__.toRoman)(this.degree * (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN) ? -1 : 1));
 
     if (!this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MAJ) && !this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.MIN)) {
       if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.AUG)) s += "+";else if (this.chord.equals(_Chord__WEBPACK_IMPORTED_MODULE_0__.EnumChord.AUG)) s += "-";else s += this.chord.name().toLowerCase();
@@ -2077,26 +2552,37 @@ class Tonality {
   }
 
   [_Symbol$iterator]() {
-    var o = this;
-    var i = -1;
-    return {
-      next() {
-        var value;
-        var done = true;
+    var _this = this;
 
-        if (i < o.scale.size) {
-          value = o.note.clone().add(o.scale.intervals[i]);
-          i++;
-          done = false;
+    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var i;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              i = 0;
+
+            case 1:
+              if (!(i < _this.scale.size)) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 4;
+              return _this.note.clone().add(_this.scale.intervals[i]);
+
+            case 4:
+              i++;
+              _context.next = 1;
+              break;
+
+            case 7:
+            case "end":
+              return _context.stop();
+          }
         }
-
-        return {
-          value,
-          done
-        };
-      }
-
-    };
+      }, _callee);
+    })();
   }
 
 }
@@ -2182,9 +2668,49 @@ class EnumVelocity {
 }
 class Velocity {
   constructor(velocityIn) {
-    _defineProperty(this, "velocity", void 0);
+    _defineProperty(this, "_velocity", void 0);
 
     if (typeof velocityIn === "number") this.velocity = velocityIn;else this.velocity = velocityIn.velocity;
+  }
+
+  get velocity() {
+    return this._velocity;
+  }
+
+  set velocity(value) {
+    this._velocity = Math.max(0, Math.min(128, ~~value));
+  }
+
+  add(that) {
+    this.velocity += that.velocity;
+    return this;
+  }
+
+  sub(that) {
+    this.velocity -= that.velocity;
+    return this;
+  }
+
+  mul(fIn) {
+    this.velocity *= fIn;
+    return this;
+  }
+
+  div(that) {
+    if (typeof that === "number") {
+      this.velocity /= that;
+      return this;
+    }
+
+    return this.velocity /= that.velocity;
+  }
+
+  equals(that) {
+    return isVelocity(that) && this.velocity === that.velocity;
+  }
+
+  compareTo(that) {
+    return this.velocity - that.velocity;
   }
 
   normalize() {
@@ -2195,32 +2721,50 @@ class Velocity {
     return new Velocity(this);
   }
 
+  toString() {
+    return "Vel: ".concat(this.velocity);
+  }
+
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Velocity);
 
 /***/ }),
 
-/***/ "./src/utils.ts":
-/*!**********************!*\
-  !*** ./src/utils.ts ***!
-  \**********************/
+/***/ "./src/utils1.ts":
+/*!***********************!*\
+  !*** ./src/utils1.ts ***!
+  \***********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "precisionFactor": () => (/* binding */ precisionFactor),
 /* harmony export */   "gcd": () => (/* binding */ gcd),
 /* harmony export */   "lcm": () => (/* binding */ lcm),
 /* harmony export */   "floorMod": () => (/* binding */ floorMod),
 /* harmony export */   "isStringArray": () => (/* binding */ isStringArray),
 /* harmony export */   "isNumberArray": () => (/* binding */ isNumberArray),
 /* harmony export */   "parseRoman": () => (/* binding */ parseRoman),
-/* harmony export */   "toRoman": () => (/* binding */ toRoman)
+/* harmony export */   "toRoman": () => (/* binding */ toRoman),
+/* harmony export */   "getValueFromCurve": () => (/* binding */ getValueFromCurve),
+/* harmony export */   "nearestFraction": () => (/* binding */ nearestFraction),
+/* harmony export */   "nearestFractions": () => (/* binding */ nearestFractions),
+/* harmony export */   "nearestReciprocal": () => (/* binding */ nearestReciprocal),
+/* harmony export */   "nearestReciprocals": () => (/* binding */ nearestReciprocals),
+/* harmony export */   "permutations": () => (/* binding */ permutations),
+/* harmony export */   "permute": () => (/* binding */ permute),
+/* harmony export */   "combinations": () => (/* binding */ combinations),
+/* harmony export */   "randomCombination": () => (/* binding */ randomCombination)
 /* harmony export */ });
+/* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
+
+var precisionFactor = function precisionFactor(x) {
+  var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  return Math.round(x * e) !== x * e ? precisionFactor(x, e * 10) : e;
+};
 var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
 var lcm = (a, b) => a * (b / gcd(a, b));
-var floorMod = (x, y) => {
-  return (x % y + y) % y;
-};
+var floorMod = (x, y) => (x % y + y) % y;
 var isStringArray = x => {
   return Array.isArray(x) && x.every(e => typeof e === "string");
 };
@@ -2275,6 +2819,147 @@ var toRoman = nIn => {
   }
 
   return nIn > 0 ? rOut : rOut.toLowerCase();
+};
+var getValueFromCurve = (t0, t1, t, exp) => t0 + (t1 - t0) * Math.pow(t, Math.pow(2, exp));
+/**
+ * Get a fraction typle from a floating number.
+ *
+ * @param {number} v Floating number
+ * @param {number} [approx=Frequency.THRES_AUDIT] Approximation ratio (> 1)
+ * @returns {number[]} fraction tuple
+ */
+
+var nearestFraction = function nearestFraction(v) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__.default.THRES_AUDIT;
+  return nearestFractions([1, v], approxIn);
+};
+var nearestFractions = function nearestFractions(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__.default.THRES_AUDIT;
+  if (ratio.length < 2) return ratio.map(() => 1);
+  var approx = approxIn;
+  var iApprox = 1 / approx;
+
+  if (iApprox > approx) {
+    var _ref = [approx, iApprox];
+    iApprox = _ref[0];
+    approx = _ref[1];
+  }
+
+  var div = 0;
+  var ref;
+  var factor = [];
+  var iFactor = [];
+  var delta = [];
+
+  do {
+    ref = ratio[0] / ++div;
+    factor[0] = div;
+    iFactor[0] = div;
+    delta[0] = 1;
+
+    for (var i = 1; i < ratio.length; i++) {
+      factor[i] = ratio[i] / ref;
+      iFactor[i] = Math.round(factor[i]);
+      delta[i] = iFactor[i] / factor[i];
+    }
+  } while (!delta.every(d => iApprox < d && d < approx));
+
+  return iFactor;
+};
+var nearestReciprocal = function nearestReciprocal(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__.default.THRES_AUDIT;
+  return nearestReciprocals([ratio, 1], approxIn);
+};
+var nearestReciprocals = function nearestReciprocals(ratio) {
+  var approxIn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Frequency__WEBPACK_IMPORTED_MODULE_0__.default.THRES_AUDIT;
+  if (ratio.length < 2) return ratio.map(() => 1);
+  var approx = approxIn;
+  var iApprox = 1 / approx;
+
+  if (iApprox > approx) {
+    var _ref2 = [approx, iApprox];
+    iApprox = _ref2[0];
+    approx = _ref2[1];
+  }
+
+  var mul = 0;
+  var ref;
+  var factor = [];
+  var iFactor = [];
+  var delta = [];
+
+  do {
+    ref = ratio[0] * ++mul;
+    factor[0] = mul;
+    iFactor[0] = mul;
+    delta[0] = 1;
+
+    for (var i = 1; i < ratio.length; i++) {
+      factor[i] = ref / ratio[i];
+      iFactor[i] = Math.round(factor[i]);
+      delta[i] = iFactor[i] / factor[i];
+    }
+  } while (!delta.every(d => iApprox < d && d < approx));
+
+  return iFactor;
+}; // eslint-disable-next-line arrow-parens
+
+var permutations = array => {
+  var length = array.length;
+  var result = [array.slice()];
+  var c = new Array(length).fill(0);
+  var i = 1;
+  var k;
+  var p;
+
+  while (i < length) {
+    if (c[i] < i) {
+      k = i % 2 && c[i];
+      var permutation = array.slice();
+      p = permutation[i];
+      permutation[i] = permutation[k];
+      permutation[k] = p;
+      c[i]++;
+      i = 1;
+      result.push(permutation);
+    } else {
+      c[i] = 0;
+      i++;
+    }
+  }
+
+  return result;
+}; // eslint-disable-next-line arrow-parens
+
+var permute = (array, random) => {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = random ? random.randint(0, i + 1) : ~~(Math.random() * (i + 1));
+    var _ref3 = [array[j], array[i]];
+    array[i] = _ref3[0];
+    array[j] = _ref3[1];
+  }
+
+  return array;
+}; // eslint-disable-next-line arrow-parens
+
+var combinations = array => {
+  var length = array.length;
+
+  var helper = ($, current, result) => {
+    for (var i = $; i < length; i++) {
+      var next = current.slice().concat(array[i]);
+      result.push(next);
+      if ($ < length - 1) helper(i + 1, next, result);
+    }
+
+    return result;
+  };
+
+  return helper(0, [], []);
+}; // eslint-disable-next-line arrow-parens
+
+var randomCombination = (array, random) => {
+  return array.filter(() => random ? !!random.randint(0, 1) : Math.random() < 0.5);
 };
 
 /***/ })
@@ -2431,6 +3116,83 @@ __webpack_require__.r(__webpack_exports__);
   Tonality: _Tonality__WEBPACK_IMPORTED_MODULE_12__.default,
   Velocity: _Velocity__WEBPACK_IMPORTED_MODULE_13__.default
 });
+/* eslint-disable no-console */
+
+/*
+console.log(new Pitch("C8").offset);
+new Note("#G").getInterval(new Note("C"));
+console.log(new Note("#G").getInterval(new Note("C")).toString());
+console.log(new Note("#C").getInterval(new Note("G")).toString());
+console.log(new Note("C").getInterval(new Note("bC")).toString());
+console.log(new Note("C").getInterval(new Note("#C")).toString());
+console.log(new Note("C").getInterval(new Note("bB")).toString());
+console.log(new Note("C").getInterval(new Note("#A")).toString());
+
+const n = new Note(1);
+console.log(n.toString());
+
+const p = new Pitch("##F0");
+console.log(p.add("A4").toString() + " " + p.offset);
+
+const f = 440;
+console.log(Pitch.fromFrequency(f).offset);
+
+const c = new Chord(new Pitch("C1"), new Pitch("bC2"), new Pitch("#C1"));
+
+console.log(c.toString());
+
+console.log(new Interval("M3").reverse().toString());
+
+console.log(c.notes.toString());
+console.log(c.contains(new Pitch("#C1")));
+const c1 = new Chord(new Pitch("C1"), new Pitch("E1"), new Pitch("G1"));
+const c2 = new Chord(new Pitch("B0"), new Pitch("D1"), new Pitch("G1"));
+console.log(c1.enumChord);
+
+const s = EnumScale.MINOR;
+console.log(s.toString());
+console.log(new Tonality("C").toRelative().toString());
+console.log(new Tonality("C").toPrev().toString());
+console.log(new Tonality("C").toNext().toString());
+
+console.log(EnumChordProgression.EPIC1.toString());
+
+console.log(new Random("1").randint(0, 100));
+
+const tn1 = new TrackNote({ pitch: new Pitch("C1"), duration: new Duration(1, 4), offset: new Duration(0, 4) });
+const tn2 = new TrackNote({ pitch: new Pitch("D1"), duration: new Duration(1, 4), offset: new Duration(1, 4) });
+const tn3 = new TrackNote({ pitch: new Pitch("E1"), duration: new Duration(1, 4), offset: new Duration(2, 4) });
+const seg = new Segment({ notes: [tn2, tn3, tn1], automations: [], duration: new Duration(1, 1) });
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+HClipper.use(seg, { start: new Duration(1, 8), end: new Duration(3, 8), mode: "clip" });
+seg.notes.sort((a, b) => a.offset.compareTo(b.offset)).forEach(n => console.log(n.toString()));
+console.log(seg.duration.toString());
+console.log(new Interval("P5").fraction.toString());
+console.log(new Interval("M3").fraction.toString());
+console.log(new Interval("M2").fraction.toString());
+const C3 = EnumChord.DOM7.toChord("C");
+console.log(C3.ratio);
+console.log(C3.imaginaryBase.toString());
+const c3 = EnumChord.MIN.toChord("C");
+console.log(c3.reciprocal);
+console.log(c3.imaginaryVertex.toString());
+
+console.log(Duration.random(new Random("2"), new Duration(1, 4), new Duration(3, 1), new Duration(1, 2)));
+console.log(new Duration(0.03, 4).div(2));
+console.log(new Pitch("C4").getStability(new Pitch("G3")));
+console.log(c1.getTendancy(c2));
+console.log(c1.add(c2).toString());
+console.log(new Note("C").mul(2));
+console.log(new Note("C").mul(3));
+
+const c5 = EnumChord.MAJ.toChord("C");
+const c4 = EnumChord.MAJ.toChord("G");
+const ii = new Interval("P5");
+for (let i = 0; i < 12; i++) {
+    console.log(c4.toString() + ": " + c5.getStability(c4));
+    c4.base.add(ii);
+}
+*/
 })();
 
 var __webpack_exports__Articulation = __webpack_exports__.Articulation;

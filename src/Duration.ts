@@ -1,5 +1,6 @@
 import { TimeCode } from "./TimeCode";
-import { gcd } from "./utils";
+import { gcd, precisionFactor } from "./utils1";
+import Random from "./genre/Random";
 
 export interface IDuration {
     isAbsolute: boolean;
@@ -15,7 +16,7 @@ export const isDuration = (x: any): x is IDuration => {
             : typeof x.numerator === "number" && typeof x.denominator === "number"
         );
 };
-export class Duration implements IDuration {
+export class Duration implements IDuration, IComputable<Duration> {
     /**
      * Absolute mode (use seconds or numerator/denominator)
      */
@@ -83,52 +84,106 @@ export class Duration implements IDuration {
     }
 
     add(durationIn: Duration) {
-        if (this.denominator === durationIn.denominator) this.numerator += durationIn.numerator;
-        else {
-            this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
-            this.denominator *= durationIn.denominator;
+        if (this.isAbsolute && durationIn.isAbsolute) {
+            this.seconds += durationIn.seconds;
+        } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+            if (this.denominator === durationIn.denominator) {
+                this.numerator += durationIn.numerator;
+            } else {
+                this.numerator = this.numerator * durationIn.denominator + durationIn.numerator * this.denominator;
+                this.denominator *= durationIn.denominator;
+            }
+            this.simplify();
+        } else {
+            throw new Error("Cannot operate between absolute and relative duration.");
         }
-        this.simplify().check();
-        return this;
+        return this.check();
     }
-
+    static add(a: Duration, b: Duration) {
+        return a.clone().add(b);
+    }
     sub(durationIn: Duration) {
-        if (this.denominator === durationIn.denominator) this.numerator -= durationIn.numerator;
-        else {
-            this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
-            this.denominator *= durationIn.denominator;
+        if (this.isAbsolute && durationIn.isAbsolute) {
+            this.seconds -= durationIn.seconds;
+        } else if (!this.isAbsolute && !durationIn.isAbsolute) {
+            if (this.denominator === durationIn.denominator) {
+                this.numerator -= durationIn.numerator;
+            } else {
+                this.numerator = this.numerator * durationIn.denominator - durationIn.numerator * this.denominator;
+                this.denominator *= durationIn.denominator;
+            }
+            this.simplify();
+        } else {
+            throw new Error("Cannot operate between absolute and relative duration.");
         }
-        this.simplify().check();
-        return this;
+        return this.check();
     }
-
+    static sub(a: Duration, b: Duration) {
+        return a.clone().sub(b);
+    }
     mul(f: number) {
-        this.numerator *= f;
-        this.simplify().check();
-        return this;
+        if (this.isAbsolute) {
+            this.seconds *= f;
+        } else {
+            this.numerator *= f;
+            this.simplify();
+        }
+        return this.check();
     }
-
-    div(f: number) {
-        this.numerator /= f;
-        this.simplify().check();
-        return this;
+    static mul(a: Duration, b: number) {
+        return a.clone().mul(b);
+    }
+    div(f: number): this;
+    div(durationIn: Duration): number;
+    div(first: number | Duration) {
+        if (typeof first === "number") {
+            if (this.isAbsolute) {
+                this.seconds /= first;
+            } else {
+                this.denominator *= first;
+                this.simplify();
+            }
+            return this.check();
+        }
+        if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
+        throw new Error("Cannot operate between absolute and relative duration.");
+    }
+    static div(a: Duration, b: number): Duration;
+    static div(a: Duration, b: Duration): number;
+    static div(a: Duration, b: Duration | number) {
+        if (typeof b === "number") return a.clone().div(b);
+        return a.clone().div(b);
+    }
+    equals(durationIn: object) {
+        return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+    }
+    compareTo(that: IDuration) {
+        return Duration.compare(this, that);
+    }
+    static compare(x: IDuration, y: IDuration) {
+        if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
+        return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
     }
 
     private simplify() {
-        const _gcd = gcd(this.numerator, this.denominator);
-        if (_gcd > 1) {
-            this.denominator /= _gcd;
-            this.numerator /= _gcd;
+        if (this.numerator === 0) return this;
+        const f = Math.max(precisionFactor(this.numerator), precisionFactor(this.denominator));
+        const $gcd = gcd(this.numerator * f, this.denominator * f) / f;
+        if ($gcd !== 1) {
+            this.denominator /= $gcd;
+            this.numerator /= $gcd;
         }
         return this;
     }
 
     private check() {
+        /*
         if (this.isAbsolute) {
-            if (this.numerator <= 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
+            if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
         } else {
-            if (this.seconds <= 0) throw new Error("Duration should have positive value.");
+            if (this.seconds < 0) throw new Error("Duration should have positive value.");
         }
+        */
         return this;
     }
 
@@ -136,17 +191,11 @@ export class Duration implements IDuration {
         return new Duration(this);
     }
 
-    compareTo(that: IDuration) {
-        return Duration.compare(this, that);
-    }
-
-    static compare(x: IDuration, y: IDuration) {
-        if (x.isAbsolute !== y.isAbsolute) throw new Error("Cannot compare between absolute and relative duration");
-        return x.isAbsolute ? x.seconds - y.seconds : x.numerator / x.denominator - y.numerator / y.denominator;
-    }
-
-    equals(durationIn: object) {
-        return isDuration(durationIn) && this.compareTo(durationIn) === 0;
+    static random(randomIn: Random, min: Duration, max: Duration, step: Duration): Duration {
+        if (min.equals(max)) return min.clone();
+        const d = max.clone().sub(min);
+        const steps = randomIn.randint(0, ~~d.div(step));
+        return min.clone().add(step.clone().mul(steps));
     }
 
     toString() {
