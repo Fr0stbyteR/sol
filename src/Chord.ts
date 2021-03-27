@@ -207,10 +207,10 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         return EnumChord.byChord(this);
     }
     get imaginaryBase() {
-        return this.base.div(this.ratio[0]);
+        return this.base.clone().div(this.ratio[0]);
     }
-    get imaginaryVertex() {
-        return this.base.mul(this.reciprocal[0]);
+    get imaginaryTop() {
+        return this.base.clone().mul(this.reciprocal[0]);
     }
     add(chordIn: Chord): Chord;
     add(noteIn: INote | Note[]): Chord;

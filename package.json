@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "a Music Library",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "build": "webpack --mode development",
     "dist": "npm run build && webpack --mode production",

@@ -445,11 +445,11 @@ class Chord {
   }
 
   get imaginaryBase() {
-    return this.base.div(this.ratio[0]);
+    return this.base.clone().div(this.ratio[0]);
   }
 
-  get imaginaryVertex() {
-    return this.base.mul(this.reciprocal[0]);
+  get imaginaryTop() {
+    return this.base.clone().mul(this.reciprocal[0]);
   }
 
   add(first) {
