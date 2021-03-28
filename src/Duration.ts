@@ -2,6 +2,12 @@ import { TimeCode } from "./TimeCode";
 import { gcd, precisionFactor } from "./utils";
 import Random from "./genre/Random";
 
+export type TDurationAbbreviation = `${1 | 2 | 4 | 8 | 16 | 32 | 64 | 128}${"n" | "nd" | "nt"}`;
+export const isDurationAbbreviation = (x: any): x is TDurationAbbreviation => {
+    return typeof x === "string"
+        && !!x.match(/^\d+n(t|d)?$/)
+        && new Array(8).fill(null).map((v, i) => 2 ** i).indexOf(parseInt(x)) !== -1;
+};
 export interface IDuration {
     isAbsolute: boolean;
     numerator: number;
@@ -16,7 +22,9 @@ export const isDuration = (x: any): x is IDuration => {
             : typeof x.numerator === "number" && typeof x.denominator === "number"
         );
 };
-export class Duration implements IDuration, IComputable<Duration> {
+export class Duration implements IDuration, IComputable<Duration>, IClonable<Duration> {
+    static readonly isDuration = isDuration;
+    static readonly isDuractionAbbreviation = isDurationAbbreviation;
     /**
      * Absolute mode (use seconds or numerator/denominator)
      */
@@ -32,28 +40,45 @@ export class Duration implements IDuration, IComputable<Duration> {
     /**
      * Absolute duration if in abs mode, in seconds
      */
-    seconds: number; // Absolute duration if in abs mode.
+    seconds: number;
 
     constructor(secondsIn: number);
     constructor(numeratorIn: number, denominatorIn: number);
     constructor(durationIn: Duration);
-    constructor(first: number | Duration, second?: number) {
-        if (isDuration(first)) {
+    constructor(durationString: TDurationAbbreviation);
+    constructor(first: number | Duration | TDurationAbbreviation, second?: number) {
+        this.become(first, second);
+    }
+    become(first: number | Duration | TDurationAbbreviation, second?: number) {
+        if (isDurationAbbreviation(first)) {
+            this.isAbsolute = false;
+            this.denominator = parseInt(first);
+            if (first.endsWith("d")) {
+                this.numerator = 3;
+                this.denominator *= 2;
+            } else if (first.endsWith("t")) {
+                this.numerator = 2;
+                this.denominator *= 3;
+            } else {
+                this.numerator = 1;
+            }
+            this.simplify();
+        } else if (isDuration(first)) {
             this.isAbsolute = first.isAbsolute;
             this.numerator = first.numerator;
             this.denominator = first.denominator;
             this.seconds = first.seconds;
-            this.simplify().check();
+            this.simplify();
         } else if (typeof second === "number") {
             this.isAbsolute = false;
             this.numerator = first;
             this.denominator = second;
-            this.simplify().check();
+            this.simplify();
         } else {
             this.isAbsolute = true;
             this.seconds = first;
-            this.check();
         }
+        return this;
     }
     private get value() {
         return this.isAbsolute ? this.seconds : this.numerator / this.denominator;
@@ -71,6 +96,9 @@ export class Duration implements IDuration, IComputable<Duration> {
             return this.value * 4 * first / 60;
         } // timeCodeIn
         return this.value * 4 * first.getAbsoluteDuration();
+    }
+    getTicks(first: Parameters<this["getBeats"]>[0]) {
+        return Math.round(this.getBeats(first) * 480);
     }
 
     toAbsolute(bpmIn: number): this;
@@ -97,7 +125,7 @@ export class Duration implements IDuration, IComputable<Duration> {
         } else {
             throw new Error("Cannot operate between absolute and relative duration.");
         }
-        return this.check();
+        return this;
     }
     static add(a: Duration, b: Duration) {
         return a.clone().add(b);
@@ -116,7 +144,7 @@ export class Duration implements IDuration, IComputable<Duration> {
         } else {
             throw new Error("Cannot operate between absolute and relative duration.");
         }
-        return this.check();
+        return this;
     }
     static sub(a: Duration, b: Duration) {
         return a.clone().sub(b);
@@ -128,7 +156,7 @@ export class Duration implements IDuration, IComputable<Duration> {
             this.numerator *= f;
             this.simplify();
         }
-        return this.check();
+        return this;
     }
     static mul(a: Duration, b: number) {
         return a.clone().mul(b);
@@ -143,7 +171,7 @@ export class Duration implements IDuration, IComputable<Duration> {
                 this.denominator *= first;
                 this.simplify();
             }
-            return this.check();
+            return this;
         }
         if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
         throw new Error("Cannot operate between absolute and relative duration.");
@@ -173,17 +201,6 @@ export class Duration implements IDuration, IComputable<Duration> {
             this.denominator /= $gcd;
             this.numerator /= $gcd;
         }
-        return this;
-    }
-
-    private check() {
-        /*
-        if (this.isAbsolute) {
-            if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
-        } else {
-            if (this.seconds < 0) throw new Error("Duration should have positive value.");
-        }
-        */
         return this;
     }
 

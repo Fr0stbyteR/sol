@@ -24,6 +24,9 @@ export const isTrackNoteArray = (x: any): x is TrackNote[] => {
         && x.every(el => el instanceof TrackNote);
 };
 export class TrackNote implements ITrackNote {
+    static readonly isTrackNote = isTrackNote;
+    static readonly isTrackNoteArray = isTrackNoteArray;
+
     duration: Duration;
     offset: Duration;
     pitch?: Pitch;

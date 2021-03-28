@@ -34,6 +34,9 @@ export const isScale = (x: any): x is IScale => {
         && isIntervalArray(x.intervals));
 };
 export class Scale implements Iterable<Interval>, IScale {
+    static readonly isScale = isScale;
+    static readonly EnumScale = EnumScale;
+
     scaleName?: string;
     intervals: Interval[];
     degreeNames: string[];

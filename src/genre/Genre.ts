@@ -20,6 +20,8 @@ export const isGenre = (x: any): x is IGenre => {
         && typeof x.getForm === "function");
 };
 export class Genre implements IGenre {
+    static readonly isGenre = isGenre;
+
     name: string;
     chordProgressionGenre: ChordProgressionGenre;
     getChordProgression: (tonalityIn: Tonality) => ChordProgression;

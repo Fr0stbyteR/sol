@@ -22,6 +22,8 @@ export const isTrack = (x: any): x is ITrack => {
         && isTrack(x.output));
 };
 export class Track implements ITrack {
+    static readonly isTrack = isTrack;
+
     name: string;
     instrument?: TConcreteInstrument;
     notes: TrackNote[];

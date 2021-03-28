@@ -15,6 +15,8 @@ export const isColor = (x: any): x is IColor => {
         && x.major === "number");
 };
 class Color implements IColor {
+    static readonly isColor = isColor;
+
     t: number;
     s: number;
     d: number;

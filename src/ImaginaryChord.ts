@@ -1,4 +1,4 @@
-import { Note } from "./Note";
+import Note from "./Note";
 
 export interface IImaginaryNote {
     note: Note;

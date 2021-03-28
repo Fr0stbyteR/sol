@@ -24,6 +24,8 @@ export const isChordProgressionGenre = (x: any): x is IChordProgressionGenre => 
         && keys.every(k => typeof x[k] === "undefined" || typeof x[k] === "boolean"));
 };
 export class ChordProgressionGenre implements IChordProgressionGenre {
+    static readonly isChordProgressionGenre = isChordProgressionGenre;
+
     II?: boolean;
     III?: boolean;
     bVI?: boolean;

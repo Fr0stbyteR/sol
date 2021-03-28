@@ -1,6 +1,7 @@
 import TonalChord, { isTonalChord, isTonalChordArray } from "../TonalChord";
 import { isStringArray } from "../utils";
 import Tonality from "../Tonality";
+import EnumChordProgression from "./EnumChordProgression";
 
 export interface IChordProgression {
     chords: TonalChord[];
@@ -11,6 +12,9 @@ export const isChordProgression = (x: any): x is IChordProgression => {
         && isTonalChord(x.chord));
 };
 export class ChordProgression implements Iterable<TonalChord>, IChordProgression {
+    static readonly isChordProgression = isChordProgression;
+    static readonly EnumChordProgression = EnumChordProgression;
+
     chords: TonalChord[];
     constructor(cp: string);
     constructor(cp: string[]);

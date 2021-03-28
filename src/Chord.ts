@@ -79,6 +79,10 @@ export const isChordArray = (x: any): x is Chord[] => {
         && x.every(e => e instanceof Chord);
 };
 export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClonable<Chord> {
+    static readonly isChord = isChord;
+    static readonly isChordArray = isChordArray;
+    static readonly EnumChord = EnumChord;
+
     base: Note | Pitch;
     intervals: Interval[]; // Intervals from base
     /**

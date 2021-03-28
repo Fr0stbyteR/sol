@@ -9,6 +9,8 @@ export const isForm = (x: any): x is IForm => {
         && isPartArray(x.parts));
 };
 export class Form implements IForm, Iterable<Part> {
+    static readonly isForm = isForm;
+
     parts: Part[];
     constructor(formIn: IForm);
     constructor(partsIn: Part[]);

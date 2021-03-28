@@ -10,7 +10,8 @@ export const isTimeCode = (x: any): x is ITimeCode => {
         && typeof x.bpm === "number");
 };
 export class TimeCode implements ITimeCode {
-    static DEFAULT = new TimeCode(4, 4, 60);
+    static readonly DEFAULT = new TimeCode(4, 4, 60);
+    static readonly isTimeCode = isTimeCode;
 
     beats: number;
     beatDuration: number;

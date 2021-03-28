@@ -23,6 +23,9 @@ export class EnumVelocity {
     static get FFF() { return new Velocity(120); }
 }
 export class Velocity implements IVelocity, IComputable<Velocity> {
+    static readonly isVelocity = isVelocity;
+    static readonly EnumVelocity = EnumVelocity;
+
     private _velocity: number;
 
     constructor(velocityIn: number);

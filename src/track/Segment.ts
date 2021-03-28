@@ -23,6 +23,9 @@ export const isSegmentArray = (x: any): x is ISegment[] => {
         && x.every(e => e instanceof Segment);
 };
 export class Segment implements ISegment {
+    static readonly isSegment = isSegment;
+    static readonly isSegmentArray = isSegmentArray;
+
     instrument?: TConcreteInstrument;
     notes: TrackNote[];
     automations: Automation[];

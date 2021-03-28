@@ -60,7 +60,11 @@ export const isNoteArray = (x: any): x is Note[] => {
         && x.every(el => el instanceof Note);
 };
 export class Note implements INote, IComputable<Note>, IClonable<Note> {
-    static REGEX = /^([b#]*)([a-gA-G])$/;
+    static readonly REGEX = /^([b#]*)([a-gA-G])$/;
+    static readonly isNote = isNote;
+    static readonly isNoteArray = isNoteArray;
+    static readonly EnumNote = EnumNote;
+
     enumNote: EnumNote;
     alteration: number;
     /**
@@ -85,7 +89,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     /**
      * Creates an instance of Note.
      */
-    constructor(offset: number, alteration?: number)
+    constructor(offset: number, alteration?: number);
     constructor(first?: EnumNote | INote | string | number, second?: number) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;

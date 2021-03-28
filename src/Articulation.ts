@@ -20,6 +20,9 @@ export class EnumArticulation {
     static get MUTED() { return new Articulation(1, 1); }
 }
 export class Articulation implements IArticulation {
+    static readonly isArticulation = isArticulation;
+    static readonly EnumArticulation = EnumArticulation;
+
     velocity: number;
     length: number;
     constructor(articulationIn: IArticulation);

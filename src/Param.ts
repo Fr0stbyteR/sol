@@ -18,6 +18,8 @@ export const isParam = (x: any): x is IParam => {
         && typeof x.init === "number");
 };
 export class Param implements IParam {
+    static readonly isParam = isParam;
+
     readonly path: string;
     name?: string;
     private _min: number;

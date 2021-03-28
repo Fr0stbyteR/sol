@@ -17,12 +17,15 @@ export const isPitchArray = (x: any): x is Pitch[] => {
         && x.every(el => el instanceof Pitch);
 };
 export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable<Pitch> {
-    static REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
+    static readonly REGEX = /^([b#]*[a-gA-G])(-?\d+)?$/;
     static fromFrequency(f: number) {
         return new Pitch(69 + 12 * (Math.log(f / Frequency.A440) / Math.log(2)));
     }
-    static MINIMUM = Pitch.fromFrequency(20);
-    static MAXIMUM = Pitch.fromFrequency(20000);
+    static readonly MINIMUM = Pitch.fromFrequency(20);
+    static readonly MAXIMUM = Pitch.fromFrequency(20000);
+    static readonly isPitch = isPitch;
+    static readonly isPitchArray = isPitchArray;
+
     octave: number;
 
     /**

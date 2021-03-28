@@ -9,6 +9,8 @@ export const isPattern = (x: any): x is IPattern => {
         && isSegmentArray(x.segments));
 };
 export class Pattern implements IPattern {
+    static readonly isPattern = isPattern;
+
     segments: Segment[];
     constructor(...segments: Segment[]);
     constructor(patternIn: IPattern);

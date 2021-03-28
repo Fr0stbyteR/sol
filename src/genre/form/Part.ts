@@ -17,6 +17,9 @@ export const isPartArray = (x: any): x is Part[] => {
         && x.every(e => e instanceof Part);
 };
 export class Part implements IPart {
+    static readonly isPart = isPart;
+    static readonly isPartArray = isPartArray;
+
     minDuration: Duration;
     maxDuration: Duration;
     stepDuration: Duration;

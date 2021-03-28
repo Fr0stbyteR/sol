@@ -14,6 +14,8 @@ export const isTrackChord = (x: any): x is ITrackChord => {
         && isTonalChord(x.chord));
 };
 export class TrackChord implements ITrackChord {
+    static readonly isTrackChord = isTrackChord;
+
     duration: Duration;
     offset: Duration;
     chord: TonalChord;

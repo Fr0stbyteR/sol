@@ -20,6 +20,9 @@ export const isTypeofInstrument = (x: any): x is typeof Instrument => {
         && (typeof x.MAX_PITCH === "undefined" || isPitch(x.MAX_PITCH));
 };
 export abstract class Instrument implements IInstrument {
+    static readonly isInstrument = isInstrument;
+    static readonly isTypeofInstrument = isTypeofInstrument;
+
     static NAME: string; // instrument name
     static TAGS: EnumInstrumentTag[];
     static MIN_PITCH?: Pitch;
