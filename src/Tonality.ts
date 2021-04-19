@@ -13,7 +13,7 @@ export const isTonality = (x: any): x is ITonality => {
         && isNote(x.note)
         && isScale(x.scale));
 };
-export class Tonality implements Iterable<Note>, ITonality {
+export class Tonality implements Iterable<Note>, ITonality, IClonable<Tonality> {
     static readonly isTonality = isTonality;
 
     note: Note;
@@ -22,6 +22,9 @@ export class Tonality implements Iterable<Note>, ITonality {
     constructor(tonalityIn: string);
     constructor(noteIn: Note, scaleIn: Scale);
     constructor(first: Tonality | string | Note, second?: Scale) {
+        this.become(first, second);
+    }
+    become(first: Tonality | string | Note, second?: Scale) {
         if (isTonality(first)) {
             this.note = first.note.clone();
             this.scale = first.scale.clone();
@@ -36,6 +39,7 @@ export class Tonality implements Iterable<Note>, ITonality {
             this.note = first;
             this.scale = second;
         }
+        return this;
     }
     add(intervalIn: Interval) {
         this.note.add(intervalIn);

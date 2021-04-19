@@ -60,7 +60,7 @@ export const isNoteArray = (x: any): x is Note[] => {
         && x.every(el => el instanceof Note);
 };
 export class Note implements INote, IComputable<Note>, IClonable<Note> {
-    static readonly REGEX = /^([b#]*)([a-gA-G])$/;
+    static readonly REGEX = /^([a-gA-G])([b#x]*)$/;
     static readonly isNote = isNote;
     static readonly isNoteArray = isNoteArray;
     static readonly EnumNote = EnumNote;
@@ -82,7 +82,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     /**
      * Parses note string.
      * @example
-     * new Note("##E");
+     * new Note("E##");
      * @throws {SyntaxError} when parse failed
      */
     constructor(noteIn: string)
@@ -112,9 +112,9 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     static fromString(nameIn: string): INote {
         const matched = Note.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such note ${nameIn}.`);
-        const enumNote = EnumNote[matched[2] as TEnumNoteValue];
+        const enumNote = EnumNote[matched[1] as TEnumNoteValue];
         let alteration = 0;
-        matched[1].split("").forEach(c => alteration += c === "#" ? 1 : -1);
+        matched[2].split("").forEach(c => alteration += c === "x" ? 2 : c === "#" ? 1 : -1);
         return { enumNote, alteration };
     }
     protected fromString(nameIn: string) {
@@ -231,7 +231,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         return arrayIn.map(e => new Note(e as any));
     }
     toString() {
-        return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name();
+        return this.enumNote.name() + (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration));
     }
     clone() {
         return new Note(this);

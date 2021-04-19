@@ -81,6 +81,11 @@ class Articulation {
   }
 
 }
+
+_defineProperty(Articulation, "isArticulation", isArticulation);
+
+_defineProperty(Articulation, "EnumArticulation", EnumArticulation);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Articulation);
 
 /***/ }),
@@ -610,6 +615,13 @@ class Chord {
   }
 
 }
+
+_defineProperty(Chord, "isChord", isChord);
+
+_defineProperty(Chord, "isChordArray", isChordArray);
+
+_defineProperty(Chord, "EnumChord", EnumChord);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Chord);
 
 /***/ }),
@@ -685,6 +697,8 @@ class Color {
 
 }
 
+_defineProperty(Color, "isColor", isColor);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Color);
 
 /***/ }),
@@ -698,6 +712,7 @@ class Color {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isDurationAbbreviation": () => (/* binding */ isDurationAbbreviation),
 /* harmony export */   "isDuration": () => (/* binding */ isDuration),
 /* harmony export */   "Duration": () => (/* binding */ Duration),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -706,6 +721,9 @@ __webpack_require__.r(__webpack_exports__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+var isDurationAbbreviation = x => {
+  return typeof x === "string" && !!x.match(/^\d+n(t|d)?$/) && new Array(8).fill(null).map((v, i) => Math.pow(2, i)).indexOf(parseInt(x)) !== -1;
+};
 var isDuration = x => {
   return x instanceof Duration || (typeof x.isAbsolute === "boolean" && x.isAbsolute ? typeof x.seconds === "number" : typeof x.numerator === "number" && typeof x.denominator === "number");
 };
@@ -725,7 +743,6 @@ class Duration {
   /**
    * Absolute duration if in abs mode, in seconds
    */
-  // Absolute duration if in abs mode.
   constructor(first, second) {
     _defineProperty(this, "isAbsolute", void 0);
 
@@ -735,22 +752,42 @@ class Duration {
 
     _defineProperty(this, "seconds", void 0);
 
-    if (isDuration(first)) {
+    this.become(first, second);
+  }
+
+  become(first, second) {
+    if (isDurationAbbreviation(first)) {
+      this.isAbsolute = false;
+      this.denominator = parseInt(first);
+
+      if (first.endsWith("d")) {
+        this.numerator = 3;
+        this.denominator *= 2;
+      } else if (first.endsWith("t")) {
+        this.numerator = 2;
+        this.denominator *= 3;
+      } else {
+        this.numerator = 1;
+      }
+
+      this.simplify();
+    } else if (isDuration(first)) {
       this.isAbsolute = first.isAbsolute;
       this.numerator = first.numerator;
       this.denominator = first.denominator;
       this.seconds = first.seconds;
-      this.simplify().check();
+      this.simplify();
     } else if (typeof second === "number") {
       this.isAbsolute = false;
       this.numerator = first;
       this.denominator = second;
-      this.simplify().check();
+      this.simplify();
     } else {
       this.isAbsolute = true;
       this.seconds = first;
-      this.check();
     }
+
+    return this;
   }
 
   get value() {
@@ -770,6 +807,10 @@ class Duration {
 
 
     return this.value * 4 * first.getAbsoluteDuration();
+  }
+
+  getTicks(first) {
+    return Math.round(this.getBeats(first) * 480);
   }
 
   toAbsolute(first) {
@@ -795,7 +836,7 @@ class Duration {
       throw new Error("Cannot operate between absolute and relative duration.");
     }
 
-    return this.check();
+    return this;
   }
 
   static add(a, b) {
@@ -818,7 +859,7 @@ class Duration {
       throw new Error("Cannot operate between absolute and relative duration.");
     }
 
-    return this.check();
+    return this;
   }
 
   static sub(a, b) {
@@ -833,7 +874,7 @@ class Duration {
       this.simplify();
     }
 
-    return this.check();
+    return this;
   }
 
   static mul(a, b) {
@@ -849,7 +890,7 @@ class Duration {
         this.simplify();
       }
 
-      return this.check();
+      return this;
     }
 
     if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
@@ -887,17 +928,6 @@ class Duration {
     return this;
   }
 
-  check() {
-    /*
-    if (this.isAbsolute) {
-        if (this.numerator < 0 || this.denominator <= 0) throw new Error("Duration should have positive value.");
-    } else {
-        if (this.seconds < 0) throw new Error("Duration should have positive value.");
-    }
-    */
-    return this;
-  }
-
   clone() {
     return new Duration(this);
   }
@@ -914,6 +944,11 @@ class Duration {
   }
 
 }
+
+_defineProperty(Duration, "isDuration", isDuration);
+
+_defineProperty(Duration, "isDuractionAbbreviation", isDurationAbbreviation);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Duration);
 
 /***/ }),
@@ -1340,6 +1375,14 @@ class Interval {
 
 _defineProperty(Interval, "REGEX", /^([PMmAd])([0-9]+)((\+|-)\d+)?$/);
 
+_defineProperty(Interval, "DEGREE_TO_OFFSET", DEGREE_TO_OFFSET);
+
+_defineProperty(Interval, "isInterval", isInterval);
+
+_defineProperty(Interval, "isIntervalArray", isIntervalArray);
+
+_defineProperty(Interval, "EnumIntervalProperty", EnumIntervalProperty);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Interval);
 
 /***/ }),
@@ -1498,7 +1541,7 @@ class Note {
   /**
    * Parses note string.
    * @example
-   * new Note("##E");
+   * new Note("E##");
    * @throws {SyntaxError} when parse failed
    */
 
@@ -1534,9 +1577,9 @@ class Note {
   static fromString(nameIn) {
     var matched = Note.REGEX.exec(nameIn);
     if (matched === null) throw new SyntaxError("No such note ".concat(nameIn, "."));
-    var enumNote = EnumNote[matched[2]];
+    var enumNote = EnumNote[matched[1]];
     var alteration = 0;
-    matched[1].split("").forEach(c => alteration += c === "#" ? 1 : -1);
+    matched[2].split("").forEach(c => alteration += c === "x" ? 2 : c === "#" ? 1 : -1);
     return {
       enumNote,
       alteration
@@ -1679,7 +1722,7 @@ class Note {
   }
 
   toString() {
-    return (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration)) + this.enumNote.name();
+    return this.enumNote.name() + (this.alteration > 0 ? "#" : "b").repeat(Math.abs(this.alteration));
   }
 
   clone() {
@@ -1702,7 +1745,13 @@ class Note {
 
 }
 
-_defineProperty(Note, "REGEX", /^([b#]*)([a-gA-G])$/);
+_defineProperty(Note, "REGEX", /^([a-gA-G])([b#x]*)$/);
+
+_defineProperty(Note, "isNote", isNote);
+
+_defineProperty(Note, "isNoteArray", isNoteArray);
+
+_defineProperty(Note, "EnumNote", EnumNote);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Note);
 
@@ -1795,6 +1844,9 @@ class Param {
   }
 
 }
+
+_defineProperty(Param, "isParam", isParam);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Param);
 
 /***/ }),
@@ -2012,11 +2064,15 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
 
 }
 
-_defineProperty(Pitch, "REGEX", /^([b#]*[a-gA-G])(-?\d+)?$/);
+_defineProperty(Pitch, "REGEX", /^([a-gA-G][b#x]*)(-?\d+)?$/);
 
 _defineProperty(Pitch, "MINIMUM", Pitch.fromFrequency(20));
 
 _defineProperty(Pitch, "MAXIMUM", Pitch.fromFrequency(20000));
+
+_defineProperty(Pitch, "isPitch", isPitch);
+
+_defineProperty(Pitch, "isPitchArray", isPitchArray);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Pitch);
 
@@ -2132,6 +2188,14 @@ class Scale {
 
     _defineProperty(this, "degreeNames", void 0);
 
+    for (var _len = arguments.length, degreesIn = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      degreesIn[_key - 1] = arguments[_key];
+    }
+
+    this.become(first, ...degreesIn);
+  }
+
+  become(first) {
     if (typeof first === "string") {
       this.scaleName = first;
       this.intervals = [];
@@ -2154,6 +2218,8 @@ class Scale {
       this.intervals = first.intervals.map(i => i.clone());
       this.degreeNames = [...first.degreeNames];
     }
+
+    return this;
   }
 
   get size() {
@@ -2274,6 +2340,11 @@ class Scale {
   }
 
 }
+
+_defineProperty(Scale, "isScale", isScale);
+
+_defineProperty(Scale, "EnumScale", EnumScale);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Scale);
 
 /***/ }),
@@ -2330,6 +2401,8 @@ class TimeCode {
 }
 
 _defineProperty(TimeCode, "DEFAULT", new TimeCode(4, 4, 60));
+
+_defineProperty(TimeCode, "isTimeCode", isTimeCode);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TimeCode);
 
@@ -2436,6 +2509,10 @@ _defineProperty(TonalChord, "REGEX1", /^([#b]?)(I{1,3}|i{1,3}|I?V|i?v|VI{1,2}|vi
 
 _defineProperty(TonalChord, "REGEX2", /^([#b]?)([1-7])(M|m|\+|-?)$/);
 
+_defineProperty(TonalChord, "isTonalChord", isTonalChord);
+
+_defineProperty(TonalChord, "isTonalChordArray", isTonalChordArray);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TonalChord);
 
 /***/ }),
@@ -2475,6 +2552,10 @@ class Tonality {
 
     _defineProperty(this, "scale", void 0);
 
+    this.become(first, second);
+  }
+
+  become(first, second) {
     if (isTonality(first)) {
       this.note = first.note.clone();
       this.scale = first.scale.clone();
@@ -2490,6 +2571,8 @@ class Tonality {
       this.note = first;
       this.scale = second;
     }
+
+    return this;
   }
 
   add(intervalIn) {
@@ -2599,6 +2682,9 @@ class Tonality {
   }
 
 }
+
+_defineProperty(Tonality, "isTonality", isTonality);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Tonality);
 
 /***/ }),
@@ -2740,6 +2826,11 @@ class Velocity {
   }
 
 }
+
+_defineProperty(Velocity, "isVelocity", isVelocity);
+
+_defineProperty(Velocity, "EnumVelocity", EnumVelocity);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Velocity);
 
 /***/ }),

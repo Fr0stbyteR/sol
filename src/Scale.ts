@@ -33,7 +33,7 @@ export const isScale = (x: any): x is IScale => {
         && isStringArray(x.degreeNames)
         && isIntervalArray(x.intervals));
 };
-export class Scale implements Iterable<Interval>, IScale {
+export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
     static readonly isScale = isScale;
     static readonly EnumScale = EnumScale;
 
@@ -44,6 +44,9 @@ export class Scale implements Iterable<Interval>, IScale {
     constructor(nameIn: string, ...degreesIn: string[]);
     constructor(scaleIn: IScale);
     constructor(first: string | IScale, ...degreesIn: string[]) {
+        this.become(first, ...degreesIn);
+    }
+    become(first: string | IScale, ...degreesIn: string[]) {
         if (typeof first === "string") {
             this.scaleName = first;
             this.intervals = [];
@@ -64,6 +67,7 @@ export class Scale implements Iterable<Interval>, IScale {
             this.intervals = first.intervals.map(i => i.clone());
             this.degreeNames = [...first.degreeNames];
         }
+        return this;
     }
     get size() {
         return this.intervals.length;

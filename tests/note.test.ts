@@ -5,7 +5,7 @@ const c = new Note("C");
 const cs = new Note(1);
 
 test("Note creation #C", () => {
-    expect(cs.toString()).toBe("#C");
+    expect(cs.toString()).toBe("C#");
 });
 
 test("Note C * 2", () => {
