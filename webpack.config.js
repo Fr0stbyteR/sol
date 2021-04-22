@@ -15,7 +15,6 @@ const config = {
       type: "umd"
     }
   },
-  target: "node",
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,

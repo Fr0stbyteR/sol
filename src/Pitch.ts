@@ -178,7 +178,7 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     get offset() {
         return this.enumNote.offset + this.alteration + 12 * (this.octave + 1);
     }
-    static fromArray(...arrayIn: (string | number | IPitch)[]) {
+    static fromArray(arrayIn: (string | number | IPitch)[]) {
         return arrayIn.map(e => new Pitch(e as any));
     }
     toString() {

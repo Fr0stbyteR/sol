@@ -32,7 +32,7 @@ export class EnumChord extends Enum {
         super();
         if (typeof first === "string") {
             this._name = first;
-            this.intervals = Interval.fromArray(...intervalsIn);
+            this.intervals = Interval.fromArray(intervalsIn);
         } else {
             this._name = first._name;
             this.intervals = first.intervals.map(i => i.clone());
@@ -120,7 +120,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         } else if (isIntervalArray(arrayIn)) {
             this.intervals = arrayIn.sort(Interval.compare);
         } else {
-            this.intervals = Interval.fromArray(...arrayIn).sort(Interval.compare);
+            this.intervals = Interval.fromArray(arrayIn).sort(Interval.compare);
         }
         return this;
     }

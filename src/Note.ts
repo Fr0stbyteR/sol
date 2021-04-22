@@ -227,7 +227,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     get offset() {
         return this.enumNote.offset + this.alteration;
     }
-    static fromArray(...arrayIn: (string | number | INote)[]) {
+    static fromArray(arrayIn: (string | number | INote)[]) {
         return arrayIn.map(e => new Note(e as any));
     }
     toString() {

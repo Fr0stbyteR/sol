@@ -245,7 +245,7 @@ export class Interval implements IInterval, IComputable<Interval> {
     get property() {
         return Interval.getPropertyFromOffset(this.onset, this.degree);
     }
-    static fromArray(...arrayIn: (string | IInterval)[]) {
+    static fromArray(arrayIn: (string | IInterval)[]) {
         return arrayIn.map(e => new Interval(e as any));
     }
     toString() {

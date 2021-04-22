@@ -7,7 +7,7 @@
 		exports["Sol"] = factory();
 	else
 		root["Sol"] = factory();
-})(global, function() {
+})(self, function() {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -223,7 +223,7 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_3__.default {
         intervalsIn[_key - 1] = arguments[_key];
       }
 
-      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(...intervalsIn);
+      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(intervalsIn);
     } else {
       this._name = first._name;
       this.intervals = first.intervals.map(i => i.clone());
@@ -319,7 +319,7 @@ class Chord {
     } else if ((0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(arrayIn)) {
       this.intervals = arrayIn.sort(_Interval__WEBPACK_IMPORTED_MODULE_0__.default.compare);
     } else {
-      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(...arrayIn).sort(_Interval__WEBPACK_IMPORTED_MODULE_0__.default.compare);
+      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(arrayIn).sort(_Interval__WEBPACK_IMPORTED_MODULE_0__.default.compare);
     }
 
     return this;
@@ -1364,11 +1364,7 @@ class Interval {
     return Interval.getPropertyFromOffset(this.onset, this.degree);
   }
 
-  static fromArray() {
-    for (var _len = arguments.length, arrayIn = new Array(_len), _key = 0; _key < _len; _key++) {
-      arrayIn[_key] = arguments[_key];
-    }
-
+  static fromArray(arrayIn) {
     return arrayIn.map(e => new Interval(e));
   }
 
@@ -1724,11 +1720,7 @@ class Note {
     return this.enumNote.offset + this.alteration;
   }
 
-  static fromArray() {
-    for (var _len = arguments.length, arrayIn = new Array(_len), _key = 0; _key < _len; _key++) {
-      arrayIn[_key] = arguments[_key];
-    }
-
+  static fromArray(arrayIn) {
     return arrayIn.map(e => new Note(e));
   }
 
@@ -2049,11 +2041,7 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
     return this.enumNote.offset + this.alteration + 12 * (this.octave + 1);
   }
 
-  static fromArray() {
-    for (var _len = arguments.length, arrayIn = new Array(_len), _key = 0; _key < _len; _key++) {
-      arrayIn[_key] = arguments[_key];
-    }
-
+  static fromArray(arrayIn) {
     return arrayIn.map(e => new Pitch(e));
   }
 
@@ -4140,7 +4128,7 @@ if ( true && module.exports) {
   module.exports = seedrandom;
   // When in node.js, try using crypto package for autoseeding.
   try {
-    nodecrypto = __webpack_require__(/*! crypto */ "crypto");
+    nodecrypto = __webpack_require__(/*! crypto */ "?d4c0");
   } catch (ex) {}
 } else if (true) {
   !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() { return seedrandom; }).call(exports, __webpack_require__, exports, module),
@@ -4160,14 +4148,13 @@ if ( true && module.exports) {
 
 /***/ }),
 
-/***/ "crypto":
-/*!*************************!*\
-  !*** external "crypto" ***!
-  \*************************/
-/***/ ((module) => {
+/***/ "?d4c0":
+/*!************************!*\
+  !*** crypto (ignored) ***!
+  \************************/
+/***/ (() => {
 
-"use strict";
-module.exports = require("crypto");;
+/* (ignored) */
 
 /***/ })
 
