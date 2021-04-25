@@ -29,9 +29,9 @@ export class TonalChord implements ITonalChord {
     chord: EnumChord;
     constructor(nameIn: string);
     constructor(chordIn: ITonalChord);
-    constructor(first: string | ITonalChord) {
-        if (typeof first === "string") {
-            let matched = TonalChord.REGEX1.exec(first);
+    constructor(p1: string | ITonalChord) {
+        if (typeof p1 === "string") {
+            let matched = TonalChord.REGEX1.exec(p1);
             if (matched) {
                 let s = matched[1];
                 this.alteration = s === "#" ? 1 : s === "b" ? -1 : 0;
@@ -44,7 +44,7 @@ export class TonalChord implements ITonalChord {
                     ? p > 0 ? EnumChord.MAJ : EnumChord.MIN
                     : s === "+" ? EnumChord.AUG : EnumChord.DIM;
             } else {
-                matched = TonalChord.REGEX2.exec(first);
+                matched = TonalChord.REGEX2.exec(p1);
                 if (matched) {
                     let s = matched[1];
                     this.alteration = s === "#" ? 1 : s === "b" ? -1 : 0;
@@ -57,12 +57,12 @@ export class TonalChord implements ITonalChord {
                             : s === "m" ? EnumChord.MAJ
                                 : s === "+" ? EnumChord.AUG
                                     : EnumChord.DIM;
-                } else throw new Error("Input string error: " + first);
+                } else throw new Error("Input string error: " + p1);
             }
         } else {
-            this.alteration = first.alteration;
-            this.degree = first.degree;
-            this.chord = first.chord.clone();
+            this.alteration = p1.alteration;
+            this.degree = p1.degree;
+            this.chord = p1.chord.clone();
         }
     }
     getChord(tonalityIn: Tonality) {

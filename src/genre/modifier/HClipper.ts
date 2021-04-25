@@ -4,7 +4,7 @@ import Duration from "../../Duration";
 
 interface IHSidedClipperParams {
     duration: Duration;
-    mode?: "preserve" | "clip" | "remove"; // mode for last/first notes, preserve or clip their length or remove them
+    mode?: "preserve" | "clip" | "remove"; // mode for last/p1 notes, preserve or clip their length or remove them
 }
 export class HClipperRight extends Modifier {
     static use = (s: Segment, params: IHSidedClipperParams) => {

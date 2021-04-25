@@ -1,3 +1,4 @@
+import { Midi } from "@tonejs/midi";
 import Pitch, { isPitch } from "../Pitch";
 import Velocity, { isVelocity } from "../Velocity";
 import Duration, { isDuration } from "../Duration";
@@ -35,13 +36,24 @@ export class TrackNote implements ITrackNote {
     constructor(optionsIn: ITrackNote) {
         this.duration = optionsIn.duration.clone();
         this.offset = optionsIn.offset.clone();
-        if (optionsIn.pitch) this.pitch = optionsIn.pitch.clone();
-        if (optionsIn.velocity) this.velocity = optionsIn.velocity.clone();
-        if (optionsIn.articulation) this.articulation = optionsIn.articulation.clone();
+        this.pitch = optionsIn.pitch?.clone();
+        this.velocity = optionsIn.velocity?.clone();
+        this.articulation = optionsIn.articulation?.clone();
         return this;
     }
     clone() {
         return new TrackNote(this);
+    }
+    toMidi(bpm = 60) {
+        const midi = new Midi();
+        midi.header.setTempo(bpm);
+        const track = midi.addTrack();
+        track.addNote({
+            midi: ~~this.pitch.offset,
+            ticks: this.offset.getTicks(bpm),
+            durationTicks: this.duration.getTicks(bpm)
+        });
+        return midi.toArray();
     }
     toString() {
         return `${this.offset} -> ${this.pitch ? this.pitch.toString() : "*"} ${this.duration}`;

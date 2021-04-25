@@ -26,16 +26,16 @@ class Color implements IColor {
     constructor(t?: number, s?: number, d?: number, major?: number);
     constructor(color: number[]);
     constructor(colorIn: Color);
-    constructor(first?: number | number[] | IColor, s?: number, d?: number, major?: number) {
-        if (isColor(first)) {
-            this.t = first.t;
-            this.s = first.s;
-            this.d = first.d;
-            this.major = first.major;
-        } else if (isNumberArray(first)) {
-            this.fromArray(first);
+    constructor(p1?: number | number[] | IColor, s?: number, d?: number, major?: number) {
+        if (isColor(p1)) {
+            this.t = p1.t;
+            this.s = p1.s;
+            this.d = p1.d;
+            this.major = p1.major;
+        } else if (isNumberArray(p1)) {
+            this.fromArray(p1);
         } else {
-            this.t = first || 0;
+            this.t = p1 || 0;
             this.s = s || 0;
             this.d = d || 0;
             this.major = major || 0;

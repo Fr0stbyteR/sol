@@ -1,3 +1,4 @@
+import { Midi } from "@tonejs/midi";
 import TrackNote, { isTrackNoteArray } from "./TrackNote";
 import Effect, { isEffectArray } from "../effect/Effect";
 import Automation, { isAutomationArray } from "../effect/Automation";
@@ -30,6 +31,19 @@ export class Track implements ITrack {
     effects: Effect[];
     automations: Automation[];
     output: Track;
+    toMidi(bpm = 60) {
+        const midi = new Midi();
+        midi.header.setTempo(bpm);
+        const track = midi.addTrack();
+        this.notes.forEach((note) => {
+            track.addNote({
+                midi: ~~note.pitch.offset,
+                ticks: note.offset.getTicks(bpm),
+                durationTicks: note.duration.getTicks(bpm)
+            });
+        });
+        return midi.toArray();
+    }
 }
 
 export default Track;

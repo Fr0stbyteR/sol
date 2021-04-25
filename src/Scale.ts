@@ -43,12 +43,12 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
 
     constructor(nameIn: string, ...degreesIn: string[]);
     constructor(scaleIn: IScale);
-    constructor(first: string | IScale, ...degreesIn: string[]) {
-        this.become(first, ...degreesIn);
+    constructor(p1: string | IScale, ...degreesIn: string[]) {
+        this.become(p1, ...degreesIn);
     }
-    become(first: string | IScale, ...degreesIn: string[]) {
-        if (typeof first === "string") {
-            this.scaleName = first;
+    become(p1: string | IScale, ...degreesIn: string[]) {
+        if (typeof p1 === "string") {
+            this.scaleName = p1;
             this.intervals = [];
             this.degreeNames = [];
             for (let i = 0; i < degreesIn.length; i++) {
@@ -63,9 +63,9 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
                 }
             }
         } else {
-            this.scaleName = first.scaleName;
-            this.intervals = first.intervals.map(i => i.clone());
-            this.degreeNames = [...first.degreeNames];
+            this.scaleName = p1.scaleName;
+            this.intervals = p1.intervals.map(i => i.clone());
+            this.degreeNames = [...p1.degreeNames];
         }
         return this;
     }

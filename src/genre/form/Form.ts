@@ -15,13 +15,13 @@ export class Form implements IForm, Iterable<Part> {
     constructor(formIn: IForm);
     constructor(partsIn: Part[]);
     constructor(...partsIn: Part[]);
-    constructor(first: IForm | Part[] | Part, ...rest: Part[]) {
-        if (isForm(first)) {
-            this.parts = first.parts.slice();
-        } else if (isPartArray(first)) {
-            this.parts = first.slice();
+    constructor(p1: IForm | Part[] | Part, ...rest: Part[]) {
+        if (isForm(p1)) {
+            this.parts = p1.parts.slice();
+        } else if (isPartArray(p1)) {
+            this.parts = p1.slice();
         } else {
-            this.parts = [first, ...rest];
+            this.parts = [p1, ...rest];
         }
     }
     clone() {

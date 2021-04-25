@@ -90,22 +90,22 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
      * Creates an instance of Note.
      */
     constructor(offset: number, alteration?: number);
-    constructor(first?: EnumNote | INote | string | number, second?: number) {
+    constructor(p1?: EnumNote | INote | string | number, p2?: number) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;
-        this.become(first, second);
+        this.become(p1, p2);
     }
-    become(first?: EnumNote | INote | string | number, second?: number) {
-        if (first instanceof EnumNote) {
-            this.enumNote = first;
-            if (second) this.alteration = second;
-        } else if (isNote(first)) {
-            this.enumNote = first.enumNote;
-            this.alteration = first.alteration;
-        } else if (typeof first === "string") {
-            this.fromString(first);
-        } else if (typeof first === "number") {
-            this.fromOffset(first, second);
+    become(p1?: EnumNote | INote | string | number, p2?: number) {
+        if (p1 instanceof EnumNote) {
+            this.enumNote = p1;
+            if (p2) this.alteration = p2;
+        } else if (isNote(p1)) {
+            this.enumNote = p1.enumNote;
+            this.alteration = p1.alteration;
+        } else if (typeof p1 === "string") {
+            this.fromString(p1);
+        } else if (typeof p1 === "number") {
+            this.fromOffset(p1, p2);
         }
         return this;
     }
@@ -153,12 +153,12 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     add(semitones: number): Note;
     add(interval: string | Interval): Note;
     add(noteIn: Note): Note
-    add(first: number | string | Interval | Note) {
-        if (typeof first === "number") return this.fromOffset(this.offset + first);
-        if (first instanceof Note) return this.become(first);
+    add(p1: number | string | Interval | Note) {
+        if (typeof p1 === "number") return this.fromOffset(this.offset + p1);
+        if (p1 instanceof Note) return this.become(p1);
         let i: Interval;
-        if (typeof first === "string") i = new Interval(first);
-        else if (first instanceof Interval) i = first;
+        if (typeof p1 === "string") i = new Interval(p1);
+        else if (p1 instanceof Interval) i = p1;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(newEnumNote.offset - this.enumNote.offset, 12);
         this.enumNote = newEnumNote;
@@ -170,12 +170,12 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     sub(semitones: number): Note;
     sub(interval: string | Interval): Note;
     sub(noteIn: Note): Note
-    sub(first: number | string | Interval | Note) {
-        if (typeof first === "number") return this.fromOffset(this.offset - first);
-        if (first instanceof Note) return this.become(first);
+    sub(p1: number | string | Interval | Note) {
+        if (typeof p1 === "number") return this.fromOffset(this.offset - p1);
+        if (p1 instanceof Note) return this.become(p1);
         let i: Interval;
-        if (typeof first === "string") i = new Interval(first);
-        else if (first instanceof Interval) i = first;
+        if (typeof p1 === "string") i = new Interval(p1);
+        else if (p1 instanceof Interval) i = p1;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
@@ -192,9 +192,9 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     }
     div(fIn: number): Note;
     div(noteIn: Note): number;
-    div(first: number | Note) {
-        if (first instanceof Note) return Note.offsetToRatio(this.offset - first.offset);
-        return this.mul(1 / first);
+    div(p1: number | Note) {
+        if (p1 instanceof Note) return Note.offsetToRatio(this.offset - p1.offset);
+        return this.mul(1 / p1);
     }
     static div(a: Note, b: number): Note;
     static div(a: Note, b: Note): number;
@@ -235,6 +235,20 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     }
     clone() {
         return new Note(this);
+    }
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true) {
+        await factory.openEvent(this.enumNote.name());
+        await factory.setEventAccidentals(this.alteration);
+        if (close) await factory.closeEvent();
+    }
+    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+        await factory.openMusic();
+        await factory.openVoice();
+        await factory.openChord();
+        await this.openGuidoEvent(factory);
+        await factory.closeChord();
+        await factory.closeVoice();
+        return factory.closeMusic();
     }
 
     getTendancy(that: Note) {

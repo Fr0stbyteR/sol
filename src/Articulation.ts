@@ -27,12 +27,12 @@ export class Articulation implements IArticulation {
     length: number;
     constructor(articulationIn: IArticulation);
     constructor(velocityIn: number, lengthIn: number);
-    constructor(first: IArticulation | number, lengthIn?: number) {
-        if (isArticulation(first)) {
-            this.velocity = first.velocity;
-            this.length = first.length;
+    constructor(p1: IArticulation | number, lengthIn?: number) {
+        if (isArticulation(p1)) {
+            this.velocity = p1.velocity;
+            this.length = p1.length;
         } else {
-            this.velocity = first;
+            this.velocity = p1;
             this.length = lengthIn;
         }
     }

@@ -6,6 +6,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "build": "webpack --mode development",
+    "build-watch": "webpack --mode development --watch --stats-children",
     "dist": "npm run build && webpack --mode production",
     "debug": "node ./dist/index.js",
     "test": "jest"
@@ -24,6 +25,8 @@
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.13.12",
     "@babel/preset-typescript": "^7.13.0",
+    "@shren/guidolib": "^1.7.3",
+    "@tonejs/midi": "^2.0.27",
     "@types/jest": "^26.0.22",
     "@types/seedrandom": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.19.0",

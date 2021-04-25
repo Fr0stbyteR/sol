@@ -14,11 +14,11 @@ export class Pattern implements IPattern {
     segments: Segment[];
     constructor(...segments: Segment[]);
     constructor(patternIn: IPattern);
-    constructor(first: IPattern | Segment, ...rest: Segment[]) {
-        if (isPattern(first)) {
-            this.segments = first.segments.map(e => e.clone());
+    constructor(p1: IPattern | Segment, ...rest: Segment[]) {
+        if (isPattern(p1)) {
+            this.segments = p1.segments.map(e => e.clone());
         } else {
-            this.segments = [first.clone(), ...rest.map(e => e.clone())];
+            this.segments = [p1.clone(), ...rest.map(e => e.clone())];
         }
     }
     clone() {

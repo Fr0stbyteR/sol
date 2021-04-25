@@ -2,7 +2,7 @@ import Interval, { isIntervalArray } from "./Interval";
 import Note, { isNoteArray, isNote, INote } from "./Note";
 import Pitch, { isPitchArray, isPitch, IPitch } from "./Pitch";
 import Enum from "./Enum";
-import { nearestFractions, nearestReciprocals } from "./utils";
+import { isNumberArray, nearestFractions, nearestReciprocals } from "./utils";
 
 type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
 export class EnumChord extends Enum {
@@ -28,14 +28,14 @@ export class EnumChord extends Enum {
     intervals: Interval[];
     private constructor(nameIn: string, ...intervalsIn: string[]);
     private constructor(chord: EnumChord);
-    private constructor(first: string | EnumChord, ...intervalsIn: string[]) {
+    private constructor(p1: string | EnumChord, ...intervalsIn: string[]) {
         super();
-        if (typeof first === "string") {
-            this._name = first;
+        if (typeof p1 === "string") {
+            this._name = p1;
             this.intervals = Interval.fromArray(intervalsIn);
         } else {
-            this._name = first._name;
-            this.intervals = first.intervals.map(i => i.clone());
+            this._name = p1._name;
+            this.intervals = p1.intervals.map(i => i.clone());
         }
     }
     static byChord(chordIn: IChord) {
@@ -92,31 +92,35 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     /**
      * Construct chord by notes
      */
-    constructor(base: Note | Pitch | string, ...notes: Note[] | Pitch[]);
+    constructor(base: Note | Pitch | string | number, ...notes: Note[] | Pitch[] | number[]);
     /**
      * Construct chord by intervals
      */
     constructor(base: Note | Pitch | string, ...intervals: Interval[] | string[]);
-    constructor(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
+    constructor(p1: IChord | Note | Pitch | string | number, ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
-        this.become(first, ...arrayIn);
+        this.become(p1, ...arrayIn);
     }
-    become(first: IChord | Note | Pitch | string, ...arrayIn: Note[] | Pitch[] | Interval[] | string[]) {
-        if (isChord(first)) {
-            this.base = first.base;
-            this.intervals = first.intervals;
-        } else if (typeof first === "string") {
-            const isNote = Note.REGEX.exec(first);
-            if (isNote) this.base = new Note(first);
-            else this.base = new Pitch(first);
+    become(p1: IChord | Note | Pitch | string | number, ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
+        if (isChord(p1)) {
+            this.base = p1.base;
+            this.intervals = p1.intervals;
+        } else if (typeof p1 === "string") {
+            const isNote = Note.REGEX.exec(p1);
+            if (isNote) this.base = new Note(p1);
+            else this.base = new Pitch(p1);
+        } else if (typeof p1 === "number") {
+            this.base = new Pitch(p1);
         } else {
-            this.base = first;
+            this.base = p1;
         }
         if (isPitchArray(arrayIn)) {
             this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
         } else if (isNoteArray(arrayIn)) {
             this.intervals = arrayIn.map(note => this.base.getInterval(note));
+        } else if (isNumberArray(arrayIn)) {
+            this.intervals = arrayIn.map(pitch => this.base.getInterval(new Pitch(pitch)));
         } else if (isIntervalArray(arrayIn)) {
             this.intervals = arrayIn.sort(Interval.compare);
         } else {
@@ -132,8 +136,8 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     }
     set notes(notesIn: Note[] | Pitch[]) {
         if (!notesIn.length) return;
-        const [first, ...arrayIn] = notesIn;
-        this.base = first;
+        const [p1, ...arrayIn] = notesIn;
+        this.base = p1;
         if (isPitchArray(arrayIn)) {
             this.intervals = arrayIn.sort(Pitch.compare).map(pitch => this.base.getInterval(pitch));
         } else if (isNoteArray(arrayIn)) {
@@ -220,16 +224,16 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     add(noteIn: INote | Note[]): Chord;
     add(pitchIn: IPitch | Pitch[]): Chord;
     add(intervalIn: Interval): Chord;
-    add(first: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
-        if (first instanceof Interval) {
-            this.intervals.push(first);
-        } else if (isNote(first)) {
-            this.intervals.push(this.base.getInterval(first));
-        } else if (isNoteArray(first)) {
-            this.intervals.push(...(first as Array<Note | Pitch>).map(p => this.base.getInterval(p)));
+    add(p1: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
+        if (p1 instanceof Interval) {
+            this.intervals.push(p1);
+        } else if (isNote(p1)) {
+            this.intervals.push(this.base.getInterval(p1));
+        } else if (isNoteArray(p1)) {
+            this.intervals.push(...(p1 as Array<Note | Pitch>).map(p => this.base.getInterval(p)));
         } else {
-            const d = this.base.getInterval(first.base);
-            for (const interval of first.intervals) {
+            const d = this.base.getInterval(p1.base);
+            for (const interval of p1.intervals) {
                 this.intervals.push(d.clone().add(interval));
             }
         }
@@ -243,24 +247,24 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     sub(noteIn: INote | Note[]): Chord;
     sub(pitchIn: IPitch | Pitch[]): Chord;
     sub(intervalIn: Interval): Chord;
-    sub(first: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
-        if (first instanceof Interval) {
-            this.intervals = this.intervals.filter(i0 => !i0.equals(first));
-        } else if (isNote(first)) {
-            const that = first instanceof Note ? first : isPitch(first) ? new Pitch(first) : new Note(first);
+    sub(p1: Chord | IPitch | Pitch[] | INote | Note[] | Interval): Chord {
+        if (p1 instanceof Interval) {
+            this.intervals = this.intervals.filter(i0 => !i0.equals(p1));
+        } else if (isNote(p1)) {
+            const that = p1 instanceof Note ? p1 : isPitch(p1) ? new Pitch(p1) : new Note(p1);
             const notes = this.notes.filter(n0 => !that.equals(n0));
             if (!notes.length) return null;
             this.notes = notes;
-        } else if (isNoteArray(first)) {
+        } else if (isNoteArray(p1)) {
             let { notes } = this;
-            first.forEach((n) => {
+            p1.forEach((n) => {
                 const that = n instanceof Note ? n : isPitch(n) ? new Pitch(n) : new Note(n);
                 notes = this.notes.filter(n0 => !that.equals(n0));
             });
             if (!notes.length) return null;
             this.notes = notes;
         } else {
-            this.sub(first.notes);
+            this.sub(p1.notes);
         }
         this.reorder();
         return this;
@@ -285,6 +289,17 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     }
     clone() {
         return new Chord(this);
+    }
+    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+        await factory.openMusic();
+        await factory.openVoice();
+        await factory.openChord();
+        for (const note of this.notes) {
+            await note.openGuidoEvent(factory);
+        }
+        await factory.closeChord();
+        await factory.closeVoice();
+        return factory.closeMusic();
     }
 
     * [Symbol.iterator](): Iterator<Note | Pitch> {

@@ -1,5 +1,5 @@
 import { TimeCode } from "./TimeCode";
-import { gcd, precisionFactor } from "./utils";
+import { gcd, nearestFractions, precisionFactor } from "./utils";
 import Random from "./genre/Random";
 
 export type TDurationAbbreviation = `${1 | 2 | 4 | 8 | 16 | 32 | 64 | 128}${"n" | "nd" | "nt"}`;
@@ -46,68 +46,79 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
     constructor(numeratorIn: number, denominatorIn: number);
     constructor(durationIn: Duration);
     constructor(durationString: TDurationAbbreviation);
-    constructor(first: number | Duration | TDurationAbbreviation, second?: number) {
-        this.become(first, second);
+    constructor(p1: number | Duration | TDurationAbbreviation, p2?: number) {
+        this.become(p1, p2);
     }
-    become(first: number | Duration | TDurationAbbreviation, second?: number) {
-        if (isDurationAbbreviation(first)) {
+    become(p1: number | Duration | TDurationAbbreviation, p2?: number) {
+        if (isDurationAbbreviation(p1)) {
             this.isAbsolute = false;
-            this.denominator = parseInt(first);
-            if (first.endsWith("d")) {
+            this.denominator = parseInt(p1);
+            if (p1.endsWith("d")) {
                 this.numerator = 3;
                 this.denominator *= 2;
-            } else if (first.endsWith("t")) {
+            } else if (p1.endsWith("t")) {
                 this.numerator = 2;
                 this.denominator *= 3;
             } else {
                 this.numerator = 1;
             }
             this.simplify();
-        } else if (isDuration(first)) {
-            this.isAbsolute = first.isAbsolute;
-            this.numerator = first.numerator;
-            this.denominator = first.denominator;
-            this.seconds = first.seconds;
+        } else if (isDuration(p1)) {
+            this.isAbsolute = p1.isAbsolute;
+            this.numerator = p1.numerator;
+            this.denominator = p1.denominator;
+            this.seconds = p1.seconds;
             this.simplify();
-        } else if (typeof second === "number") {
+        } else if (typeof p2 === "number") {
             this.isAbsolute = false;
-            this.numerator = first;
-            this.denominator = second;
+            this.numerator = p1;
+            this.denominator = p2;
             this.simplify();
         } else {
             this.isAbsolute = true;
-            this.seconds = first;
+            this.seconds = p1;
         }
         return this;
     }
     private get value() {
         return this.isAbsolute ? this.seconds : this.numerator / this.denominator;
     }
+    get isRelative() {
+        return !this.isAbsolute;
+    }
 
     getBeats(): number;
     getBeats(timeCodeIn: TimeCode): number;
     getBeats(bpmIn: number): number;
-    getBeats(first?: TimeCode | number) {
-        if (typeof first === "undefined") {
-            if (this.isAbsolute) throw new Error("Absolute duration needs BPM to calculate.");
-            return this.value * 4;
-        }
-        if (typeof first === "number") { // bpmIn
-            return this.value * 4 * first / 60;
-        } // timeCodeIn
-        return this.value * 4 * first.getAbsoluteDuration();
+    getBeats(p1?: TimeCode | number) {
+        if (!this.isAbsolute) return this.value * 4;
+        if (typeof p1 === "undefined") throw new Error("Absolute duration needs BPM to calculate.");
+        if (typeof p1 === "number") return this.value * 4 * p1 / 60; // bpmIn
+        return this.value * 4 * p1.getSecondsFromBeats();
     }
-    getTicks(first: Parameters<this["getBeats"]>[0]) {
-        return Math.round(this.getBeats(first) * 480);
+    getTicks(p1?: Parameters<this["getBeats"]>[0]) {
+        return Math.round(this.getBeats(p1) * 480);
     }
 
     toAbsolute(bpmIn: number): this;
     toAbsolute(timeCodeIn: TimeCode): this
-    toAbsolute(first: TimeCode | number) {
+    toAbsolute(p1: TimeCode | number) {
         if (this.isAbsolute) return this;
-        if (typeof first === "number") this.seconds = this.getBeats() * first / 60;
-        else this.seconds = first.getAbsoluteDuration(this.getBeats());
+        if (typeof p1 === "number") this.seconds = this.getBeats() * 60 / p1;
+        else this.seconds = p1.getSecondsFromBeats(this.getBeats());
         this.isAbsolute = true;
+        return this;
+    }
+
+    toRelative(bpmIn: number): this;
+    toRelative(timeCodeIn: TimeCode): this
+    toRelative(p1: TimeCode | number) {
+        if (!this.isAbsolute) return this;
+        if (typeof p1 === "number") this.numerator = this.seconds * p1 / 60;
+        else this.numerator = p1.getBeatsFromSeconds(this.seconds);
+        this.denominator = 4;
+        this.isAbsolute = false;
+        this.simplify();
         return this;
     }
 
@@ -163,17 +174,17 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
     }
     div(f: number): this;
     div(durationIn: Duration): number;
-    div(first: number | Duration) {
-        if (typeof first === "number") {
+    div(p1: number | Duration) {
+        if (typeof p1 === "number") {
             if (this.isAbsolute) {
-                this.seconds /= first;
+                this.seconds /= p1;
             } else {
-                this.denominator *= first;
+                this.denominator *= p1;
                 this.simplify();
             }
             return this;
         }
-        if (this.isAbsolute === first.isAbsolute) return this.value / first.value;
+        if (this.isAbsolute === p1.isAbsolute) return this.value / p1.value;
         throw new Error("Cannot operate between absolute and relative duration.");
     }
     static div(a: Duration, b: number): Duration;
@@ -201,6 +212,9 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
             this.denominator /= $gcd;
             this.numerator /= $gcd;
         }
+        const [n, d] = nearestFractions([this.numerator, this.denominator], 1.001);
+        this.numerator = n;
+        this.denominator = d;
         return this;
     }
 

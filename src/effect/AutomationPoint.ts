@@ -21,15 +21,15 @@ export class AutomationPoint implements IAutomationPoint {
     exponent: number;
     constructor(value: number, offset: Duration, exponent?: number);
     constructor(pointIn: IAutomationPoint);
-    constructor(first: number | IAutomationPoint, offset?: Duration, exponent?: number) {
-        if (typeof first === "number") {
-            this.value = first;
+    constructor(p1: number | IAutomationPoint, offset?: Duration, exponent?: number) {
+        if (typeof p1 === "number") {
+            this.value = p1;
             this.offset = offset.clone();
             this.exponent = exponent || 0;
         } else {
-            this.value = first.value;
-            this.offset = first.offset;
-            this.exponent = first.exponent;
+            this.value = p1.value;
+            this.offset = p1.offset;
+            this.exponent = p1.exponent;
         }
     }
     clone() {

@@ -13,7 +13,8 @@ const config = {
     library: {
       name: "Sol",
       type: "umd"
-    }
+    },
+    globalObject: "this"
   },
   module: {
     rules: [{

@@ -26,13 +26,13 @@ export class Part implements IPart {
     constructor(minDuration: Duration, maxDuration?: Duration, stepDuration?: Duration);
     constructor(minMeasures: number, maxMeasures?: number, stepMeasures?: number);
     constructor(partIn: IPart);
-    constructor(first: Duration | number | IPart, maxDuration?: Duration | number, stepDuration?: Duration | number) {
-        if (isPart(first)) {
-            this.minDuration = first.minDuration.clone();
-            this.maxDuration = first.maxDuration.clone();
-            this.stepDuration = first.stepDuration.clone();
+    constructor(p1: Duration | number | IPart, maxDuration?: Duration | number, stepDuration?: Duration | number) {
+        if (isPart(p1)) {
+            this.minDuration = p1.minDuration.clone();
+            this.maxDuration = p1.maxDuration.clone();
+            this.stepDuration = p1.stepDuration.clone();
         } else {
-            this.minDuration = typeof first === "number" ? new Duration(first, 1) : first.clone();
+            this.minDuration = typeof p1 === "number" ? new Duration(p1, 1) : p1.clone();
             this.maxDuration = typeof maxDuration === "undefined"
                 ? this.minDuration.clone()
                 : typeof maxDuration === "number"

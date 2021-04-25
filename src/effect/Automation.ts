@@ -20,13 +20,13 @@ export class Automation implements IAutomation {
     points: AutomationPoint[];
     constructor(path: string, points?: AutomationPoint[]);
     constructor(automationIn: IAutomation);
-    constructor(first: string | IAutomation, points?: AutomationPoint[]) {
-        if (typeof first === "string") {
-            this.path = first;
+    constructor(p1: string | IAutomation, points?: AutomationPoint[]) {
+        if (typeof p1 === "string") {
+            this.path = p1;
             this.points = points ? points.map(e => e.clone()) : [];
         } else {
-            this.path = first.path;
-            this.points = first.points.map(e => e.clone());
+            this.path = p1.path;
+            this.points = p1.points.map(e => e.clone());
         }
     }
     getValueAtTime(time: Duration) {

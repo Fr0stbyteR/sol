@@ -52,7 +52,7 @@ class EnumIntervalProperty extends Enum {
     }
 }
 
-export class Interval implements IInterval, IComputable<Interval> {
+export class Interval implements IInterval, IClonable<Interval>, IComputable<Interval> {
     private static readonly REGEX = /^([PMmAd])([0-9]+)((\+|-)\d+)?$/;
     static readonly DEGREE_TO_OFFSET = DEGREE_TO_OFFSET;
     static readonly isInterval = isInterval;
@@ -112,17 +112,21 @@ export class Interval implements IInterval, IComputable<Interval> {
      * Creates an instance of Interval.
      */
     constructor(degreeIn: number, onset?: number, octave?: number);
-    constructor(first?: IInterval | string | number, second?: number, third?: number) {
+    constructor(p1?: IInterval | string | number, p2?: number, p3?: number) {
+        this.become(p1, p2, p3);
+    }
+    become(p1?: IInterval | string | number, p2?: number, p3?: number) {
         this.degree = 0;
         this.onset = 0;
         this.octave = 0;
-        if (isInterval(first)) {
-            this.fromInterval(first.degree, first.onset, first.octave);
-        } else if (typeof first === "string") {
-            this.fromString(first);
-        } else if (typeof first === "number") {
-            this.fromInterval(first, second, third);
+        if (isInterval(p1)) {
+            this.fromInterval(p1.degree, p1.onset, p1.octave);
+        } else if (typeof p1 === "string") {
+            this.fromString(p1);
+        } else if (typeof p1 === "number") {
+            this.fromInterval(p1, p2, p3);
         }
+        return this;
     }
     protected fromInterval(degreeIn: number, onsetIn = 0, octaveIn = 0) {
         this.degree = floorMod(degreeIn - 1, 7) + 1;

@@ -21,8 +21,8 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
     constructor(c: TonalChord);
     constructor(cp: TonalChord[]);
     constructor(cp: IChordProgression);
-    constructor(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
-        this.chords = this.from(first);
+    constructor(p1: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords = this.from(p1);
     }
     getChords(tonalityIn: Tonality) {
         return this.chords.map(c => c.getChord(tonalityIn));
@@ -33,19 +33,19 @@ export class ChordProgression implements Iterable<TonalChord>, IChordProgression
     fromStringArray(chords: string[]) {
         return chords.map(s => new TonalChord(s));
     }
-    from(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
-        if (typeof first === "string") return this.fromString(first);
-        if (isStringArray(first)) return this.fromStringArray(first);
-        if (isTonalChord(first)) return [first.clone()];
-        if (isTonalChordArray(first)) return first.map(c => c.clone());
-        return first.chords.map(c => c.clone());
+    from(p1: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        if (typeof p1 === "string") return this.fromString(p1);
+        if (isStringArray(p1)) return this.fromStringArray(p1);
+        if (isTonalChord(p1)) return [p1.clone()];
+        if (isTonalChordArray(p1)) return p1.map(c => c.clone());
+        return p1.chords.map(c => c.clone());
     }
-    append(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
-        this.chords.concat(this.from(first));
+    append(p1: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords.concat(this.from(p1));
         return this;
     }
-    prepend(first: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
-        this.chords = this.from(first).concat(this.chords);
+    prepend(p1: string | string[] | TonalChord | TonalChord[] | IChordProgression) {
+        this.chords = this.from(p1).concat(this.chords);
         return this;
     }
     toString() {

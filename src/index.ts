@@ -13,7 +13,8 @@ import TonalChord from "./TonalChord";
 import Tonality from "./Tonality";
 import Velocity from "./Velocity";
 import Random from "./genre/Random";
-
+import * as Utils from "./utils";
+/*
 export * as Articulation from "./Articulation";
 export * as Chord from "./Chord";
 export * as Color from "./Color";
@@ -28,8 +29,8 @@ export * as TimeCode from "./TimeCode";
 export * as TonalChord from "./TonalChord";
 export * as Tonality from "./Tonality";
 export * as Velocity from "./Velocity";
-
-export default {
+*/
+export /* default */ {
     Articulation,
     Chord,
     Color,
@@ -44,7 +45,8 @@ export default {
     TonalChord,
     Tonality,
     Velocity,
-    Random
+    Random,
+    Utils
 };
 /* eslint-disable no-console */
 /*

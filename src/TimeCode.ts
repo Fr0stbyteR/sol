@@ -18,20 +18,24 @@ export class TimeCode implements ITimeCode {
     bpm: number;
     constructor(beatsIn?: number, beatDurationIn?: number, bpmIn?: number);
     constructor(timeCodeIn: ITimeCode);
-    constructor(first?: number | ITimeCode, second?: number, third?: number) {
-        if (isTimeCode(first)) {
-            this.beats = first.beats;
-            this.beatDuration = first.beatDuration;
-            this.bpm = first.bpm;
+    constructor(p1?: number | ITimeCode, p2?: number, p3?: number) {
+        if (isTimeCode(p1)) {
+            this.beats = p1.beats;
+            this.beatDuration = p1.beatDuration;
+            this.bpm = p1.bpm;
         } else {
-            this.beats = first || 4;
-            this.beatDuration = second || 4;
-            this.bpm = third || 60;
+            this.beats = p1 || 4;
+            this.beatDuration = p2 || 4;
+            this.bpm = p3 || 60;
         }
     }
 
-    getAbsoluteDuration(beatsIn?: number) {
-        return (typeof beatsIn === "number" ? beatsIn : 1) * this.bpm / 60;
+    getSecondsFromBeats(beatsIn = 1) {
+        return beatsIn * 60 / this.bpm;
+    }
+
+    getBeatsFromSeconds(secondsIn = 1) {
+        return secondsIn * this.bpm / 60;
     }
 
     toString() {

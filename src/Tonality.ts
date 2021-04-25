@@ -21,23 +21,23 @@ export class Tonality implements Iterable<Note>, ITonality, IClonable<Tonality> 
     constructor(tonalityIn: Tonality);
     constructor(tonalityIn: string);
     constructor(noteIn: Note, scaleIn: Scale);
-    constructor(first: Tonality | string | Note, second?: Scale) {
-        this.become(first, second);
+    constructor(p1: Tonality | string | Note, p2?: Scale) {
+        this.become(p1, p2);
     }
-    become(first: Tonality | string | Note, second?: Scale) {
-        if (isTonality(first)) {
-            this.note = first.note.clone();
-            this.scale = first.scale.clone();
-        } else if (typeof first === "string") {
+    become(p1: Tonality | string | Note, p2?: Scale) {
+        if (isTonality(p1)) {
+            this.note = p1.note.clone();
+            this.scale = p1.scale.clone();
+        } else if (typeof p1 === "string") {
             try {
-                this.note = new Note(first);
+                this.note = new Note(p1);
             } catch (e) {
-                throw new Error(`No such tonality: ${first}.`);
+                throw new Error(`No such tonality: ${p1}.`);
             }
-            this.scale = first.substr(first.length - 1).match("[A-G]") ? EnumScale.MAJOR : EnumScale.MINOR;
+            this.scale = p1.substr(p1.length - 1).match("[A-G]") ? EnumScale.MAJOR : EnumScale.MINOR;
         } else {
-            this.note = first;
-            this.scale = second;
+            this.note = p1;
+            this.scale = p2;
         }
         return this;
     }

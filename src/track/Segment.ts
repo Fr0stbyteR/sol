@@ -1,3 +1,4 @@
+import { Midi } from "@tonejs/midi";
 import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
 import TrackNote, { isTrackNoteArray } from "./TrackNote";
 import Automation, { isAutomationArray } from "../effect/Automation";
@@ -65,6 +66,19 @@ export class Segment implements ISegment {
     }
     clone() {
         return new Segment(this);
+    }
+    toMidi(bpm = 60) {
+        const midi = new Midi();
+        midi.header.setTempo(bpm);
+        const track = midi.addTrack();
+        this.notes.forEach((note) => {
+            track.addNote({
+                midi: ~~note.pitch.offset,
+                ticks: note.offset.getTicks(bpm),
+                durationTicks: note.duration.getTicks(bpm)
+            });
+        });
+        return midi.toArray();
     }
 }
 

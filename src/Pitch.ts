@@ -54,26 +54,26 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     /**
      * Creates an instance of Pitch with index
      */
-    constructor(first?: IPitch | EnumNote | INote | string | number, second?: number) {
+    constructor(p1?: IPitch | EnumNote | INote | string | number, p2?: number) {
         super();
-        this.become(first, second);
+        this.become(p1, p2);
     }
-    become(first?: IPitch | EnumNote | INote | string | number, second?: number) {
-        if (isPitch(first)) {
-            super.become(first);
-            this.octave = first.octave;
-        } else if (first instanceof EnumNote) {
-            super.become(first);
-            this.octave = second || 0;
-        } else if (isNote(first)) {
-            super.become(first);
-            this.octave = second || 0;
-        } else if (typeof first === "string") {
+    become(p1?: IPitch | EnumNote | INote | string | number, p2?: number) {
+        if (isPitch(p1)) {
+            super.become(p1);
+            this.octave = p1.octave;
+        } else if (p1 instanceof EnumNote) {
+            super.become(p1);
+            this.octave = p2 || 0;
+        } else if (isNote(p1)) {
+            super.become(p1);
+            this.octave = p2 || 0;
+        } else if (typeof p1 === "string") {
             super.become();
-            this.fromString(first);
-        } else if (typeof first === "number") {
-            super.become(first);
-            this.octave = Math.floor(first / 12 - 1);
+            this.fromString(p1);
+        } else if (typeof p1 === "number") {
+            super.become(p1);
+            this.octave = Math.floor(p1 / 12 - 1);
         } else {
             super.become();
         }
@@ -144,9 +144,9 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     }
     div(pitchIn: Pitch): number;
     div(fIn: number): Pitch;
-    div(first: number | Pitch) {
-        if (first instanceof Pitch) return this.frequency / first.frequency;
-        return this.mul(1 / first);
+    div(p1: number | Pitch) {
+        if (p1 instanceof Pitch) return this.frequency / p1.frequency;
+        return this.mul(1 / p1);
     }
     static div(a: Pitch, b: number): Pitch;
     static div(a: Pitch, b: Pitch): number;
@@ -186,6 +186,11 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     }
     clone(): Pitch {
         return new Pitch(this);
+    }
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true) {
+        await super.openGuidoEvent(factory, false);
+        await factory.setOctave(this.octave - 3);
+        if (close) await factory.closeEvent();
     }
 
     getTendancy(that: Pitch) {
