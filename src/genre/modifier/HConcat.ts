@@ -4,8 +4,8 @@ import Segment from "../../track/Segment";
 export class HConcatOne extends Modifier {
     static use = (s1: Segment, sIn2: Segment) => {
         const s2 = sIn2.clone();
-        s2.notes.forEach(n => n.offset.add(s1.duration));
-        s1.notes.concat(s2.notes);
+        s2.trackChords.forEach(n => n.offset.add(s1.duration));
+        s1.trackChords.concat(s2.trackChords);
         s2.automations.forEach(a => a.forward(s1.duration));
         s2.automations.forEach((a2) => {
             const $find = s1.automations.findIndex(a1 => a1.path === a2.path);

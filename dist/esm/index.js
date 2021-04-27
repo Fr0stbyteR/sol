@@ -44,6 +44,10 @@ class EnumArticulation {
     return new Articulation(1, 1.2);
   }
 
+  static get ACCENT() {
+    return new Articulation(1.2, 1);
+  }
+
   static get MARCATO() {
     return new Articulation(1.5, 1);
   }
@@ -348,6 +352,12 @@ class Chord {
 
   get isAbsolute() {
     return this.base instanceof _Pitch__WEBPACK_IMPORTED_MODULE_2__.default;
+  }
+
+  toAbsolute() {
+    var octaveIn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
+    if (!this.isAbsolute) this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(this.base, octaveIn);
+    return this;
   }
 
   get ratio() {
@@ -1847,29 +1857,68 @@ class Note {
         _this = this;
 
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var close;
+      var close, octaveIn, alteration, accidentals, alterDetune;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               close = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : true;
-              _context.next = 3;
-              return factory.openEvent(_this.enumNote.name());
+              octaveIn = _arguments.length > 2 && _arguments[2] !== undefined ? _arguments[2] : 3;
+              alteration = _this.alteration;
+              accidentals = Math.max(-2, Math.min(2, ~~alteration));
+              alterDetune = alteration - accidentals;
 
-            case 3:
-              _context.next = 5;
-              return factory.setEventAccidentals(_this.alteration);
-
-            case 5:
-              if (!close) {
-                _context.next = 8;
+              if (!alterDetune) {
+                _context.next = 12;
                 break;
               }
 
               _context.next = 8;
-              return factory.closeEvent();
+              return factory.openTag("alter", 0);
 
             case 8:
+              _context.next = 10;
+              return factory.addTagParameterFloat(alterDetune);
+
+            case 10:
+              _context.next = 12;
+              return factory.setParameterName("detune");
+
+            case 12:
+              _context.next = 14;
+              return factory.openEvent(_this.enumNote.name());
+
+            case 14:
+              _context.next = 16;
+              return factory.setEventAccidentals(_this.alteration);
+
+            case 16:
+              _context.next = 18;
+              return factory.setOctave(octaveIn - 3);
+
+            case 18:
+              if (!close) {
+                _context.next = 26;
+                break;
+              }
+
+              _context.next = 21;
+              return factory.closeEvent();
+
+            case 21:
+              if (!alterDetune) {
+                _context.next = 26;
+                break;
+              }
+
+              _context.next = 24;
+              return factory.closeTag();
+
+            case 24:
+              _context.next = 26;
+              return factory.endTag();
+
+            case 26:
             case "end":
               return _context.stop();
           }
@@ -1895,24 +1944,16 @@ class Note {
 
             case 4:
               _context2.next = 6;
-              return factory.openChord();
+              return _this2.openGuidoEvent(factory);
 
             case 6:
               _context2.next = 8;
-              return _this2.openGuidoEvent(factory);
-
-            case 8:
-              _context2.next = 10;
-              return factory.closeChord();
-
-            case 10:
-              _context2.next = 12;
               return factory.closeVoice();
 
-            case 12:
+            case 8:
               return _context2.abrupt("return", factory.closeMusic());
 
-            case 13:
+            case 9:
             case "end":
               return _context2.stop();
           }
@@ -2087,7 +2128,8 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
   /**
    * Creates an instance of Pitch with index
    */
-  constructor(p1, p2) {
+  constructor(p1) {
+    var p2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
     super();
 
     _defineProperty(this, "octave", void 0);
@@ -2095,16 +2137,18 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
     this.become(p1, p2);
   }
 
-  become(p1, p2) {
+  become(p1) {
+    var p2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
+
     if (isPitch(p1)) {
       super.become(p1);
       this.octave = p1.octave;
     } else if (p1 instanceof _Note__WEBPACK_IMPORTED_MODULE_0__.EnumNote) {
       super.become(p1);
-      this.octave = p2 || 0;
+      this.octave = p2;
     } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_0__.isNote)(p1)) {
       super.become(p1);
-      this.octave = p2 || 0;
+      this.octave = p2;
     } else if (typeof p1 === "string") {
       super.become();
       this.fromString(p1);
@@ -2259,22 +2303,9 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
             case 0:
               close = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : true;
               _context.next = 3;
-              return _superprop_getOpenGuidoEvent().call(_this, factory, false);
+              return _superprop_getOpenGuidoEvent().call(_this, factory, close, _this.octave);
 
             case 3:
-              _context.next = 5;
-              return factory.setOctave(_this.octave - 3);
-
-            case 5:
-              if (!close) {
-                _context.next = 8;
-                break;
-              }
-
-              _context.next = 8;
-              return factory.closeEvent();
-
-            case 8:
             case "end":
               return _context.stop();
           }

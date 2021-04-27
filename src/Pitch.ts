@@ -54,20 +54,20 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     /**
      * Creates an instance of Pitch with index
      */
-    constructor(p1?: IPitch | EnumNote | INote | string | number, p2?: number) {
+    constructor(p1?: IPitch | EnumNote | INote | string | number, p2 = 4) {
         super();
         this.become(p1, p2);
     }
-    become(p1?: IPitch | EnumNote | INote | string | number, p2?: number) {
+    become(p1?: IPitch | EnumNote | INote | string | number, p2 = 4) {
         if (isPitch(p1)) {
             super.become(p1);
             this.octave = p1.octave;
         } else if (p1 instanceof EnumNote) {
             super.become(p1);
-            this.octave = p2 || 0;
+            this.octave = p2;
         } else if (isNote(p1)) {
             super.become(p1);
-            this.octave = p2 || 0;
+            this.octave = p2;
         } else if (typeof p1 === "string") {
             super.become();
             this.fromString(p1);
@@ -188,9 +188,7 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
         return new Pitch(this);
     }
     async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true) {
-        await super.openGuidoEvent(factory, false);
-        await factory.setOctave(this.octave - 3);
-        if (close) await factory.closeEvent();
+        await super.openGuidoEvent(factory, close, this.octave);
     }
 
     getTendancy(that: Pitch) {

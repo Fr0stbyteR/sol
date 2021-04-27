@@ -236,17 +236,30 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     clone() {
         return new Note(this);
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true) {
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true, octaveIn = 3) {
+        const { alteration } = this;
+        const accidentals = Math.max(-2, Math.min(2, ~~alteration));
+        const alterDetune = alteration - accidentals;
+        if (alterDetune) {
+            await factory.openTag("alter", 0);
+            await factory.addTagParameterFloat(alterDetune);
+            await factory.setParameterName("detune");
+        }
         await factory.openEvent(this.enumNote.name());
         await factory.setEventAccidentals(this.alteration);
-        if (close) await factory.closeEvent();
+        await factory.setOctave(octaveIn - 3);
+        if (close) {
+            await factory.closeEvent();
+            if (alterDetune) {
+                await factory.closeTag();
+                await factory.endTag();
+            }
+        }
     }
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
         await factory.openMusic();
         await factory.openVoice();
-        await factory.openChord();
         await this.openGuidoEvent(factory);
-        await factory.closeChord();
         await factory.closeVoice();
         return factory.closeMusic();
     }

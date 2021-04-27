@@ -15,6 +15,7 @@ export class EnumArticulation {
     static get LEGATO() { return new Articulation(1, 0.95); }
     static get TENUTO() { return new Articulation(1, 1); }
     static get SOSTENUTO() { return new Articulation(1, 1.2); }
+    static get ACCENT() { return new Articulation(1.2, 1); }
     static get MARCATO() { return new Articulation(1.5, 1); }
     static get PIZZICATO() { return new Articulation(1, 1); }
     static get MUTED() { return new Articulation(1, 1); }

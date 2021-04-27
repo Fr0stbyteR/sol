@@ -11,9 +11,9 @@ export class HClipperRight extends Modifier {
         const duration = params.duration;
         const mode = params.mode || "clip";
         let end = duration.clone();
-        s.notes.forEach((note, i) => {
+        s.trackChords.forEach((note, i) => {
             if (note.offset.compareTo(duration) >= 0) {
-                s.notes[i] = null;
+                s.trackChords[i] = null;
             } else {
                 const noteEnd = note.offset.clone().add(note.duration);
                 if (mode === "preserve") {
@@ -21,12 +21,12 @@ export class HClipperRight extends Modifier {
                 } else {
                     if (noteEnd.compareTo(duration) > 0) {
                         if (mode === "clip") note.duration = noteEnd.sub(duration);
-                        else if (mode === "remove") s.notes[i] = null;
+                        else if (mode === "remove") s.trackChords[i] = null;
                     }
                 }
             }
         });
-        s.notes = s.notes.filter(e => e);
+        s.trackChords = s.trackChords.filter(e => e);
         s.duration = end;
         s.automations.forEach((a) => {
             a.sort();
@@ -41,10 +41,10 @@ export class HClipperLeft extends Modifier {
         const duration = params.duration;
         const mode = params.mode || "clip";
         let start = duration.clone();
-        s.notes.forEach((note, i) => {
+        s.trackChords.forEach((note, i) => {
             const noteEnd = note.offset.clone().add(note.duration);
             if (noteEnd.compareTo(duration) <= 0) {
-                s.notes[i] = null;
+                s.trackChords[i] = null;
             } else {
                 if (mode === "preserve") {
                     if (note.offset.compareTo(start) < 0) start = note.offset;
@@ -55,15 +55,15 @@ export class HClipperLeft extends Modifier {
                             note.duration = noteEnd.sub(duration);
                             note.offset.add(oldDuration.sub(note.duration));
                         } else if (mode === "remove") {
-                            s.notes[i] = null;
+                            s.trackChords[i] = null;
                         }
                     }
                 }
             }
         });
-        s.notes = s.notes.filter(e => e);
+        s.trackChords = s.trackChords.filter(e => e);
         s.duration.sub(start);
-        s.notes.forEach(note => note.offset.sub(start));
+        s.trackChords.forEach(note => note.offset.sub(start));
         s.automations.forEach((a) => {
             a.sort();
             const $0 = a.points.findIndex(p => p.offset.compareTo(start) >= 0);

@@ -4,8 +4,8 @@ import Segment from "../../track/Segment";
 import Pitch from "../../Pitch";
 import Duration from "../../Duration";
 import Interval from "../../Interval";
+import TrackTonalChord from "../../track/TrackTonalChord";
 import TrackChord from "../../track/TrackChord";
-import TrackNote from "../../track/TrackNote";
 import Random from "../Random";
 import Chord from "../../Chord";
 
@@ -18,9 +18,9 @@ export interface IGeneratorParams {
     timeIntervalRange: [Duration, Duration];
     scale: Scale;
     timeCode: TimeCode;
-    chordProgression: TrackChord[];
-    rhythm: TrackNote[];
-    baseNote: TrackNote;
+    chordProgression: TrackTonalChord[];
+    rhythm: TrackChord[];
+    baseNote: TrackChord;
     baseChord: Chord;
     stability: number;
     complexity: number;

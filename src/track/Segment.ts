@@ -1,21 +1,22 @@
 import { Midi } from "@tonejs/midi";
 import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
-import TrackNote, { isTrackNoteArray } from "./TrackNote";
+import TrackChord, { isTrackChordArray } from "./TrackChord";
 import Automation, { isAutomationArray } from "../effect/Automation";
 import Duration, { isDuration } from "../Duration";
+import Chord from "../Chord";
 import Pitch from "../Pitch";
 
 export interface ISegment {
-    instrument?: TConcreteInstrument;
-    notes: TrackNote[];
+    Instrument?: TConcreteInstrument;
+    trackChords: TrackChord[];
     automations: Automation[];
     duration: Duration;
 }
 export const isSegment = (x: any): x is ISegment => {
     return x instanceof Segment
         || (typeof x === "object"
-        && (typeof x.instrument === "undefined" || isTypeofInstrument(x.instrument))
-        && isTrackNoteArray(x.notes)
+        && (typeof x.Instrument === "undefined" || isTypeofInstrument(x.Instrument))
+        && isTrackChordArray(x.trackChords)
         && isAutomationArray(x.automations)
         && isDuration(x.duration));
 };
@@ -27,40 +28,40 @@ export class Segment implements ISegment {
     static readonly isSegment = isSegment;
     static readonly isSegmentArray = isSegmentArray;
 
-    instrument?: TConcreteInstrument;
-    notes: TrackNote[];
+    Instrument?: TConcreteInstrument;
+    trackChords: TrackChord[];
     automations: Automation[];
     duration: Duration;
     constructor(optionsIn: ISegment) {
-        this.instrument = optionsIn.instrument;
-        this.notes = optionsIn.notes.map(e => e.clone());
+        this.Instrument = optionsIn.Instrument;
+        this.trackChords = optionsIn.trackChords.map(e => e.clone());
         this.automations = optionsIn.automations.map(e => e.clone());
         this.duration = optionsIn.duration.clone();
     }
-    get pitches() {
-        return this.notes.map(note => note.pitch);
+    get chords() {
+        return this.trackChords.map(trackChord => trackChord.chord);
     }
-    set pitches(pitchesIn: Pitch[]) {
-        pitchesIn.forEach((e, i) => {
-            const trackNote = this.notes[i];
-            if (trackNote) trackNote.pitch = e.clone();
+    set chords(chordsIn: Chord[]) {
+        chordsIn.forEach((e, i) => {
+            const trackNote = this.trackChords[i];
+            if (trackNote) trackNote.chord = e.clone().toAbsolute();
         });
     }
     get noteDurations() {
-        return this.notes.map(note => note.duration);
+        return this.trackChords.map(note => note.duration);
     }
     set noteDurations(durationsIn: Duration[]) {
         durationsIn.forEach((e, i) => {
-            const trackNote = this.notes[i];
+            const trackNote = this.trackChords[i];
             if (trackNote) trackNote.duration = e.clone();
         });
     }
     get noteOffsets() {
-        return this.notes.map(note => note.offset);
+        return this.trackChords.map(note => note.offset);
     }
     set noteOffsets(offsetsIn: Duration[]) {
         offsetsIn.forEach((e, i) => {
-            const trackNote = this.notes[i];
+            const trackNote = this.trackChords[i];
             if (trackNote) trackNote.offset = e.clone();
         });
     }
@@ -71,11 +72,15 @@ export class Segment implements ISegment {
         const midi = new Midi();
         midi.header.setTempo(bpm);
         const track = midi.addTrack();
-        this.notes.forEach((note) => {
-            track.addNote({
-                midi: ~~note.pitch.offset,
-                ticks: note.offset.getTicks(bpm),
-                durationTicks: note.duration.getTicks(bpm)
+        this.trackChords.forEach((trackChord) => {
+            const ticks = trackChord.offset.getTicks(bpm);
+            const durationTicks = trackChord.duration.getTicks(bpm);
+            trackChord.chord.notes.forEach((pitch: Pitch) => {
+                track.addNote({
+                    midi: ~~pitch.offset,
+                    ticks,
+                    durationTicks
+                });
             });
         });
         return midi.toArray();

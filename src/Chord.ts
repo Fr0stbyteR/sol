@@ -147,6 +147,10 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     get isAbsolute() {
         return this.base instanceof Pitch;
     }
+    toAbsolute(octaveIn = 4) {
+        if (!this.isAbsolute) this.base = new Pitch(this.base, octaveIn);
+        return this;
+    }
     get ratio() {
         return nearestFractions([1, ...this.intervals.map(i => i.ratio)]);
     }

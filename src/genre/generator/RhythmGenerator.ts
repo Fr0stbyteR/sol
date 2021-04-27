@@ -2,25 +2,25 @@ import Generator from "./Generator";
 import Random from "../Random";
 import Duration from "../../Duration";
 import Segment from "../../track/Segment";
-import TrackNote from "../../track/TrackNote";
+import TrackChord from "../../track/TrackChord";
 import Automation from "../../effect/Automation";
 
 export interface IRhythmGeneratorAParams {
     durationRange: [Duration, Duration];
     durationStep: Duration;
-    baseNote: TrackNote;
+    baseNote: TrackChord;
     stability: number;
     complexity: number;
     group?: number[];
 }
-type TPipe = (segmentIn: Segment, randomIn: Random, pIn: number, gridIn: Duration, orderIn: number, baseNoteIn: TrackNote) => void;
+type TPipe = (segmentIn: Segment, randomIn: Random, pIn: number, gridIn: Duration, orderIn: number, baseNoteIn: TrackChord) => void;
 export class RhythmGeneratorA extends Generator {
     static use = (randomIn: Random, params: IRhythmGeneratorAParams) => {
         const { durationRange, durationStep, baseNote, stability, complexity, group } = params;
         const duration = Duration.random(randomIn, durationRange[0], durationRange[1], durationStep);
-        const notes: TrackNote[] = [];
+        const notes: TrackChord[] = [];
         const automations: Automation[] = [];
-        const seg = new Segment({ notes, duration, automations });
+        const seg = new Segment({ trackChords: notes, duration, automations });
         const { fill, prepare, anticipate, rebound, defer, split, tree, maxSteps } = RhythmGeneratorA;
         const pipes = [prepare, anticipate, rebound, defer, split, tree];
         let steps = ~~(maxSteps * complexity);
@@ -39,7 +39,7 @@ export class RhythmGeneratorA extends Generator {
     };
     static maxSteps = 16;
     static fill: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { duration, notes } = segmentIn;
+        const { duration, trackChords: notes } = segmentIn;
         const $ = new Duration(0, 4);
         const note = baseNoteIn.clone();
         if (orderIn) note.velocity.mul(0.9 ** orderIn);
@@ -49,19 +49,19 @@ export class RhythmGeneratorA extends Generator {
         }
     };
     static prepare: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes } = segmentIn;
+        const { trackChords: notes } = segmentIn;
         for (const note of notes) {
             if (note.offset.compareTo(gridIn) < 0) continue;
             if (randomIn.quick() < pIn) {
                 const $note = note.clone();
                 if (orderIn) $note.velocity = baseNoteIn.velocity.clone().mul(0.9 ** orderIn);
                 $note.offset.sub(gridIn);
-                segmentIn.notes.push($note);
+                segmentIn.trackChords.push($note);
             }
         }
     };
     static anticipate: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes } = segmentIn;
+        const { trackChords: notes } = segmentIn;
         for (const note of notes) {
             if (note.offset.compareTo(gridIn) < 0) continue;
             if (randomIn.quick() < pIn) {
@@ -71,7 +71,7 @@ export class RhythmGeneratorA extends Generator {
         }
     };
     static rebound: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes, duration } = segmentIn;
+        const { trackChords: notes, duration } = segmentIn;
         const end = duration.clone().sub(gridIn);
         for (const note of notes) {
             if (note.offset.compareTo(end) > 0) continue;
@@ -79,12 +79,12 @@ export class RhythmGeneratorA extends Generator {
                 const $note = note.clone();
                 if (orderIn) $note.velocity = baseNoteIn.velocity.clone().mul(0.9 ** orderIn);
                 $note.offset.add(gridIn);
-                segmentIn.notes.push($note);
+                segmentIn.trackChords.push($note);
             }
         }
     };
     static defer: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes, duration } = segmentIn;
+        const { trackChords: notes, duration } = segmentIn;
         const end = duration.clone().sub(gridIn);
         for (const note of notes) {
             if (note.offset.compareTo(end) > 0) continue;
@@ -95,7 +95,7 @@ export class RhythmGeneratorA extends Generator {
         }
     };
     static split: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes, duration } = segmentIn;
+        const { trackChords: notes, duration } = segmentIn;
         const end = duration.clone().sub(gridIn);
         for (const note of notes) {
             if (note.offset.compareTo(gridIn) < 0 || note.offset.compareTo(end) > 0) continue;
@@ -104,12 +104,12 @@ export class RhythmGeneratorA extends Generator {
                 const left = note.clone();
                 note.offset.add(gridIn);
                 left.offset.sub(gridIn);
-                segmentIn.notes.push(left);
+                segmentIn.trackChords.push(left);
             }
         }
     };
     static tree: TPipe = (segmentIn, randomIn, pIn, gridIn, orderIn, baseNoteIn) => {
-        const { notes, duration } = segmentIn;
+        const { trackChords: notes, duration } = segmentIn;
         const end = duration.clone().sub(gridIn);
         for (const note of notes) {
             if (note.offset.compareTo(gridIn) < 0 || note.offset.compareTo(end) > 0) continue;
@@ -119,7 +119,7 @@ export class RhythmGeneratorA extends Generator {
                 const right = note.clone();
                 right.offset.add(gridIn);
                 left.offset.sub(gridIn);
-                segmentIn.notes.push(left, right);
+                segmentIn.trackChords.push(left, right);
             }
         }
     };
