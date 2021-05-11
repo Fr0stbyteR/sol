@@ -1,82 +1,23 @@
-import Interval, { isIntervalArray } from "./Interval";
+import Interval, { IInterval, isIntervalArray } from "./Interval";
 import Note, { isNoteArray, isNote, INote } from "./Note";
 import Pitch, { isPitchArray, isPitch, IPitch } from "./Pitch";
-import Enum from "./Enum";
 import { isNumberArray, nearestFractions, nearestReciprocals } from "./utils";
+import { EnumChord } from "./EnumChord";
 
-type TEnumChordName = "MAJ" | "MIN" | "AUG" | "DIM" | "SUS2" | "SUS" | "SUS4" | "DOM7" | "MAJ7" | "MINMAJ7" | "MIN7" | "AUGMAJ7" | "AUG7" | "DIMMIN7" | "DIM7" | "DOM7DIM5";
-export class EnumChord extends Enum {
-    protected static indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"] as TEnumChordName[];
-    static get MAJ() { return new EnumChord("MAJ", "M3", "P5"); }
-    static get MIN() { return new EnumChord("MIN", "m3", "P5"); }
-    static get AUG() { return new EnumChord("AUG", "M3", "A5"); }
-    static get DIM() { return new EnumChord("DIM", "m3", "d5"); }
-    static get SUS2() { return new EnumChord("SUS2", "M2", "P5"); }
-    static get SUS() { return new EnumChord("SUS", "P5", "P5"); }
-    static get SUS4() { return new EnumChord("SUS4", "P5", "P5"); }
-    static get DOM7() { return new EnumChord("DOM7", "M3", "P5", "m7"); }
-    static get MAJ7() { return new EnumChord("MAJ7", "M3", "P5", "M7"); }
-    static get MINMAJ7() { return new EnumChord("MINMAJ7", "m3", "P5", "M7"); }
-    static get MIN7() { return new EnumChord("MIN7", "m3", "P5", "m7"); }
-    static get AUGMAJ7() { return new EnumChord("AUGMAJ7", "M3", "A5", "M7"); }
-    static get AUG7() { return new EnumChord("AUG7", "M3", "A5", "m7"); }
-    static get DIMMIN7() { return new EnumChord("DIMMIN7", "m3", "d5", "m7"); }
-    static get DIM7() { return new EnumChord("DIM7", "m3", "d5", "d7"); }
-    static get DOM7DIM5() { return new EnumChord("DOM7DIM5", "M3", "d5", "m7"); }
-
-    _name: string;
-    intervals: Interval[];
-    private constructor(nameIn: string, ...intervalsIn: string[]);
-    private constructor(chord: EnumChord);
-    private constructor(p1: string | EnumChord, ...intervalsIn: string[]) {
-        super();
-        if (typeof p1 === "string") {
-            this._name = p1;
-            this.intervals = Interval.fromArray(intervalsIn);
-        } else {
-            this._name = p1._name;
-            this.intervals = p1.intervals.map(i => i.clone());
-        }
-    }
-    static byChord(chordIn: IChord) {
-        return this.values<EnumChord>().find((enumChord) => {
-            return enumChord.intervals.length === chordIn.intervals.length
-                && enumChord.intervals.every((interval, i) => interval.equals(chordIn.intervals[i]));
-        }) || null;
-    }
-    static byName(chordIn: TEnumChordName) {
-        return EnumChord[chordIn];
-    }
-    toChord(base: Note | Pitch | string) {
-        return new Chord(base, ...this.intervals);
-    }
-    name() {
-        return this._name;
-    }
-    equals(chordIn: object) {
-        return isChord(chordIn)
-            && "intervals" in chordIn
-            && isIntervalArray(chordIn.intervals)
-            && chordIn.intervals.length === this.intervals.length
-            && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
-    }
-    clone() {
-        return new EnumChord(this);
-    }
-}
 export interface IChord {
-    base: Note | Pitch;
-    intervals: Interval[];
+    base: INote | IPitch;
+    intervals: IInterval[];
 }
 export const isChord = (x: any): x is IChord => {
     return x instanceof Chord
         || (typeof x === "object"
+        && x !== null
         && isNote(x.base)
         && isIntervalArray(x.intervals));
 };
-export const isChordArray = (x: any): x is Chord[] => {
+export const isChordArray = (x: any): x is IChord[] => {
     return Array.isArray(x)
-        && x.every(e => e instanceof Chord);
+        && x.every(e => isChord(e));
 };
 export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClonable<Chord> {
     static readonly isChord = isChord;
@@ -104,8 +45,10 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     }
     become(p1: IChord | Note | Pitch | string | number, ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
         if (isChord(p1)) {
-            this.base = p1.base;
-            this.intervals = p1.intervals;
+            const _isNote = isNote(p1);
+            if (_isNote) this.base = new Note(p1.base);
+            else this.base = new Pitch(p1.base);
+            this.intervals = Interval.fromArray(p1.intervals);
         } else if (typeof p1 === "string") {
             const isNote = Note.REGEX.exec(p1);
             if (isNote) this.base = new Note(p1);
@@ -282,9 +225,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     static compare(x: Chord, y: Chord) {
         return x.intervals.length - y.intervals.length;
     }
-    equals(chordIn: object) {
+    equals(chordIn: any) {
         return isChord(chordIn)
-            && chordIn.base.equals(this.base)
+            && this.base.equals(chordIn.base)
             && chordIn.intervals.length === this.intervals.length
             && chordIn.intervals.every((e, i) => this.intervals[i].equals(e));
     }
@@ -322,7 +265,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
                 m[i][j] = notes[j].getTendancy($notes[i]);
             }
         }
-        return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
+        return m.map(r => Math.max(...r)).reduce((s, e) => s + e, 0) / m.length;
     }
     getStability(that: Chord) {
         const m: number[][] = [];
@@ -334,7 +277,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
                 m[i][j] = notes[j].getStability($notes[i]);
             }
         }
-        return m.map(r => Math.max(...r)).reduce((s, e) => s += e, 0) / m.length; // eslint-disable-line no-param-reassign
+        return m.map(r => Math.max(...r)).reduce((s, e) => s + e, 0) / m.length;
     }
 }
 

@@ -1,50 +1,47 @@
 import { Midi } from "@tonejs/midi";
-import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
-import TrackChord, { isTrackChordArray } from "./TrackChord";
-import Automation, { isAutomationArray } from "../effect/Automation";
-import Duration, { isDuration } from "../Duration";
+import TrackChord, { isTrackChordArray, ITrackChord } from "./TrackChord";
+import Automation, { IAutomation, isAutomationArray } from "../effect/Automation";
+import Duration, { IDuration, isDuration } from "../Duration";
 import Chord from "../Chord";
-import Pitch from "../Pitch";
+import Velocity from "../Velocity";
+import { isObjectArray } from "../utils";
+import TimeCode, { ITimeCode } from "../TimeCode";
 
 export interface ISegment {
-    Instrument?: TConcreteInstrument;
-    trackChords: TrackChord[];
-    automations: Automation[];
-    duration: Duration;
+    trackChords: ITrackChord[];
+    automations: IAutomation[];
+    duration: IDuration;
 }
 export const isSegment = (x: any): x is ISegment => {
     return x instanceof Segment
         || (typeof x === "object"
-        && (typeof x.Instrument === "undefined" || isTypeofInstrument(x.Instrument))
+        && x !== null
         && isTrackChordArray(x.trackChords)
         && isAutomationArray(x.automations)
         && isDuration(x.duration));
 };
 export const isSegmentArray = (x: any): x is ISegment[] => {
-    return Array.isArray(x)
-        && x.every(e => e instanceof Segment);
+    return isObjectArray(x, isSegment);
 };
 export class Segment implements ISegment {
     static readonly isSegment = isSegment;
     static readonly isSegmentArray = isSegmentArray;
 
-    Instrument?: TConcreteInstrument;
     trackChords: TrackChord[];
     automations: Automation[];
     duration: Duration;
     constructor(optionsIn: ISegment) {
-        this.Instrument = optionsIn.Instrument;
-        this.trackChords = optionsIn.trackChords.map(e => e.clone());
-        this.automations = optionsIn.automations.map(e => e.clone());
-        this.duration = optionsIn.duration.clone();
+        this.trackChords = TrackChord.fromArray(optionsIn.trackChords);
+        this.automations = Automation.fromArray(optionsIn.automations);
+        this.duration = new Duration(optionsIn.duration);
     }
-    get chords() {
-        return this.trackChords.map(trackChord => trackChord.chord);
+    getChords() {
+        return this.trackChords.map(trackChord => trackChord.getChord());
     }
-    set chords(chordsIn: Chord[]) {
+    setChords(chordsIn: Chord[], velocitiesIn?: Velocity[][] | number[][]) {
         chordsIn.forEach((e, i) => {
-            const trackNote = this.trackChords[i];
-            if (trackNote) trackNote.chord = e.clone().toAbsolute();
+            const trackChord = this.trackChords[i];
+            trackChord.setChord(e, velocitiesIn?.[i]);
         });
     }
     get noteDurations() {
@@ -68,16 +65,18 @@ export class Segment implements ISegment {
     clone() {
         return new Segment(this);
     }
-    toMidi(bpm = 60) {
+    toMidi({ bpm, beats, beatDuration }: ITimeCode = new TimeCode(4, 4, 60)) {
         const midi = new Midi();
         midi.header.setTempo(bpm);
+        midi.header.timeSignatures.push({ ticks: 0, measures: 0, timeSignature: [beats, beatDuration] });
+        midi.header.update();
         const track = midi.addTrack();
         this.trackChords.forEach((trackChord) => {
             const ticks = trackChord.offset.getTicks(bpm);
             const durationTicks = trackChord.duration.getTicks(bpm);
-            trackChord.chord.notes.forEach((pitch: Pitch) => {
+            trackChord.trackNotes.forEach((trackNote) => {
                 track.addNote({
-                    midi: ~~pitch.offset,
+                    midi: ~~trackNote.pitch.offset,
                     ticks,
                     durationTicks
                 });

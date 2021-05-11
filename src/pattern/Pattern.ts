@@ -6,6 +6,7 @@ export interface IPattern {
 export const isPattern = (x: any): x is IPattern => {
     return x instanceof Pattern
         || (typeof x === "object"
+        && x !== null
         && isSegmentArray(x.segments));
 };
 export class Pattern implements IPattern {

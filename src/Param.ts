@@ -9,6 +9,7 @@ export interface IParam {
 export const isParam = (x: any): x is IParam => {
     return x instanceof Param
         || (typeof x === "object"
+        && x !== null
         && typeof x.path === "string"
         && (typeof x.name === "undefined" || x.name === "string")
         && typeof x.min === "number"

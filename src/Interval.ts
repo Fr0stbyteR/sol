@@ -1,4 +1,4 @@
-import { floorMod, nearestFraction, nearestReciprocal } from "./utils";
+import { floorMod, isObjectArray, nearestFraction, nearestReciprocal } from "./utils";
 import Enum from "./Enum";
 import Frequency from "./Frequency";
 
@@ -8,20 +8,20 @@ export interface IInterval {
     octave: number;
 }
 export type TIntervalOffset = 0 | 2 | 4 | 5 | 7 | 9 | 11;
+export const DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 export const isInterval = (x: any): x is IInterval => {
     return x instanceof Interval
         || (typeof x === "object"
+        && x !== null
         && typeof x.degree === "number"
         && typeof x.onset === "number"
         && typeof x.octave === "number");
 };
-export const isIntervalArray = (x: any): x is Interval[] => {
-    return Array.isArray(x)
-        && x.every(el => el instanceof Interval);
+export const isIntervalArray = (x: any): x is IInterval[] => {
+    return isObjectArray(x, isInterval);
 };
 type TIntervalProperty = "P" | "M" | "m" | "A" | "d";
 type TIntervalPropertyValue = "PERFECT" | "MAJOR" | "MINOR" | "AUGMENTED" | "DIMINISHED";
-export const DEGREE_TO_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 class EnumIntervalProperty extends Enum {
     protected static indexes = ["PERFECT", "MAJOR", "MINOR", "AUGMENTED", "DIMINISHED"];
     private static abbMap: Record<string, TIntervalPropertyValue> = { P: "PERFECT", M: "MAJOR", m: "MINOR", A: "AUGMENTED", d: "DIMINISHED" };
@@ -39,6 +39,9 @@ class EnumIntervalProperty extends Enum {
     private constructor(abbIn: TIntervalProperty) {
         super();
         this.abb = abbIn;
+    }
+    get className() {
+        return "EnumIntervalProperty" as const;
     }
     name() {
         return EnumIntervalProperty.abbMap[this.abb];

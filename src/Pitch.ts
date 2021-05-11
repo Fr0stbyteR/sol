@@ -1,6 +1,9 @@
-import Note, { EnumNote, INote, isNote } from "./Note";
+import Note, { INote, isNote } from "./Note";
+import { EnumNote, isEnumNote } from "./EnumNote";
 import Interval from "./Interval";
 import Frequency from "./Frequency";
+import { isObjectArray } from "./utils";
+import Duration from "./Duration";
 
 export interface IPitch extends INote {
     octave: number;
@@ -8,13 +11,13 @@ export interface IPitch extends INote {
 export const isPitch = (x: any): x is IPitch => {
     return x instanceof Pitch
         || (typeof x === "object"
-        && x.enumNote instanceof EnumNote
+        && x !== null
+        && isEnumNote(x.enumNote)
         && typeof x.alteration === "number"
         && typeof x.octave === "number");
 };
-export const isPitchArray = (x: any): x is Pitch[] => {
-    return Array.isArray(x)
-        && x.every(el => el instanceof Pitch);
+export const isPitchArray = (x: any): x is IPitch[] => {
+    return isObjectArray(x, isPitchArray);
 };
 export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable<Pitch> {
     static readonly REGEX = /^([a-gA-G][b#x]*)(-?\d+)?$/;
@@ -82,7 +85,7 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     get frequency() {
         return Frequency.A440 * 2 ** ((this.offset - 69) / 12);
     }
-    static fromString(nameIn: string): IPitch {
+    static fromString(nameIn: string) {
         const matched = Pitch.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such pitch ${nameIn}.`);
         const octave = parseInt(matched[2]) || 0;
@@ -90,17 +93,17 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     }
     protected fromString(nameIn: string) {
         const { enumNote, alteration, octave } = Pitch.fromString(nameIn);
-        this.enumNote = enumNote;
+        this.enumNote = EnumNote.from(enumNote);
         this.alteration = alteration;
         this.octave = octave;
         return this;
     }
-    static fromOffset(offsetIn: number): IPitch {
+    static fromOffset(offsetIn: number) {
         return { ...super.fromOffset(offsetIn), octave: Math.floor(offsetIn / 12 - 1) };
     }
     protected fromOffset(offsetIn: number) {
         const { enumNote, alteration, octave } = Pitch.fromOffset(offsetIn);
-        this.enumNote = enumNote;
+        this.enumNote = EnumNote.from(enumNote);
         this.alteration = alteration;
         this.octave = octave;
         return this;
@@ -154,7 +157,7 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
         if (typeof b === "number") return a.clone().div(b);
         return a.clone().div(b);
     }
-    equals(pitchIn: object) {
+    equals(pitchIn: any) {
         return super.equals(pitchIn)
             && isPitch(pitchIn)
             && this.octave === pitchIn.octave;
@@ -187,8 +190,8 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
     clone(): Pitch {
         return new Pitch(this);
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true) {
-        await super.openGuidoEvent(factory, close, this.octave);
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true) {
+        await super.openGuidoEvent(factory, durationIn, close, this.octave);
     }
 
     getTendancy(that: Pitch) {

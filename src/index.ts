@@ -14,6 +14,10 @@ import Tonality from "./Tonality";
 import Velocity from "./Velocity";
 import Random from "./genre/Random";
 import * as Utils from "./utils";
+import Segment from "./track/Segment";
+import Sequence from "./track/Sequence";
+import TrackChord from "./track/TrackChord";
+import TrackNote from "./track/TrackNote";
 /*
 export * as Articulation from "./Articulation";
 export * as Chord from "./Chord";
@@ -46,6 +50,10 @@ export /* default */ {
     Tonality,
     Velocity,
     Random,
+    TrackNote,
+    TrackChord,
+    Sequence,
+    Segment,
     Utils
 };
 /* eslint-disable no-console */

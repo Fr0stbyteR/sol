@@ -1,15 +1,16 @@
-import Scale, { isScale, EnumScale } from "./Scale";
-import Note, { isNote } from "./Note";
+import Scale, { isScale, EnumScale, IScale } from "./Scale";
+import Note, { INote, isNote } from "./Note";
 import Chord from "./Chord";
 import Interval from "./Interval";
 
 export interface ITonality {
-    note: Note;
-    scale: Scale;
+    note: INote;
+    scale: IScale;
 }
 export const isTonality = (x: any): x is ITonality => {
     return x instanceof Tonality
         || (typeof x === "object"
+        && x !== null
         && isNote(x.note)
         && isScale(x.scale));
 };
@@ -18,16 +19,16 @@ export class Tonality implements Iterable<Note>, ITonality, IClonable<Tonality> 
 
     note: Note;
     scale: Scale;
-    constructor(tonalityIn: Tonality);
+    constructor(tonalityIn: ITonality);
     constructor(tonalityIn: string);
     constructor(noteIn: Note, scaleIn: Scale);
-    constructor(p1: Tonality | string | Note, p2?: Scale) {
+    constructor(p1: ITonality | string | Note, p2?: Scale) {
         this.become(p1, p2);
     }
-    become(p1: Tonality | string | Note, p2?: Scale) {
+    become(p1: ITonality | string | Note, p2?: Scale) {
         if (isTonality(p1)) {
-            this.note = p1.note.clone();
-            this.scale = p1.scale.clone();
+            this.note = new Note(p1.note);
+            this.scale = new Scale(p1.scale);
         } else if (typeof p1 === "string") {
             try {
                 this.note = new Note(p1);

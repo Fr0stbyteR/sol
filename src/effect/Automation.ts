@@ -1,21 +1,26 @@
-import AutomationPoint, { isAutomationPointArray } from "./AutomationPoint";
+import AutomationPoint, { IAutomationPoint, isAutomationPointArray } from "./AutomationPoint";
 import { Duration } from "../Duration";
-import { getValueFromCurve } from "../utils";
+import { getValueFromCurve, isObjectArray } from "../utils";
 
 export interface IAutomation {
     path: string;
-    points: AutomationPoint[];
+    points: IAutomationPoint[];
 }
 export const isAutomation = (x: any): x is IAutomation => {
     return x instanceof Automation
         || (typeof x.path === "string"
         && isAutomationPointArray(x.points));
 };
-export const isAutomationArray = (x: any): x is Automation[] => {
-    return Array.isArray(x)
-        && x.every(e => e instanceof Automation);
+export const isAutomationArray = (x: any): x is IAutomation[] => {
+    return isObjectArray(x, isAutomation);
 };
 export class Automation implements IAutomation {
+    static readonly isAutomation = isAutomation;
+    static readonly isAutomationArray = isAutomationArray;
+    static fromArray(automationsIn: IAutomation[]) {
+        return automationsIn.map(e => new Automation(e));
+    }
+
     path: string;
     points: AutomationPoint[];
     constructor(path: string, points?: AutomationPoint[]);
@@ -26,7 +31,7 @@ export class Automation implements IAutomation {
             this.points = points ? points.map(e => e.clone()) : [];
         } else {
             this.path = p1.path;
-            this.points = p1.points.map(e => e.clone());
+            this.points = AutomationPoint.fromArray(p1.points);
         }
     }
     getValueAtTime(time: Duration) {

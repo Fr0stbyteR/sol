@@ -1,63 +1,22 @@
-import { floorMod } from "./utils";
-import Interval, { TIntervalOffset, DEGREE_TO_OFFSET } from "./Interval";
-import Enum from "./Enum";
+import { floorMod, isObjectArray } from "./utils";
+import Interval, { DEGREE_TO_OFFSET } from "./Interval";
 import Frequency from "./Frequency";
+import { EnumNote, IEnumNote, isEnumNote, TEnumNoteValue } from "./EnumNote";
+import Duration from "./Duration";
 
-type TEnumNoteValue = "C" | "D" | "E" | "F" | "G" | "A" | "B";
-export class EnumNote extends Enum {
-    protected static indexes: TEnumNoteValue[] = ["C", "D", "E", "F", "G", "A", "B"];
-    private static offsetMap: Record<string, TEnumNoteValue> = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
-    static get C() { return new EnumNote(0); }
-    static get D() { return new EnumNote(2); }
-    static get E() { return new EnumNote(4); }
-    static get F() { return new EnumNote(5); }
-    static get G() { return new EnumNote(7); }
-    static get A() { return new EnumNote(9); }
-    static get B() { return new EnumNote(11); }
-    static c = EnumNote.C;
-    static d = EnumNote.D;
-    static e = EnumNote.E;
-    static f = EnumNote.F;
-    static g = EnumNote.G;
-    static a = EnumNote.A;
-    static b = EnumNote.B;
-    readonly offset: TIntervalOffset;
-    private constructor(offsetIn: TIntervalOffset) {
-        super();
-        this.offset = offsetIn;
-    }
-    static byOffset(offsetIn: number) {
-        if (typeof offsetIn !== "number") return null;
-        const name = EnumNote.offsetMap[floorMod(offsetIn, 12)];
-        if (name) return EnumNote[name];
-        throw new SyntaxError(`No such note with offset ${offsetIn}.`);
-    }
-    static byIndex(indexIn: number) {
-        if (typeof indexIn !== "number") return null;
-        const name = EnumNote.indexes[floorMod(indexIn, 7)];
-        if (name) return EnumNote[name];
-        throw new SyntaxError(`No such note with index ${indexIn}.`);
-    }
-    name() { return EnumNote.offsetMap[this.offset]; }
-    get index() { return DEGREE_TO_OFFSET.indexOf(this.offset); }
-    ordinal() { return this.index; }
-    equals(noteIn: object) {
-        return noteIn instanceof EnumNote && noteIn.offset === this.offset;
-    }
-}
 export interface INote {
-    enumNote: EnumNote;
+    enumNote: IEnumNote;
     alteration: number;
 }
 export const isNote = (x: any): x is INote => {
     return x instanceof Note
         || (typeof x === "object"
-        && x.enumNote instanceof EnumNote
+        && x !== null
+        && isEnumNote(x.enumNote)
         && typeof x.alteration === "number");
 };
-export const isNoteArray = (x: any): x is Note[] => {
-    return Array.isArray(x)
-        && x.every(el => el instanceof Note);
+export const isNoteArray = (x: any): x is INote[] => {
+    return isObjectArray(x, isNote);
 };
 export class Note implements INote, IComputable<Note>, IClonable<Note> {
     static readonly REGEX = /^([a-gA-G])([b#x]*)$/;
@@ -100,7 +59,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
             this.enumNote = p1;
             if (p2) this.alteration = p2;
         } else if (isNote(p1)) {
-            this.enumNote = p1.enumNote;
+            this.enumNote = EnumNote.from(p1.enumNote);
             this.alteration = p1.alteration;
         } else if (typeof p1 === "string") {
             this.fromString(p1);
@@ -109,7 +68,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         }
         return this;
     }
-    static fromString(nameIn: string): INote {
+    static fromString(nameIn: string) {
         const matched = Note.REGEX.exec(nameIn);
         if (matched === null) throw new SyntaxError(`No such note ${nameIn}.`);
         const enumNote = EnumNote[matched[1] as TEnumNoteValue];
@@ -123,7 +82,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         this.alteration = alteration;
         return this;
     }
-    static fromOffset(offsetIn: number, alterationIn?: number): INote {
+    static fromOffset(offsetIn: number, alterationIn?: number) {
         const note = floorMod(offsetIn, 12);
         let offset = 11;
         for (let i = DEGREE_TO_OFFSET.length - 1; i >= 0; i--) {
@@ -202,7 +161,7 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         if (typeof b === "number") return a.clone().div(b);
         return a.clone().div(b);
     }
-    equals(noteIn: object) {
+    equals(noteIn: any) {
         return isNote(noteIn)
             && this.enumNote.equals(noteIn.enumNote)
             && this.alteration === noteIn.alteration;
@@ -236,18 +195,19 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     clone() {
         return new Note(this);
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, close = true, octaveIn = 3) {
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true, octaveIn = 3) {
         const { alteration } = this;
         const accidentals = Math.max(-2, Math.min(2, ~~alteration));
         const alterDetune = alteration - accidentals;
         if (alterDetune) {
-            await factory.openTag("alter", 0);
+            await factory.openRangeTag("alter", 0);
             await factory.addTagParameterFloat(alterDetune);
             await factory.setParameterName("detune");
         }
         await factory.openEvent(this.enumNote.name());
         await factory.setEventAccidentals(this.alteration);
         await factory.setOctave(octaveIn - 3);
+        if (durationIn) await factory.setDuration(durationIn.numerator, durationIn.denominator);
         if (close) {
             await factory.closeEvent();
             if (alterDetune) {

@@ -2,11 +2,13 @@ import { TimeCode } from "./TimeCode";
 import { gcd, nearestFractions, precisionFactor } from "./utils";
 import Random from "./genre/Random";
 
-export type TDurationAbbreviation = `${1 | 2 | 4 | 8 | 16 | 32 | 64 | 128}${"n" | "nd" | "nt"}`;
+export type TDurationAbbreviation = `${1 | 2 | 4 | 8 | 16 | 32 | 64 | 128}${"n" | "nd" | "nt"}` | "0";
 export const isDurationAbbreviation = (x: any): x is TDurationAbbreviation => {
     return typeof x === "string"
-        && !!x.match(/^\d+n(t|d)?$/)
-        && new Array(8).fill(null).map((v, i) => 2 ** i).indexOf(parseInt(x)) !== -1;
+        && (x === "0" || (
+            !!x.match(/^\d+n(t|d)?$/)
+            && new Array(8).fill(null).map((v, i) => 2 ** i).indexOf(parseInt(x)) !== -1
+        ));
 };
 export interface IDuration {
     isAbsolute: boolean;
@@ -16,15 +18,22 @@ export interface IDuration {
 }
 export const isDuration = (x: any): x is IDuration => {
     return x instanceof Duration
-        || (typeof x.isAbsolute === "boolean"
-        && x.isAbsolute
+        || (typeof x === "object"
+        && x !== null
+        && typeof x.isAbsolute === "boolean"
+        && (x.isAbsolute
             ? typeof x.seconds === "number"
             : typeof x.numerator === "number" && typeof x.denominator === "number"
-        );
+        ));
 };
 export class Duration implements IDuration, IComputable<Duration>, IClonable<Duration> {
     static readonly isDuration = isDuration;
     static readonly isDuractionAbbreviation = isDurationAbbreviation;
+
+    static fromArray(arrayIn: IDuration[]) {
+        return arrayIn.map(e => new Duration(e));
+    }
+
     /**
      * Absolute mode (use seconds or numerator/denominator)
      */
@@ -44,12 +53,12 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
 
     constructor(secondsIn: number);
     constructor(numeratorIn: number, denominatorIn: number);
-    constructor(durationIn: Duration);
+    constructor(durationIn: IDuration);
     constructor(durationString: TDurationAbbreviation);
-    constructor(p1: number | Duration | TDurationAbbreviation, p2?: number) {
+    constructor(p1: number | IDuration | TDurationAbbreviation, p2?: number) {
         this.become(p1, p2);
     }
-    become(p1: number | Duration | TDurationAbbreviation, p2?: number) {
+    become(p1: number | IDuration | TDurationAbbreviation, p2?: number) {
         if (isDurationAbbreviation(p1)) {
             this.isAbsolute = false;
             this.denominator = parseInt(p1);

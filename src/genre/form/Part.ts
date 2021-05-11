@@ -8,6 +8,7 @@ export interface IPart {
 export const isPart = (x: any): x is IPart => {
     return x instanceof Part
         || (typeof x === "object"
+        && x !== null
         && isDuration(x.minDuration)
         && isDuration(x.maxDuration)
         && isDuration(x.stepDuration));

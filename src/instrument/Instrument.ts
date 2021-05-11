@@ -6,14 +6,16 @@ export interface IInstrument {
     name: string;
     params: Record<string, Param>;
 }
-export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument)=> Instrument);
+export type TConcreteInstrument = typeof Instrument & (new (optionsIn: IInstrument) => Instrument);
 export const isInstrument = (x: any): x is Instrument => {
     return x instanceof Instrument
         || (typeof x === "object"
+        && x !== null
         && typeof x.name === "string");
 };
 export const isTypeofInstrument = (x: any): x is typeof Instrument => {
     return typeof x === "object"
+        && x !== null
         && isEnumInstrumentTagArray(x.TAGS)
         && typeof x.NAME === "string"
         && (typeof x.MIN_PITCH === "undefined" || isPitch(x.MIN_PITCH))

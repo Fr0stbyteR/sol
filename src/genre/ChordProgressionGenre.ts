@@ -21,6 +21,7 @@ const keys: (keyof IChordProgressionGenre)[] = [
 export const isChordProgressionGenre = (x: any): x is IChordProgressionGenre => {
     return x instanceof ChordProgressionGenre
         || (typeof x === "object"
+        && x !== null
         && keys.every(k => typeof x[k] === "undefined" || typeof x[k] === "boolean"));
 };
 export class ChordProgressionGenre implements IChordProgressionGenre {

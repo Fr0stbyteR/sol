@@ -3,7 +3,6 @@ import TrackChord, { isTrackChordArray } from "./TrackChord";
 import Effect, { isEffectArray } from "../effect/Effect";
 import Automation, { isAutomationArray } from "../effect/Automation";
 import { isTypeofInstrument, TConcreteInstrument } from "../instrument/Instrument";
-import Pitch from "../Pitch";
 
 export interface ITrack {
     name: string;
@@ -16,6 +15,7 @@ export interface ITrack {
 export const isTrack = (x: any): x is ITrack => {
     return x instanceof Track
         || (typeof x === "object"
+        && x !== null
         && typeof x.name === "string"
         && (typeof x.Instrument === "undefined" || isTypeofInstrument(x.Instrument))
         && isTrackChordArray(x.trackChords)
@@ -39,9 +39,9 @@ export class Track implements ITrack {
         this.trackChords.forEach((trackChord) => {
             const ticks = trackChord.offset.getTicks(bpm);
             const durationTicks = trackChord.duration.getTicks(bpm);
-            trackChord.chord.notes.forEach((pitch: Pitch) => {
+            trackChord.trackNotes.forEach((trackNote) => {
                 track.addNote({
-                    midi: ~~pitch.offset,
+                    midi: ~~trackNote.pitch.offset,
                     ticks,
                     durationTicks
                 });

@@ -9,6 +9,7 @@ export interface ITrackTonalChord {
 export const isTrackTonalChord = (x: any): x is ITrackTonalChord => {
     return x instanceof TrackTonalChord
         || (typeof x === "object"
+        && x !== null
         && isDuration(x.duration)
         && isDuration(x.offset)
         && isTonalChord(x.chord));

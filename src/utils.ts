@@ -13,6 +13,47 @@ export const isNumberArray = (x: any): x is number[] => {
     return Array.isArray(x)
         && x.every(e => typeof e === "number");
 };
+
+export const isObjectArray = <T>(x: any, typeGuard: (e: any) => e is T): x is T[] => {
+    return Array.isArray(x)
+        && x.every(typeGuard);
+};
+
+export const isObjectInstanceArray = <T>(x: any, Type: new (...args: any[]) => T): x is T[] => {
+    return Array.isArray(x)
+        && x.every(e => e instanceof Type);
+};
+
+export const isObjectArrayLike = <T>(x: any, typeGuard: (e: any) => e is T): x is ArrayLike<T> => {
+    if (x === null || typeof x !== "object" || typeof x.length !== "number") return false;
+    for (let i = 0; i < x.length; i++) {
+        if (typeGuard(x[i])) continue;
+        else return false;
+    }
+    return true;
+};
+
+export const isObjectInstanceArrayLike = <T>(x: any, Type: new (...args: any[]) => T): x is ArrayLike<T> => {
+    if (x === null || typeof x !== "object" || typeof x.length !== "number") return false;
+    for (let i = 0; i < x.length; i++) {
+        if (x[i] instanceof Type) continue;
+        else return false;
+    }
+    return true;
+};
+
+export const isObjectIterable = <T>(x: any, typeGuard: (e: any) => e is T): x is Iterable<T> => {
+    if (typeof x !== "object" || x === null) return false;
+    if (typeof x[Symbol.iterator] !== "function") return false;
+    return Array.from(x).every(typeGuard);
+};
+
+export const isObjectInstanceIterable = <T>(x: any, Type: new (...args: any[]) => T): x is Iterable<T> => {
+    if (typeof x !== "object" || x === null) return false;
+    if (typeof x[Symbol.iterator] !== "function") return false;
+    return Array.from(x).every(e => e instanceof Type);
+};
+
 export const parseRoman = (stringIn: string) => {
     if (stringIn.length === 0) return 0;
     let c: number;
@@ -112,7 +153,6 @@ export const nearestReciprocals = (ratio: number[], approxIn: number = Frequency
     } while (!delta.every(d => iApprox < d && d < approx));
     return iFactor;
 };
-// eslint-disable-next-line arrow-parens
 export const permutations = <T = any>(array: T[]): T[][] => {
     const { length } = array;
     const result = [array.slice()];
@@ -137,7 +177,6 @@ export const permutations = <T = any>(array: T[]): T[][] => {
     }
     return result;
 };
-// eslint-disable-next-line arrow-parens
 export const permute = <T = any>(array: T[], random?: Random): T[] => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = random ? random.randint(0, i + 1) : ~~(Math.random() * (i + 1));
@@ -145,8 +184,6 @@ export const permute = <T = any>(array: T[], random?: Random): T[] => {
     }
     return array;
 };
-
-// eslint-disable-next-line arrow-parens
 export const combinations = <T = any>(array: T[]): T[][] => {
     const { length } = array;
     const helper = ($: number, current: T[], result: T[][]) => {
@@ -159,7 +196,6 @@ export const combinations = <T = any>(array: T[]): T[][] => {
     };
     return helper(0, [], []);
 };
-// eslint-disable-next-line arrow-parens
 export const randomCombination = <T = any>(array: T[], random?: Random): T[] => {
     return array.filter(() => (random ? !!random.randint(0, 1) : Math.random() < 0.5));
 };

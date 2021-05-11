@@ -9,6 +9,7 @@ export interface IChordProgression {
 export const isChordProgression = (x: any): x is IChordProgression => {
     return x instanceof ChordProgression
         || (typeof x === "object"
+        && x !== null
         && isTonalChord(x.chord));
 };
 export class ChordProgression implements Iterable<TonalChord>, IChordProgression {

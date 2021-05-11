@@ -4,6 +4,7 @@ export interface IVelocity {
 export const isVelocity = (x: any): x is IVelocity => {
     return x instanceof Velocity
         || (typeof x === "object"
+        && x !== null
         && typeof x.velocity === "number");
 };
 export class EnumVelocity {
@@ -22,7 +23,7 @@ export class EnumVelocity {
     static get FORTISSIMO() { return new Velocity(100); }
     static get FFF() { return new Velocity(120); }
 }
-export class Velocity implements IVelocity, IComputable<Velocity> {
+export class Velocity implements IVelocity, IComputable<Velocity>, IClonable<Velocity> {
     static readonly isVelocity = isVelocity;
     static readonly EnumVelocity = EnumVelocity;
 
@@ -31,9 +32,15 @@ export class Velocity implements IVelocity, IComputable<Velocity> {
     constructor(velocityIn: number);
     constructor(velocityIn: IVelocity);
     constructor(velocityIn: number | IVelocity) {
-        if (typeof velocityIn === "number") this.velocity = velocityIn;
-        else this.velocity = velocityIn.velocity;
+        this.become(velocityIn);
     }
+    become(velocityIn: number | IVelocity) {
+        if (typeof velocityIn === "undefined") this.velocity = 85;
+        else if (typeof velocityIn === "number") this.velocity = velocityIn;
+        else this.velocity = velocityIn.velocity;
+        return this;
+    }
+
     get velocity(): number {
         return this._velocity;
     }

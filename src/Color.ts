@@ -9,6 +9,7 @@ interface IColor {
 export const isColor = (x: any): x is IColor => {
     return x instanceof Color
         || (typeof x === "object"
+        && x !== null
         && typeof x.t === "number"
         && typeof x.s === "number"
         && typeof x.d === "number"

@@ -1,4 +1,4 @@
-import Interval, { isIntervalArray } from "./Interval";
+import Interval, { IInterval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./utils";
 
 export class EnumScale {
@@ -24,12 +24,13 @@ export class EnumScale {
 }
 export interface IScale {
     scaleName?: string;
-    intervals: Interval[];
+    intervals: IInterval[];
     degreeNames: string[];
 }
 export const isScale = (x: any): x is IScale => {
     return x instanceof Scale
         || (typeof x === "object"
+        && x !== null
         && isStringArray(x.degreeNames)
         && isIntervalArray(x.intervals));
 };
@@ -64,7 +65,7 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
             }
         } else {
             this.scaleName = p1.scaleName;
-            this.intervals = p1.intervals.map(i => i.clone());
+            this.intervals = Interval.fromArray(p1.intervals);
             this.degreeNames = [...p1.degreeNames];
         }
         return this;

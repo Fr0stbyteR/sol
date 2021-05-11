@@ -8,6 +8,9 @@ export class Enum {
     }
     protected constructor() {
     }
+    get className() {
+        return "Enum";
+    }
     name(): string {
         throw new Error("Method not implemented");
     }

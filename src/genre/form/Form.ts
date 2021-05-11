@@ -6,6 +6,7 @@ export interface IForm {
 export const isForm = (x: any): x is IForm => {
     return x instanceof Form
         || (typeof x === "object"
+        && x !== null
         && isPartArray(x.parts));
 };
 export class Form implements IForm, Iterable<Part> {
