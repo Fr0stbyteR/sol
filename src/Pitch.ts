@@ -191,7 +191,7 @@ export class Pitch extends Note implements IPitch, IComputable<Pitch>, IClonable
         return new Pitch(this);
     }
     async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true) {
-        await super.openGuidoEvent(factory, durationIn, close, this.octave);
+        super.openGuidoEvent(factory, durationIn, close, this.octave);
     }
 
     getTendancy(that: Pitch) {

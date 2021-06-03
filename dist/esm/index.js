@@ -2248,71 +2248,32 @@ class Chord {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return factory.openMusic();
-
-            case 2:
-              _context.next = 4;
-              return factory.openVoice();
-
-            case 4:
-              _context.next = 6;
-              return factory.openChord();
-
-            case 6:
+              factory.openMusic();
+              factory.openVoice();
+              factory.openChord();
               _iterator3 = _createForOfIteratorHelper(_this.notes);
-              _context.prev = 7;
 
-              _iterator3.s();
-
-            case 9:
-              if ((_step3 = _iterator3.n()).done) {
-                _context.next = 15;
-                break;
+              try {
+                for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                  note = _step3.value;
+                  note.openGuidoEvent(factory);
+                }
+              } catch (err) {
+                _iterator3.e(err);
+              } finally {
+                _iterator3.f();
               }
 
-              note = _step3.value;
-              _context.next = 13;
-              return note.openGuidoEvent(factory);
-
-            case 13:
-              _context.next = 9;
-              break;
-
-            case 15:
-              _context.next = 20;
-              break;
-
-            case 17:
-              _context.prev = 17;
-              _context.t0 = _context["catch"](7);
-
-              _iterator3.e(_context.t0);
-
-            case 20:
-              _context.prev = 20;
-
-              _iterator3.f();
-
-              return _context.finish(20);
-
-            case 23:
-              _context.next = 25;
-              return factory.closeChord();
-
-            case 25:
-              _context.next = 27;
-              return factory.closeVoice();
-
-            case 27:
+              factory.closeChord();
+              factory.closeVoice();
               return _context.abrupt("return", factory.closeMusic());
 
-            case 28:
+            case 8:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[7, 17, 20, 23]]);
+      }, _callee);
     }))();
   }
 
@@ -3743,66 +3704,27 @@ class Note {
               accidentals = Math.max(-2, Math.min(2, ~~alteration));
               alterDetune = alteration - accidentals;
 
-              if (!alterDetune) {
-                _context.next = 12;
-                break;
+              if (alterDetune) {
+                factory.openRangeTag("alter", 0);
+                factory.addTagParameterFloat(alterDetune);
+                factory.setParameterName("detune");
               }
 
-              _context.next = 8;
-              return factory.openRangeTag("alter", 0);
+              factory.openEvent(_this.enumNote.name());
+              factory.setEventAccidentals(_this.alteration);
+              factory.setOctave(octaveIn - 3);
+              if (durationIn) factory.setDuration(durationIn.numerator, durationIn.denominator);
 
-            case 8:
-              _context.next = 10;
-              return factory.addTagParameterFloat(alterDetune);
+              if (close) {
+                factory.closeEvent();
 
-            case 10:
-              _context.next = 12;
-              return factory.setParameterName("detune");
-
-            case 12:
-              _context.next = 14;
-              return factory.openEvent(_this.enumNote.name());
-
-            case 14:
-              _context.next = 16;
-              return factory.setEventAccidentals(_this.alteration);
-
-            case 16:
-              _context.next = 18;
-              return factory.setOctave(octaveIn - 3);
-
-            case 18:
-              if (!durationIn) {
-                _context.next = 21;
-                break;
+                if (alterDetune) {
+                  factory.closeTag();
+                  factory.endTag();
+                }
               }
 
-              _context.next = 21;
-              return factory.setDuration(durationIn.numerator, durationIn.denominator);
-
-            case 21:
-              if (!close) {
-                _context.next = 29;
-                break;
-              }
-
-              _context.next = 24;
-              return factory.closeEvent();
-
-            case 24:
-              if (!alterDetune) {
-                _context.next = 29;
-                break;
-              }
-
-              _context.next = 27;
-              return factory.closeTag();
-
-            case 27:
-              _context.next = 29;
-              return factory.endTag();
-
-            case 29:
+            case 11:
             case "end":
               return _context.stop();
           }
@@ -3819,25 +3741,15 @@ class Note {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              _context2.next = 2;
-              return factory.openMusic();
+              factory.openMusic();
+              factory.openVoice();
 
-            case 2:
-              _context2.next = 4;
-              return factory.openVoice();
+              _this2.openGuidoEvent(factory);
 
-            case 4:
-              _context2.next = 6;
-              return _this2.openGuidoEvent(factory);
-
-            case 6:
-              _context2.next = 8;
-              return factory.closeVoice();
-
-            case 8:
+              factory.closeVoice();
               return _context2.abrupt("return", factory.closeMusic());
 
-            case 9:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -4190,10 +4102,10 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
           switch (_context.prev = _context.next) {
             case 0:
               close = _arguments.length > 2 && _arguments[2] !== undefined ? _arguments[2] : true;
-              _context.next = 3;
-              return _superprop_getOpenGuidoEvent().call(_this, factory, durationIn, close, _this.octave);
 
-            case 3:
+              _superprop_getOpenGuidoEvent().call(_this, factory, durationIn, close, _this.octave);
+
+            case 2:
             case "end":
               return _context.stop();
           }
@@ -5515,121 +5427,50 @@ class Sequence extends Array {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return factory.openMusic();
-
-            case 2:
-              _context.next = 4;
-              return factory.openVoice();
-
-            case 4:
+              factory.openMusic();
+              factory.openVoice();
               _iterator = _createForOfIteratorHelper(_this);
-              _context.prev = 5;
 
-              _iterator.s();
+              try {
+                for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                  trackChord = _step.value;
+                  factory.openChord();
 
-            case 7:
-              if ((_step = _iterator.n()).done) {
-                _context.next = 39;
-                break;
+                  if (!trackChord.trackNotes.length) {
+                    factory.openEvent("_");
+                    factory.closeEvent();
+                  } else {
+                    _iterator2 = _createForOfIteratorHelper(trackChord);
+
+                    try {
+                      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                        trackNote = _step2.value;
+                        trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
+                      }
+                    } catch (err) {
+                      _iterator2.e(err);
+                    } finally {
+                      _iterator2.f();
+                    }
+                  }
+
+                  factory.closeChord();
+                }
+              } catch (err) {
+                _iterator.e(err);
+              } finally {
+                _iterator.f();
               }
 
-              trackChord = _step.value;
-              _context.next = 11;
-              return factory.openChord();
-
-            case 11:
-              if (trackChord.trackNotes.length) {
-                _context.next = 18;
-                break;
-              }
-
-              _context.next = 14;
-              return factory.openEvent("_");
-
-            case 14:
-              _context.next = 16;
-              return factory.closeEvent();
-
-            case 16:
-              _context.next = 35;
-              break;
-
-            case 18:
-              _iterator2 = _createForOfIteratorHelper(trackChord);
-              _context.prev = 19;
-
-              _iterator2.s();
-
-            case 21:
-              if ((_step2 = _iterator2.n()).done) {
-                _context.next = 27;
-                break;
-              }
-
-              trackNote = _step2.value;
-              _context.next = 25;
-              return trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
-
-            case 25:
-              _context.next = 21;
-              break;
-
-            case 27:
-              _context.next = 32;
-              break;
-
-            case 29:
-              _context.prev = 29;
-              _context.t0 = _context["catch"](19);
-
-              _iterator2.e(_context.t0);
-
-            case 32:
-              _context.prev = 32;
-
-              _iterator2.f();
-
-              return _context.finish(32);
-
-            case 35:
-              _context.next = 37;
-              return factory.closeChord();
-
-            case 37:
-              _context.next = 7;
-              break;
-
-            case 39:
-              _context.next = 44;
-              break;
-
-            case 41:
-              _context.prev = 41;
-              _context.t1 = _context["catch"](5);
-
-              _iterator.e(_context.t1);
-
-            case 44:
-              _context.prev = 44;
-
-              _iterator.f();
-
-              return _context.finish(44);
-
-            case 47:
-              _context.next = 49;
-              return factory.closeVoice();
-
-            case 49:
+              factory.closeVoice();
               return _context.abrupt("return", factory.closeMusic());
 
-            case 50:
+            case 6:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[5, 41, 44, 47], [19, 29, 32, 35]]);
+      }, _callee);
     }))();
   }
 

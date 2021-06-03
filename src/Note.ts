@@ -200,27 +200,27 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
         const accidentals = Math.max(-2, Math.min(2, ~~alteration));
         const alterDetune = alteration - accidentals;
         if (alterDetune) {
-            await factory.openRangeTag("alter", 0);
-            await factory.addTagParameterFloat(alterDetune);
-            await factory.setParameterName("detune");
+            factory.openRangeTag("alter", 0);
+            factory.addTagParameterFloat(alterDetune);
+            factory.setParameterName("detune");
         }
-        await factory.openEvent(this.enumNote.name());
-        await factory.setEventAccidentals(this.alteration);
-        await factory.setOctave(octaveIn - 3);
-        if (durationIn) await factory.setDuration(durationIn.numerator, durationIn.denominator);
+        factory.openEvent(this.enumNote.name());
+        factory.setEventAccidentals(this.alteration);
+        factory.setOctave(octaveIn - 3);
+        if (durationIn) factory.setDuration(durationIn.numerator, durationIn.denominator);
         if (close) {
-            await factory.closeEvent();
+            factory.closeEvent();
             if (alterDetune) {
-                await factory.closeTag();
-                await factory.endTag();
+                factory.closeTag();
+                factory.endTag();
             }
         }
     }
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
-        await factory.openMusic();
-        await factory.openVoice();
-        await this.openGuidoEvent(factory);
-        await factory.closeVoice();
+        factory.openMusic();
+        factory.openVoice();
+        this.openGuidoEvent(factory);
+        factory.closeVoice();
         return factory.closeMusic();
     }
 

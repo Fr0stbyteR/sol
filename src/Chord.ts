@@ -238,14 +238,14 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         return new Chord(this);
     }
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
-        await factory.openMusic();
-        await factory.openVoice();
-        await factory.openChord();
+        factory.openMusic();
+        factory.openVoice();
+        factory.openChord();
         for (const note of this.notes) {
-            await note.openGuidoEvent(factory);
+            note.openGuidoEvent(factory);
         }
-        await factory.closeChord();
-        await factory.closeVoice();
+        factory.closeChord();
+        factory.closeVoice();
         return factory.closeMusic();
     }
 

@@ -91,21 +91,21 @@ export class Sequence extends Array<TrackChord> {
         return midi.toArray();
     }
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
-        await factory.openMusic();
-        await factory.openVoice();
+        factory.openMusic();
+        factory.openVoice();
         for (const trackChord of this) {
-            await factory.openChord();
+            factory.openChord();
             if (!trackChord.trackNotes.length) {
-                await factory.openEvent("_");
-                await factory.closeEvent();
+                factory.openEvent("_");
+                factory.closeEvent();
             } else {
                 for (const trackNote of trackChord) {
-                    await trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
+                    trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
                 }
             }
-            await factory.closeChord();
+            factory.closeChord();
         }
-        await factory.closeVoice();
+        factory.closeVoice();
         return factory.closeMusic();
     }
 }
