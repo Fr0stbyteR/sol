@@ -49,7 +49,9 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
             if (_isNote) this.base = new Note(p1.base);
             else this.base = new Pitch(p1.base);
             this.intervals = Interval.fromArray(p1.intervals);
-        } else if (typeof p1 === "string") {
+            return this;
+        }
+        if (typeof p1 === "string") {
             const isNote = Note.REGEX.exec(p1);
             if (isNote) this.base = new Note(p1);
             else this.base = new Pitch(p1);

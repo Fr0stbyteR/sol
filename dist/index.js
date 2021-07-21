@@ -2001,7 +2001,10 @@ class Chord {
 
       if (_isNote) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__.default(p1.base);else this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(p1.base);
       this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(p1.intervals);
-    } else if (typeof p1 === "string") {
+      return this;
+    }
+
+    if (typeof p1 === "string") {
       var _isNote2 = _Note__WEBPACK_IMPORTED_MODULE_1__.default.REGEX.exec(p1);
 
       if (_isNote2) this.base = new _Note__WEBPACK_IMPORTED_MODULE_1__.default(p1);else this.base = new _Pitch__WEBPACK_IMPORTED_MODULE_2__.default(p1);
