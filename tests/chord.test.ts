@@ -1,5 +1,6 @@
 import Pitch from "../src/Pitch";
-import Chord, { EnumChord } from "../src/Chord";
+import Chord from "../src/Chord";
+import EnumChord from "../src/EnumChord";
 
 const c = new Chord(new Pitch("C1"), new Pitch("Cb2"), new Pitch("C#1"));
 const cmaj = new Chord(new Pitch("C1"), new Pitch("E1"), new Pitch("G1"));
@@ -7,11 +8,11 @@ const cdom7 = EnumChord.DOM7.toChord("C");
 const cmin = EnumChord.MIN.toChord("C");
 
 test("Test chord 1", () => {
-    expect(c.toString()).toBe("C1:A1,d1+1");
+    expect(c.toString()).toBe("C1:d1+1,A1");
 });
 
 test("Chord 1 notes", () => {
-    expect(c.notes.toString()).toBe("C1,C#1,Cb2");
+    expect(c.notes.toString()).toBe("C1,Cb2,C#1");
 });
 
 test("Chord 1 contains", () => {

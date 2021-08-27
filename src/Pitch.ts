@@ -1,5 +1,5 @@
 import Note, { INote, isNote } from "./Note";
-import { EnumNote, isEnumNote } from "./EnumNote";
+import EnumNote, { isEnumNote } from "./EnumNote";
 import Interval from "./Interval";
 import Frequency from "./Frequency";
 import { isObjectArray } from "./utils";

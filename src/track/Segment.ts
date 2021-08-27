@@ -1,11 +1,11 @@
-import { Midi } from "@tonejs/midi";
-import TrackChord, { isTrackChordArray, ITrackChord } from "./TrackChord";
+import { isTrackChordArray, ITrackChord } from "./TrackChord";
 import Automation, { IAutomation, isAutomationArray } from "../effect/Automation";
 import Duration, { IDuration, isDuration } from "../Duration";
 import Chord from "../Chord";
 import Velocity from "../Velocity";
 import { isObjectArray } from "../utils";
 import TimeCode, { ITimeCode } from "../TimeCode";
+import Sequence from "./Sequence";
 
 export interface ISegment {
     trackChords: ITrackChord[];
@@ -27,11 +27,11 @@ export class Segment implements ISegment {
     static readonly isSegment = isSegment;
     static readonly isSegmentArray = isSegmentArray;
 
-    trackChords: TrackChord[];
+    trackChords: Sequence;
     automations: Automation[];
     duration: Duration;
     constructor(optionsIn: ISegment) {
-        this.trackChords = TrackChord.fromArray(optionsIn.trackChords);
+        this.trackChords = Sequence.fromArrays(optionsIn.trackChords);
         this.automations = Automation.fromArray(optionsIn.automations);
         this.duration = new Duration(optionsIn.duration);
     }
@@ -66,23 +66,7 @@ export class Segment implements ISegment {
         return new Segment(this);
     }
     toMidi({ bpm, beats, beatDuration }: ITimeCode = new TimeCode(4, 4, 60)) {
-        const midi = new Midi();
-        midi.header.setTempo(bpm);
-        midi.header.timeSignatures.push({ ticks: 0, measures: 0, timeSignature: [beats, beatDuration] });
-        midi.header.update();
-        const track = midi.addTrack();
-        this.trackChords.forEach((trackChord) => {
-            const ticks = trackChord.offset.getTicks(bpm);
-            const durationTicks = trackChord.duration.getTicks(bpm);
-            trackChord.trackNotes.forEach((trackNote) => {
-                track.addNote({
-                    midi: ~~trackNote.pitch.offset,
-                    ticks,
-                    durationTicks
-                });
-            });
-        });
-        return midi.toArray();
+        return this.trackChords.toMidi({ bpm, beats, beatDuration });
     }
 }
 

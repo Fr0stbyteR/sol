@@ -1,6 +1,5 @@
-import Sol from "..";
+import { Duration, Random } from "..";
 
-const { Duration, Random } = Sol;
 const random = new Random("2");
 const quarter = new Duration(1, 4);
 const half = new Duration(1, 2);

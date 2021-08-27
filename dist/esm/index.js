@@ -6,7 +6,6 @@
   \********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /**
@@ -77,7 +76,6 @@ exports.insert = insert;
   \*********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /**
@@ -184,7 +182,6 @@ exports.ControlChange = ControlChange;
   \**********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var ControlChange_1 = __webpack_require__(/*! ./ControlChange */ "./node_modules/@tonejs/midi/dist/ControlChange.js");
@@ -226,7 +223,6 @@ exports.createControlChanges = createControlChanges;
   \**************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-"use strict";
 
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -421,7 +417,6 @@ exports.encode = encode;
   \**************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var BinarySearch_1 = __webpack_require__(/*! ./BinarySearch */ "./node_modules/@tonejs/midi/dist/BinarySearch.js");
@@ -682,7 +677,6 @@ exports.Header = Header;
   \******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var InstrumentMaps_1 = __webpack_require__(/*! ./InstrumentMaps */ "./node_modules/@tonejs/midi/dist/InstrumentMaps.js");
@@ -788,7 +782,6 @@ exports.Instrument = Instrument;
   \**********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.instrumentByPatchID = [
@@ -960,7 +953,6 @@ exports.DrumKitByPatchID = {
   \************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1206,7 +1198,6 @@ function splitTracks(tracks) {
   \************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /**
@@ -1376,7 +1367,6 @@ exports.Note = Note;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var privateHeaderMap = new WeakMap();
@@ -1428,7 +1418,6 @@ exports.PitchBend = PitchBend;
   \*************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var BinarySearch_1 = __webpack_require__(/*! ./BinarySearch */ "./node_modules/@tonejs/midi/dist/BinarySearch.js");
@@ -1679,7 +1668,6 @@ exports.Track = Track;
   \*****************************************************/
 /***/ ((module) => {
 
-"use strict";
 
 
 /**
@@ -1798,7 +1786,6 @@ function flattenDownDepth (array, result, depth) {
   \*****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isArticulation": () => (/* binding */ isArticulation),
@@ -1908,7 +1895,6 @@ _defineProperty(Articulation, "EnumArticulation", EnumArticulation);
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isChord": () => (/* binding */ isChord),
@@ -1927,7 +1913,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
 
@@ -1937,7 +1923,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -2149,7 +2135,7 @@ class Chord {
   }
 
   get enumChord() {
-    return _EnumChord__WEBPACK_IMPORTED_MODULE_4__.EnumChord.byChord(this);
+    return _EnumChord__WEBPACK_IMPORTED_MODULE_4__.default.byChord(this);
   }
 
   get imaginaryBase() {
@@ -2373,7 +2359,7 @@ _defineProperty(Chord, "isChord", isChord);
 
 _defineProperty(Chord, "isChordArray", isChordArray);
 
-_defineProperty(Chord, "EnumChord", _EnumChord__WEBPACK_IMPORTED_MODULE_4__.EnumChord);
+_defineProperty(Chord, "EnumChord", _EnumChord__WEBPACK_IMPORTED_MODULE_4__.default);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Chord);
 
@@ -2385,7 +2371,6 @@ _defineProperty(Chord, "EnumChord", _EnumChord__WEBPACK_IMPORTED_MODULE_4__.Enum
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isColor": () => (/* binding */ isColor),
@@ -2462,7 +2447,6 @@ _defineProperty(Color, "isColor", isColor);
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isDurationAbbreviation": () => (/* binding */ isDurationAbbreviation),
@@ -2479,7 +2463,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -2730,7 +2714,6 @@ _defineProperty(Duration, "isDuractionAbbreviation", isDurationAbbreviation);
   \*********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Enum": () => (/* binding */ Enum),
@@ -2779,11 +2762,11 @@ _defineProperty(Enum, "indexes", []);
   \**************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isEnumChord": () => (/* binding */ isEnumChord),
-/* harmony export */   "EnumChord": () => (/* binding */ EnumChord)
+/* harmony export */   "EnumChord": () => (/* binding */ EnumChord),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
@@ -2920,6 +2903,8 @@ class EnumChord extends _Enum__WEBPACK_IMPORTED_MODULE_1__.default {
 
 _defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", "MAJ7", "MINMAJ7", "MIN7", "AUGMAJ7", "AUG7", "DIMMIN7", "DIM7", "DOM7DIM5"]);
 
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EnumChord);
+
 /***/ }),
 
 /***/ "./src/EnumNote.ts":
@@ -2928,11 +2913,11 @@ _defineProperty(EnumChord, "indexes", ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS"
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isEnumNote": () => (/* binding */ isEnumNote),
-/* harmony export */   "EnumNote": () => (/* binding */ EnumNote)
+/* harmony export */   "EnumNote": () => (/* binding */ EnumNote),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -3048,6 +3033,8 @@ _defineProperty(EnumNote, "a", EnumNote.A);
 
 _defineProperty(EnumNote, "b", EnumNote.B);
 
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EnumNote);
+
 /***/ }),
 
 /***/ "./src/Frequency.ts":
@@ -3056,7 +3043,6 @@ _defineProperty(EnumNote, "b", EnumNote.B);
   \**************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Frequency": () => (/* binding */ Frequency),
@@ -3084,7 +3070,6 @@ _defineProperty(Frequency, "getRatio", d => Math.pow(2, d / 12));
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DEGREE_TO_OFFSET": () => (/* binding */ DEGREE_TO_OFFSET),
@@ -3451,7 +3436,6 @@ _defineProperty(Interval, "EnumIntervalProperty", EnumIntervalProperty);
   \*********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isNote": () => (/* binding */ isNote),
@@ -3471,7 +3455,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -3519,17 +3503,17 @@ class Note {
 
     _defineProperty(this, "alteration", void 0);
 
-    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote.C;
+    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default.C;
     this.alteration = 0;
     this.become(p1, p2);
   }
 
   become(p1, p2) {
-    if (p1 instanceof _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote) {
+    if (p1 instanceof _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default) {
       this.enumNote = p1;
       if (p2) this.alteration = p2;
     } else if (isNote(p1)) {
-      this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote.from(p1.enumNote);
+      this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default.from(p1.enumNote);
       this.alteration = p1.alteration;
     } else if (typeof p1 === "string") {
       this.fromString(p1);
@@ -3543,7 +3527,7 @@ class Note {
   static fromString(nameIn) {
     var matched = Note.REGEX.exec(nameIn);
     if (matched === null) throw new SyntaxError("No such note ".concat(nameIn, "."));
-    var enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote[matched[1]];
+    var enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default[matched[1]];
     var alteration = 0;
     matched[2].split("").forEach(c => alteration += c === "x" ? 2 : c === "#" ? 1 : -1);
     return {
@@ -3575,7 +3559,7 @@ class Note {
       }
     }
 
-    var enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote.byOffset(offset);
+    var enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default.byOffset(offset);
     var alteration = note - offset;
     if (alterationIn) alteration += alterationIn;
     return {
@@ -3607,7 +3591,7 @@ class Note {
     if (p1 instanceof Note) return this.become(p1);
     var i;
     if (typeof p1 === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(p1);else if (p1 instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = p1;
-    var newEnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote.byIndex(this.enumNote.index + i.degree - 1);
+    var newEnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default.byIndex(this.enumNote.index + i.degree - 1);
     this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(newEnumNote.offset - this.enumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
@@ -3622,7 +3606,7 @@ class Note {
     if (p1 instanceof Note) return this.become(p1);
     var i;
     if (typeof p1 === "string") i = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(p1);else if (p1 instanceof _Interval__WEBPACK_IMPORTED_MODULE_1__.default) i = p1;
-    var newEnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote.byIndex(this.enumNote.index - i.degree + 1);
+    var newEnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default.byIndex(this.enumNote.index - i.degree + 1);
     this.alteration += i.offset - 12 * i.octave - (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.enumNote.offset - newEnumNote.offset, 12);
     this.enumNote = newEnumNote;
     return this;
@@ -3783,7 +3767,7 @@ _defineProperty(Note, "isNote", isNote);
 
 _defineProperty(Note, "isNoteArray", isNoteArray);
 
-_defineProperty(Note, "EnumNote", _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNote);
+_defineProperty(Note, "EnumNote", _EnumNote__WEBPACK_IMPORTED_MODULE_3__.default);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Note);
 
@@ -3795,7 +3779,6 @@ _defineProperty(Note, "EnumNote", _EnumNote__WEBPACK_IMPORTED_MODULE_3__.EnumNot
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isParam": () => (/* binding */ isParam),
@@ -3889,7 +3872,6 @@ _defineProperty(Param, "isParam", isParam);
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isPitch": () => (/* binding */ isPitch),
@@ -3906,7 +3888,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -3946,7 +3928,7 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
     if (isPitch(p1)) {
       super.become(p1);
       this.octave = p1.octave;
-    } else if (p1 instanceof _EnumNote__WEBPACK_IMPORTED_MODULE_1__.EnumNote) {
+    } else if (p1 instanceof _EnumNote__WEBPACK_IMPORTED_MODULE_1__.default) {
       super.become(p1);
       this.octave = p2;
     } else if ((0,_Note__WEBPACK_IMPORTED_MODULE_0__.isNote)(p1)) {
@@ -3984,7 +3966,7 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
         alteration = _Pitch$fromString.alteration,
         octave = _Pitch$fromString.octave;
 
-    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_1__.EnumNote.from(enumNote);
+    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_1__.default.from(enumNote);
     this.alteration = alteration;
     this.octave = octave;
     return this;
@@ -4002,7 +3984,7 @@ class Pitch extends _Note__WEBPACK_IMPORTED_MODULE_0__.default {
         alteration = _Pitch$fromOffset.alteration,
         octave = _Pitch$fromOffset.octave;
 
-    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_1__.EnumNote.from(enumNote);
+    this.enumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_1__.default.from(enumNote);
     this.alteration = alteration;
     this.octave = octave;
     return this;
@@ -4147,7 +4129,6 @@ _defineProperty(Pitch, "isPitchArray", isPitchArray);
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EnumScale": () => (/* binding */ EnumScale),
@@ -4159,7 +4140,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 var _Symbol$iterator;
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -4418,7 +4399,6 @@ _defineProperty(Scale, "EnumScale", EnumScale);
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isTimeCode": () => (/* binding */ isTimeCode),
@@ -4483,7 +4463,6 @@ _defineProperty(TimeCode, "isTimeCode", isTimeCode);
   \***************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isTonalChord": () => (/* binding */ isTonalChord),
@@ -4502,7 +4481,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 var isTonalChord = x => {
-  return x instanceof TonalChord || typeof x.alteration === "number" && typeof x.degree === "number" && x.chord instanceof _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord;
+  return x instanceof TonalChord || typeof x.alteration === "number" && typeof x.degree === "number" && x.chord instanceof _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default;
 };
 var isTonalChordArray = x => {
   return Array.isArray(x) && x.every(e => e instanceof TonalChord);
@@ -4526,7 +4505,7 @@ class TonalChord {
         if (p !== 0 && p > 7 && p < -7) throw new Error("Roman number too large for degree.");
         this.degree = Math.abs(p);
         s = matched[3];
-        this.chord = s.length === 0 ? p > 0 ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MAJ : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MIN : s === "+" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.AUG : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.DIM;
+        this.chord = s.length === 0 ? p > 0 ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MAJ : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MIN : s === "+" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.AUG : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.DIM;
       } else {
         matched = TonalChord.REGEX2.exec(p1);
 
@@ -4536,7 +4515,7 @@ class TonalChord {
           _s = matched[2];
           this.degree = +_s;
           _s = matched[3];
-          this.chord = _s.length === 0 ? null : _s === "M" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MAJ : _s === "m" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MAJ : _s === "+" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.AUG : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.DIM;
+          this.chord = _s.length === 0 ? null : _s === "M" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MAJ : _s === "m" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MAJ : _s === "+" ? _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.AUG : _EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.DIM;
         } else throw new Error("Input string error: " + p1);
       }
     } else {
@@ -4561,10 +4540,10 @@ class TonalChord {
     var s = "";
     if (this.alteration === 1) s = "#";else if (this.alteration === -1) s = "b";
     if (!this.chord) return s + this.degree;
-    s += (0,_utils__WEBPACK_IMPORTED_MODULE_2__.toRoman)(this.degree * (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MIN) ? -1 : 1));
+    s += (0,_utils__WEBPACK_IMPORTED_MODULE_2__.toRoman)(this.degree * (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MIN) ? -1 : 1));
 
-    if (!this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MAJ) && !this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.MIN)) {
-      if (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.AUG)) s += "+";else if (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.EnumChord.AUG)) s += "-";else s += this.chord.name().toLowerCase();
+    if (!this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MAJ) && !this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.MIN)) {
+      if (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.AUG)) s += "+";else if (this.chord.equals(_EnumChord__WEBPACK_IMPORTED_MODULE_1__.default.AUG)) s += "-";else s += this.chord.name().toLowerCase();
     }
 
     return s;
@@ -4594,7 +4573,6 @@ _defineProperty(TonalChord, "isTonalChordArray", isTonalChordArray);
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isTonality": () => (/* binding */ isTonality),
@@ -4766,7 +4744,6 @@ _defineProperty(Tonality, "isTonality", isTonality);
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isVelocity": () => (/* binding */ isVelocity),
@@ -4917,7 +4894,6 @@ _defineProperty(Velocity, "EnumVelocity", EnumVelocity);
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isAutomation": () => (/* binding */ isAutomation),
@@ -4927,7 +4903,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _AutomationPoint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutomationPoint */ "./src/effect/AutomationPoint.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -5039,7 +5015,6 @@ _defineProperty(Automation, "isAutomationArray", isAutomationArray);
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isAutomationPoint": () => (/* binding */ isAutomationPoint),
@@ -5108,7 +5083,6 @@ _defineProperty(AutomationPoint, "isAutomationPointArray", isAutomationPointArra
   \*****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Random": () => (/* binding */ Random),
@@ -5151,13 +5125,220 @@ class Random {
 
 /***/ }),
 
+/***/ "./src/track/Roll.ts":
+/*!***************************!*\
+  !*** ./src/track/Roll.ts ***!
+  \***************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isRoll": () => (/* binding */ isRoll),
+/* harmony export */   "Roll": () => (/* binding */ Roll),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
+/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
+/* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+var isRoll = _TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordArray;
+class Roll extends Array {
+  static from(arrayLike, mapfn, thisArg) {
+    if (!((0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordInstanceArrayLike)(arrayLike) || (0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordInstanceIterable)(arrayLike))) throw new TypeError("Items from are not TrackChords");
+    if (mapfn) return super.from(arrayLike, mapfn, thisArg);
+    return super.from(arrayLike);
+  }
+
+  static of() {
+    for (var _len = arguments.length, items = new Array(_len), _key = 0; _key < _len; _key++) {
+      items[_key] = arguments[_key];
+    }
+
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordArray)(items)) throw new TypeError("Items of are not TrackChords");
+    return super.of(...items);
+  }
+
+  static fromArrays(chordsIn, offsetsIn, durationsIn, velocitiesIn, articulationsIn) {
+    var seq = new Roll();
+
+    for (var i = 0; i < Math.max(chordsIn.length, (durationsIn === null || durationsIn === void 0 ? void 0 : durationsIn.length) || 0); i++) {
+      var tc = void 0;
+      var cIn = chordsIn[i];
+      var oIn = offsetsIn === null || offsetsIn === void 0 ? void 0 : offsetsIn[i];
+      var dIn = durationsIn === null || durationsIn === void 0 ? void 0 : durationsIn[i];
+      var vIn = velocitiesIn === null || velocitiesIn === void 0 ? void 0 : velocitiesIn[i];
+      var aIn = articulationsIn === null || articulationsIn === void 0 ? void 0 : articulationsIn[i];
+      if ((0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChord)(cIn)) tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_2__.default(cIn);else tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_2__.default(cIn, dIn, oIn, aIn);
+      tc.setVelocities(vIn);
+      seq[i] = tc;
+    }
+
+    return seq;
+  }
+
+  constructor(p1) {
+    if (typeof p1 === "number" || typeof p1 === "undefined") {
+      super(p1);
+    } else {
+      for (var _len2 = arguments.length, arrayIn = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        arrayIn[_key2 - 1] = arguments[_key2];
+      }
+
+      super(arrayIn.length + 1);
+      var trackChords = [p1, ...arrayIn];
+      if (isRoll(trackChords)) super(..._TrackChord__WEBPACK_IMPORTED_MODULE_2__.default.fromArray(trackChords));
+    }
+  }
+
+  push() {
+    for (var _len3 = arguments.length, itemsIn = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      itemsIn[_key3] = arguments[_key3];
+    }
+
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to push are not TrackChords");
+    return super.push(..._TrackChord__WEBPACK_IMPORTED_MODULE_2__.default.fromArray(itemsIn));
+  }
+
+  concat() {
+    for (var _len4 = arguments.length, itemsIn = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      itemsIn[_key4] = arguments[_key4];
+    }
+
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to concat are not TrackChords");
+    return super.concat(..._TrackChord__WEBPACK_IMPORTED_MODULE_2__.default.fromArray(itemsIn));
+  }
+
+  unshift() {
+    for (var _len5 = arguments.length, itemsIn = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      itemsIn[_key5] = arguments[_key5];
+    }
+
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to unshift are not TrackChords");
+    return super.unshift(..._TrackChord__WEBPACK_IMPORTED_MODULE_2__.default.fromArray(itemsIn));
+  }
+
+  fill(value, start, end) {
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_2__.isTrackChord)(value)) throw new TypeError("Item to fill is not a TrackChord");
+    return super.fill(new _TrackChord__WEBPACK_IMPORTED_MODULE_2__.default(value), start, end);
+  }
+
+  toMidi() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _TimeCode__WEBPACK_IMPORTED_MODULE_1__.default(4, 4, 60),
+        bpm = _ref.bpm,
+        beats = _ref.beats,
+        beatDuration = _ref.beatDuration;
+
+    var midi = new _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__.Midi();
+    midi.header.setTempo(bpm);
+    midi.header.timeSignatures.push({
+      ticks: 0,
+      measures: 0,
+      timeSignature: [beats, beatDuration]
+    });
+    midi.header.update();
+    var track = midi.addTrack();
+    this.forEach(trackChord => {
+      var ticks = trackChord.offset.getTicks(bpm);
+      var durationTicks = trackChord.duration.getTicks(bpm);
+      trackChord.trackNotes.forEach(trackNote => {
+        track.addNote({
+          midi: ~~trackNote.pitch.offset,
+          ticks,
+          durationTicks
+        });
+      });
+    });
+    return midi.toArray();
+  }
+
+  toGuidoAR(factory) {
+    var _arguments = arguments,
+        _this = this;
+
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var spaceFactor, i, trackChord, nextTrackChord, space, _iterator, _step, trackNote;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              spaceFactor = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : 1;
+              factory.openMusic();
+              factory.openVoice();
+
+              for (i = 0; i < _this.length; i++) {
+                trackChord = _this[i];
+                nextTrackChord = _this[i + 1];
+                space = nextTrackChord ? nextTrackChord.offset.sub(trackChord.offset).getBeats() : trackChord.duration.getBeats();
+                factory.openChord();
+
+                if (!trackChord.trackNotes.length) {
+                  factory.openEvent("_");
+                  factory.closeEvent();
+                } else {
+                  _iterator = _createForOfIteratorHelper(trackChord);
+
+                  try {
+                    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                      trackNote = _step.value;
+                      trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
+                    }
+                  } catch (err) {
+                    _iterator.e(err);
+                  } finally {
+                    _iterator.f();
+                  }
+                }
+
+                factory.closeChord();
+                factory.openTag("space", 0);
+                factory.addTagParameterFloat(space * 16 * spaceFactor);
+                factory.setParameterUnit("hs");
+                factory.setParameterName("dd");
+                factory.closeTag();
+              }
+
+              factory.closeVoice();
+              return _context.abrupt("return", factory.closeMusic());
+
+            case 6:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  }
+
+}
+
+_defineProperty(Roll, "isRoll", isRoll);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Roll);
+
+/***/ }),
+
 /***/ "./src/track/Segment.ts":
 /*!******************************!*\
   !*** ./src/track/Segment.ts ***!
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isSegment": () => (/* binding */ isSegment),
@@ -5165,13 +5346,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Segment": () => (/* binding */ Segment),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
-/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
-/* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
-/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
-/* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
+/* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
+/* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
+/* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
+/* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
+/* harmony import */ var _Sequence__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Sequence */ "./src/track/Sequence.ts");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -5181,10 +5361,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 var isSegment = x => {
-  return x instanceof Segment || typeof x === "object" && x !== null && (0,_TrackChord__WEBPACK_IMPORTED_MODULE_1__.isTrackChordArray)(x.trackChords) && (0,_effect_Automation__WEBPACK_IMPORTED_MODULE_2__.isAutomationArray)(x.automations) && (0,_Duration__WEBPACK_IMPORTED_MODULE_3__.isDuration)(x.duration);
+  return x instanceof Segment || typeof x === "object" && x !== null && (0,_TrackChord__WEBPACK_IMPORTED_MODULE_0__.isTrackChordArray)(x.trackChords) && (0,_effect_Automation__WEBPACK_IMPORTED_MODULE_1__.isAutomationArray)(x.automations) && (0,_Duration__WEBPACK_IMPORTED_MODULE_2__.isDuration)(x.duration);
 };
 var isSegmentArray = x => {
-  return (0,_utils__WEBPACK_IMPORTED_MODULE_4__.isObjectArray)(x, isSegment);
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_3__.isObjectArray)(x, isSegment);
 };
 class Segment {
   constructor(optionsIn) {
@@ -5194,9 +5374,9 @@ class Segment {
 
     _defineProperty(this, "duration", void 0);
 
-    this.trackChords = _TrackChord__WEBPACK_IMPORTED_MODULE_1__.default.fromArray(optionsIn.trackChords);
-    this.automations = _effect_Automation__WEBPACK_IMPORTED_MODULE_2__.default.fromArray(optionsIn.automations);
-    this.duration = new _Duration__WEBPACK_IMPORTED_MODULE_3__.default(optionsIn.duration);
+    this.trackChords = _Sequence__WEBPACK_IMPORTED_MODULE_5__.default.fromArrays(optionsIn.trackChords);
+    this.automations = _effect_Automation__WEBPACK_IMPORTED_MODULE_1__.default.fromArray(optionsIn.automations);
+    this.duration = new _Duration__WEBPACK_IMPORTED_MODULE_2__.default(optionsIn.duration);
   }
 
   getChords() {
@@ -5237,32 +5417,16 @@ class Segment {
   }
 
   toMidi() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _TimeCode__WEBPACK_IMPORTED_MODULE_5__.default(4, 4, 60),
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _TimeCode__WEBPACK_IMPORTED_MODULE_4__.default(4, 4, 60),
         bpm = _ref.bpm,
         beats = _ref.beats,
         beatDuration = _ref.beatDuration;
 
-    var midi = new _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__.Midi();
-    midi.header.setTempo(bpm);
-    midi.header.timeSignatures.push({
-      ticks: 0,
-      measures: 0,
-      timeSignature: [beats, beatDuration]
+    return this.trackChords.toMidi({
+      bpm,
+      beats,
+      beatDuration
     });
-    midi.header.update();
-    var track = midi.addTrack();
-    this.trackChords.forEach(trackChord => {
-      var ticks = trackChord.offset.getTicks(bpm);
-      var durationTicks = trackChord.duration.getTicks(bpm);
-      trackChord.trackNotes.forEach(trackNote => {
-        track.addNote({
-          midi: ~~trackNote.pitch.offset,
-          ticks,
-          durationTicks
-        });
-      });
-    });
-    return midi.toArray();
   }
 
 }
@@ -5281,7 +5445,6 @@ _defineProperty(Segment, "isSegmentArray", isSegmentArray);
   \*******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isSequence": () => (/* binding */ isSequence),
@@ -5293,7 +5456,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
 /* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
 /* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -5355,40 +5518,40 @@ class Sequence extends Array {
 
       super(arrayIn.length + 1);
       var trackChords = [p1, ...arrayIn];
-      if (isSequence(trackChords)) this.push(...trackChords);
+      if (isSequence(trackChords)) super(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__.default.fromArray(trackChords));
     }
   }
 
   push() {
-    for (var _len3 = arguments.length, items = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      items[_key3] = arguments[_key3];
+    for (var _len3 = arguments.length, itemsIn = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      itemsIn[_key3] = arguments[_key3];
     }
 
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(items)) throw new TypeError("Items to push are not TrackChords");
-    return super.push(...items);
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to push are not TrackChords");
+    return super.push(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__.default.fromArray(itemsIn));
   }
 
   concat() {
-    for (var _len4 = arguments.length, items = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      items[_key4] = arguments[_key4];
+    for (var _len4 = arguments.length, itemsIn = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      itemsIn[_key4] = arguments[_key4];
     }
 
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(items)) throw new TypeError("Items to concat are not TrackChords");
-    return super.concat(...items);
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to concat are not TrackChords");
+    return super.concat(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__.default.fromArray(itemsIn));
   }
 
   unshift() {
-    for (var _len5 = arguments.length, items = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      items[_key5] = arguments[_key5];
+    for (var _len5 = arguments.length, itemsIn = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      itemsIn[_key5] = arguments[_key5];
     }
 
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(items)) throw new TypeError("Items to unshift are not TrackChords");
-    return super.unshift(...items);
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn)) throw new TypeError("Items to unshift are not TrackChords");
+    return super.unshift(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__.default.fromArray(itemsIn));
   }
 
   fill(value, start, end) {
     if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChord)(value)) throw new TypeError("Item to fill is not a TrackChord");
-    return super.fill(value, start, end);
+    return super.fill(new _TrackChord__WEBPACK_IMPORTED_MODULE_3__.default(value), start, end);
   }
 
   toMidi() {
@@ -5491,7 +5654,6 @@ _defineProperty(Sequence, "isSequence", isSequence);
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isTrackChord": () => (/* binding */ isTrackChord),
@@ -5513,7 +5675,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Note */ "./src/Note.ts");
 var _Symbol$iterator;
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -5717,7 +5879,6 @@ _defineProperty(TrackChord, "isTrackChordInstanceIterable", isTrackChordInstance
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isTrackNote": () => (/* binding */ isTrackNote),
@@ -5790,7 +5951,6 @@ _defineProperty(TrackNote, "isTrackNoteArray", isTrackNoteArray);
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "precisionFactor": () => (/* binding */ precisionFactor),
@@ -7918,9 +8078,8 @@ if ( true && module.exports) {
 /******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
@@ -7941,10 +8100,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Tonality": () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__.default),
 /* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__.default),
 /* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__.default),
-/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_19__.default),
-/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_18__.default),
+/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_20__.default),
+/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_19__.default),
 /* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_17__.default),
 /* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_16__.default),
+/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_18__.default),
 /* harmony export */   "Utils": () => (/* reexport module object */ _utils__WEBPACK_IMPORTED_MODULE_15__)
 /* harmony export */ });
 /* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Articulation */ "./src/Articulation.ts");
@@ -7965,8 +8125,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _track_Segment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./track/Segment */ "./src/track/Segment.ts");
 /* harmony import */ var _track_Sequence__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./track/Sequence */ "./src/track/Sequence.ts");
-/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
-/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+/* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
+/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
+/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+
 
 
 
@@ -8095,6 +8257,7 @@ var __webpack_exports__Note = __webpack_exports__.Note;
 var __webpack_exports__Param = __webpack_exports__.Param;
 var __webpack_exports__Pitch = __webpack_exports__.Pitch;
 var __webpack_exports__Random = __webpack_exports__.Random;
+var __webpack_exports__Roll = __webpack_exports__.Roll;
 var __webpack_exports__Scale = __webpack_exports__.Scale;
 var __webpack_exports__Segment = __webpack_exports__.Segment;
 var __webpack_exports__Sequence = __webpack_exports__.Sequence;
@@ -8105,6 +8268,6 @@ var __webpack_exports__TrackChord = __webpack_exports__.TrackChord;
 var __webpack_exports__TrackNote = __webpack_exports__.TrackNote;
 var __webpack_exports__Utils = __webpack_exports__.Utils;
 var __webpack_exports__Velocity = __webpack_exports__.Velocity;
-export { __webpack_exports__Articulation as Articulation, __webpack_exports__Chord as Chord, __webpack_exports__Color as Color, __webpack_exports__Duration as Duration, __webpack_exports__Frequency as Frequency, __webpack_exports__Interval as Interval, __webpack_exports__Note as Note, __webpack_exports__Param as Param, __webpack_exports__Pitch as Pitch, __webpack_exports__Random as Random, __webpack_exports__Scale as Scale, __webpack_exports__Segment as Segment, __webpack_exports__Sequence as Sequence, __webpack_exports__TimeCode as TimeCode, __webpack_exports__TonalChord as TonalChord, __webpack_exports__Tonality as Tonality, __webpack_exports__TrackChord as TrackChord, __webpack_exports__TrackNote as TrackNote, __webpack_exports__Utils as Utils, __webpack_exports__Velocity as Velocity };
+export { __webpack_exports__Articulation as Articulation, __webpack_exports__Chord as Chord, __webpack_exports__Color as Color, __webpack_exports__Duration as Duration, __webpack_exports__Frequency as Frequency, __webpack_exports__Interval as Interval, __webpack_exports__Note as Note, __webpack_exports__Param as Param, __webpack_exports__Pitch as Pitch, __webpack_exports__Random as Random, __webpack_exports__Roll as Roll, __webpack_exports__Scale as Scale, __webpack_exports__Segment as Segment, __webpack_exports__Sequence as Sequence, __webpack_exports__TimeCode as TimeCode, __webpack_exports__TonalChord as TonalChord, __webpack_exports__Tonality as Tonality, __webpack_exports__TrackChord as TrackChord, __webpack_exports__TrackNote as TrackNote, __webpack_exports__Utils as Utils, __webpack_exports__Velocity as Velocity };
 
 //# sourceMappingURL=index.js.map

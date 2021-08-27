@@ -1,6 +1,4 @@
-import Sol from "..";
-
-const { Random } = Sol;
+import { Random } from "..";
 
 const r = new Random("1");
 

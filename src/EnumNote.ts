@@ -67,3 +67,5 @@ export class EnumNote extends Enum {
         return noteIn instanceof EnumNote && noteIn.offset === this.offset;
     }
 }
+
+export default EnumNote;

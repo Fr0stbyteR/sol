@@ -24,7 +24,7 @@ export const isTrackChord = (x: any): x is ITrackChord => {
         && (typeof x.trackNotes === "undefined" || isTrackNoteArray(x.trackNotes))
         && (typeof x.articulation === "undefined" || isArticulation(x.articulation)));
 };
-export const isTrackChordArray = (x: any): x is TrackChord[] => {
+export const isTrackChordArray = (x: any): x is ITrackChord[] => {
     return isObjectArray(x, isTrackChord);
 };
 export const isTrackChordInstanceArrayLike = (x: any): x is ArrayLike<TrackChord> => {

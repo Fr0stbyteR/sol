@@ -8,13 +8,13 @@ import { IVelocity } from "../Velocity";
 import TrackChord, { isTrackChord, isTrackChordArray, isTrackChordInstanceArrayLike, isTrackChordInstanceIterable, ITrackChord } from "./TrackChord";
 import { ITrackNote } from "./TrackNote";
 
-export interface ISequence extends Array<TrackChord> {}
+export interface IRoll extends Array<TrackChord> {}
 
-export const isSequence = isTrackChordArray;
+export const isRoll = isTrackChordArray;
 
-export class Sequence extends Array<TrackChord> {
-    static readonly isSequence = isSequence;
-    static from<T extends TrackChord>(arrayLike: Iterable<T> | ArrayLike<T>): Sequence;
+export class Roll extends Array<TrackChord> {
+    static readonly isRoll = isRoll;
+    static from<T extends TrackChord>(arrayLike: Iterable<T> | ArrayLike<T>): Roll;
     static from<T extends TrackChord, U>(arrayLike: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
     static from<T extends TrackChord, U>(arrayLike: Iterable<T> | ArrayLike<T>, mapfn?: (v: T, k: number) => U, thisArg?: any) {
         if (!(isTrackChordInstanceArrayLike(arrayLike) || isTrackChordInstanceIterable(arrayLike))) throw new TypeError("Items from are not TrackChords");
@@ -26,19 +26,18 @@ export class Sequence extends Array<TrackChord> {
         return super.of<T>(...items);
     }
 
-    static fromArrays(chordsIn: (number | number[] | string | string[] | INote[] | INote | ITrackNote | ITrackNote[] | IChord | ITrackChord)[], durationsIn?: (number | TDurationAbbreviation | Duration)[], velocitiesIn?: (number | number[] | IVelocity | IVelocity[])[], articulationsIn?: IArticulation[]) {
-        const seq = new Sequence();
-        const o = new Duration(0, 4);
+    static fromArrays(chordsIn: (number | number[] | string | string[] | INote[] | INote | ITrackNote | ITrackNote[] | IChord | ITrackChord)[], offsetsIn?: (number | TDurationAbbreviation | Duration)[], durationsIn?: (number | TDurationAbbreviation | Duration)[], velocitiesIn?: (number | number[] | IVelocity | IVelocity[])[], articulationsIn?: IArticulation[]) {
+        const seq = new Roll();
         for (let i = 0; i < Math.max(chordsIn.length, durationsIn?.length || 0); i++) {
             let tc: TrackChord;
             const cIn = chordsIn[i];
+            const oIn = offsetsIn?.[i];
             const dIn = durationsIn?.[i];
             const vIn = velocitiesIn?.[i];
             const aIn = articulationsIn?.[i];
             if (isTrackChord(cIn)) tc = new TrackChord(cIn);
-            else tc = new TrackChord(cIn, dIn, o.clone(), aIn);
+            else tc = new TrackChord(cIn, dIn, oIn, aIn);
             tc.setVelocities(vIn);
-            o.add(tc.duration);
             seq[i] = tc;
         }
         return seq;
@@ -52,7 +51,7 @@ export class Sequence extends Array<TrackChord> {
         } else {
             super(arrayIn.length + 1);
             const trackChords = [p1, ...arrayIn];
-            if (isSequence(trackChords)) super(...TrackChord.fromArray(trackChords));
+            if (isRoll(trackChords)) super(...TrackChord.fromArray(trackChords));
         }
     }
     push(...itemsIn: ITrackChord[]) {
@@ -90,10 +89,13 @@ export class Sequence extends Array<TrackChord> {
         });
         return midi.toArray();
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>, spaceFactor = 1) {
         factory.openMusic();
         factory.openVoice();
-        for (const trackChord of this) {
+        for (let i = 0; i < this.length; i++) {
+            const trackChord = this[i];
+            const nextTrackChord = this[i + 1];
+            const space = nextTrackChord ? nextTrackChord.offset.sub(trackChord.offset).getBeats() : trackChord.duration.getBeats();
             factory.openChord();
             if (!trackChord.trackNotes.length) {
                 factory.openEvent("_");
@@ -104,10 +106,15 @@ export class Sequence extends Array<TrackChord> {
                 }
             }
             factory.closeChord();
+            factory.openTag("space", 0);
+            factory.addTagParameterFloat(space * 16 * spaceFactor);
+            factory.setParameterUnit("hs");
+            factory.setParameterName("dd");
+            factory.closeTag();
         }
         factory.closeVoice();
         return factory.closeMusic();
     }
 }
 
-export default Sequence;
+export default Roll;

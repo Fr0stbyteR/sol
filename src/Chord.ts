@@ -2,7 +2,7 @@ import Interval, { IInterval, isIntervalArray } from "./Interval";
 import Note, { isNoteArray, isNote, INote } from "./Note";
 import Pitch, { isPitchArray, isPitch, IPitch } from "./Pitch";
 import { isNumberArray, nearestFractions, nearestReciprocals } from "./utils";
-import { EnumChord } from "./EnumChord";
+import EnumChord from "./EnumChord";
 
 export interface IChord {
     base: INote | IPitch;

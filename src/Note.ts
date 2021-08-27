@@ -1,7 +1,7 @@
 import { floorMod, isObjectArray } from "./utils";
 import Interval, { DEGREE_TO_OFFSET } from "./Interval";
 import Frequency from "./Frequency";
-import { EnumNote, IEnumNote, isEnumNote, TEnumNoteValue } from "./EnumNote";
+import EnumNote, { IEnumNote, isEnumNote, TEnumNoteValue } from "./EnumNote";
 import Duration from "./Duration";
 
 export interface INote {

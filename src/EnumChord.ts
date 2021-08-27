@@ -79,3 +79,5 @@ export class EnumChord extends Enum {
         return new EnumChord(this);
     }
 }
+
+export default EnumChord;

@@ -16,6 +16,7 @@ import Random from "./genre/Random";
 import * as Utils from "./utils";
 import Segment from "./track/Segment";
 import Sequence from "./track/Sequence";
+import Roll from "./track/Roll";
 import TrackChord from "./track/TrackChord";
 import TrackNote from "./track/TrackNote";
 /*
@@ -54,6 +55,7 @@ export /* default */ {
     TrackChord,
     Sequence,
     Segment,
+    Roll,
     Utils
 };
 /* eslint-disable no-console */
