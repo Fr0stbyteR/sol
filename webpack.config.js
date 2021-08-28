@@ -8,18 +8,22 @@ const config = {
   },
   output: {
     path: path.resolve(__dirname, "dist"),
-    chunkFilename: "js/[chunkhash].js",
     filename: "index.js",
     library: {
-      name: "Sol",
-      type: "umd"
+      type: "commonjs"
     },
-    globalObject: "this"
+    globalObject: "globalThis"
   },
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,
-        use: "babel-loader",
+        use: {
+          loader: 'esbuild-loader',
+          options: {
+            loader: 'tsx',
+            target: 'es2017'
+          }
+        },
         exclude: /node_modules/,
       }
     ]
@@ -34,7 +38,6 @@ const esmConfig = {
   },
   output: {
     path: path.resolve(__dirname, "dist", "esm"),
-    chunkFilename: "js/[chunkhash].js",
     filename: "index.js",
     library: {
       type: "module"
@@ -43,7 +46,13 @@ const esmConfig = {
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,
-        use: "babel-loader",
+        use: {
+          loader: 'esbuild-loader',
+          options: {
+            loader: 'tsx',
+            target: 'es2017'
+          }
+        },
         exclude: /node_modules/,
       }
     ]

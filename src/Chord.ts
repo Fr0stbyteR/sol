@@ -34,22 +34,27 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
      * Construct chord by notes
      */
     constructor(base: Note | Pitch | string | number, ...notes: Note[] | Pitch[] | number[]);
+    constructor(chordIn: Note[] | Pitch[] | string[] | number[]);
     /**
      * Construct chord by intervals
      */
     constructor(base: Note | Pitch | string, ...intervals: Interval[] | string[]);
-    constructor(p1: IChord | Note | Pitch | string | number, ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
+    constructor(p1: IChord | Note | Pitch | string | number | Note[] | Pitch[] | string[] | number[], ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
         this.base = null;
         this.intervals = [];
         this.become(p1, ...arrayIn);
     }
-    become(p1: IChord | Note | Pitch | string | number, ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]) {
+    become(p1: IChord | Note | Pitch | string | number | Note[] | Pitch[] | string[] | number[], ...arrayIn: Note[] | Pitch[] | number[] | Interval[] | string[]): this {
         if (isChord(p1)) {
             const _isNote = isNote(p1);
             if (_isNote) this.base = new Note(p1.base);
             else this.base = new Pitch(p1.base);
             this.intervals = Interval.fromArray(p1.intervals);
             return this;
+        }
+        if (Array.isArray(p1)) {
+            const [e0, ...e1] = p1;
+            return this.become(e0, ...e1 as Note[] | Pitch[] | string[] | number[]);
         }
         if (typeof p1 === "string") {
             const isNote = Note.REGEX.exec(p1);
