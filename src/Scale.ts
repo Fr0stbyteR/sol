@@ -1,4 +1,4 @@
-import Note from "./Note";
+import Pitch from "./Pitch";
 import Interval, { IInterval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./utils";
 
@@ -110,7 +110,7 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
     public getName() {
         return this.scaleName;
     }
-    toNotes(from = new Note()) {
+    toNotes(from = new Pitch(60)) {
         return this.intervals.map(interval => from.clone().add(interval));
     }
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
