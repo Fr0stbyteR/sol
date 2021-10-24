@@ -269,7 +269,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         for (let i = 0; i < $notes.length; i++) {
             m[i] = [];
             for (let j = 0; j < notes.length; j++) {
-                m[i][j] = notes[j].getTendancy($notes[i]);
+                m[i][j] = notes[j].getTendancy($notes[i] as Pitch);
             }
         }
         return m.map(r => Math.max(...r)).reduce((s, e) => s + e, 0) / m.length;
@@ -281,7 +281,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
         for (let i = 0; i < $notes.length; i++) {
             m[i] = [];
             for (let j = 0; j < notes.length; j++) {
-                m[i][j] = notes[j].getStability($notes[i]);
+                m[i][j] = notes[j].getStability($notes[i] as Pitch);
             }
         }
         return m.map(r => Math.max(...r)).reduce((s, e) => s + e, 0) / m.length;

@@ -1919,6 +1919,10 @@ const _Chord = class {
       this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(p1.intervals);
       return this;
     }
+    if (Array.isArray(p1)) {
+      const [e0, ...e1] = p1;
+      return this.become(e0, ...e1);
+    }
     if (typeof p1 === "string") {
       const isNote2 = _Note__WEBPACK_IMPORTED_MODULE_1__.default.REGEX.exec(p1);
       if (isNote2)
@@ -3501,8 +3505,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Scale": () => (/* binding */ Scale),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
+/* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+
 
 
 class EnumScale {
@@ -3559,7 +3565,7 @@ class EnumScale {
   }
 }
 const isScale = (x) => {
-  return x instanceof Scale || typeof x === "object" && x !== null && (0,_utils__WEBPACK_IMPORTED_MODULE_1__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
+  return x instanceof Scale || typeof x === "object" && x !== null && (0,_utils__WEBPACK_IMPORTED_MODULE_2__.isStringArray)(x.degreeNames) && (0,_Interval__WEBPACK_IMPORTED_MODULE_1__.isIntervalArray)(x.intervals);
 };
 const _Scale = class {
   constructor(p1, ...degreesIn) {
@@ -3574,16 +3580,16 @@ const _Scale = class {
         const degreeName = degreesIn[i];
         const split = degreeName.split(":");
         if (split.length === 2) {
-          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_0__.default(split[0]);
+          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(split[0]);
           this.degreeNames[i] = split[1];
         } else {
-          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_0__.default(degreeName);
+          this.intervals[i] = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(degreeName);
           this.degreeNames[i] = degreeName;
         }
       }
     } else {
       this.scaleName = p1.scaleName;
-      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__.default.fromArray(p1.intervals);
+      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_1__.default.fromArray(p1.intervals);
       this.degreeNames = [...p1.degreeNames];
     }
     return this;
@@ -3596,10 +3602,10 @@ const _Scale = class {
     let name;
     const split = noteIn.split(":");
     if (split.length === 2) {
-      interval = new _Interval__WEBPACK_IMPORTED_MODULE_0__.default(split[0]);
+      interval = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(split[0]);
       name = split[1];
     } else {
-      interval = new _Interval__WEBPACK_IMPORTED_MODULE_0__.default(noteIn);
+      interval = new _Interval__WEBPACK_IMPORTED_MODULE_1__.default(noteIn);
       name = noteIn;
     }
     this.intervals.push(interval);
@@ -3611,7 +3617,7 @@ const _Scale = class {
   }
   getIntervalFromDegree(degreeIn) {
     return this.intervals.find((interval) => {
-      return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
+      return (0,_utils__WEBPACK_IMPORTED_MODULE_2__.floorMod)(degreeIn - 1, this.intervals.length) + 1 === interval.degree;
     });
   }
   get degrees() {
@@ -3622,6 +3628,20 @@ const _Scale = class {
   }
   getName() {
     return this.scaleName;
+  }
+  toNotes(from = new _Note__WEBPACK_IMPORTED_MODULE_0__.default()) {
+    return this.intervals.map((interval) => from.clone().add(interval));
+  }
+  async toGuidoAR(factory) {
+    factory.openMusic();
+    factory.openVoice();
+    for (const note of this.toNotes()) {
+      factory.openChord();
+      note.openGuidoEvent(factory);
+      factory.closeChord();
+    }
+    factory.closeVoice();
+    return factory.closeMusic();
   }
   toString() {
     let s = this.scaleName ? `Scale "${this.scaleName}": {` : "Scale :{";

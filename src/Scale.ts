@@ -1,3 +1,4 @@
+import Note from "./Note";
 import Interval, { IInterval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./utils";
 
@@ -108,6 +109,20 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
     }
     public getName() {
         return this.scaleName;
+    }
+    toNotes(from = new Note()) {
+        return this.intervals.map(interval => from.clone().add(interval));
+    }
+    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+        factory.openMusic();
+        factory.openVoice();
+        for (const note of this.toNotes()) {
+            factory.openChord();
+            note.openGuidoEvent(factory);
+            factory.closeChord();
+        }
+        factory.closeVoice();
+        return factory.closeMusic();
     }
     toString() {
         let s = this.scaleName ? `Scale "${this.scaleName}": {` : "Scale :{";

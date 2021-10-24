@@ -7,7 +7,6 @@
   "scripts": {
     "build": "webpack --mode development",
     "build-watch": "webpack --mode development --watch --stats-children",
-    "dist": "npm run build && webpack --mode production",
     "debug": "node ./dist/index.js",
     "test": "jest"
   },
