@@ -4227,7 +4227,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class Random {
   constructor(seedIn) {
-    this.prng = seedrandom__WEBPACK_IMPORTED_MODULE_0__(seedIn || "");
+    this.prng = seedrandom__WEBPACK_IMPORTED_MODULE_0___default()(seedIn || "");
   }
   quick() {
     return this.prng.quick();
@@ -4246,6 +4246,108 @@ class Random {
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Random);
+
+
+/***/ }),
+
+/***/ "./src/series.ts":
+/*!***********************!*\
+  !*** ./src/series.ts ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "x2dx": () => (/* binding */ x2dx),
+/* harmony export */   "dx2x": () => (/* binding */ dx2x),
+/* harmony export */   "arithSer": () => (/* binding */ arithSer),
+/* harmony export */   "fiboSer": () => (/* binding */ fiboSer),
+/* harmony export */   "geometricSer": () => (/* binding */ geometricSer),
+/* harmony export */   "isPrime": () => (/* binding */ isPrime),
+/* harmony export */   "primeSer": () => (/* binding */ primeSer),
+/* harmony export */   "inharmSer": () => (/* binding */ inharmSer),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const x2dx = (array) => {
+  const [, ...rest] = array;
+  return rest.map((v2, i) => v2 - array[i]);
+};
+const dx2x = (array, start = 0) => {
+  let acc = start;
+  const ret = array.map((v) => acc += v);
+  return [start, ...ret];
+};
+const arithSer = (begin = 0, end = 10, step = 1, nummax = Number.MAX_SAFE_INTEGER) => {
+  const array = [];
+  for (let n = begin; step >= 0 ? n <= end : n >= end; n += step) {
+    array.push(n);
+    if (array.length >= nummax)
+      return array;
+  }
+  return array;
+};
+const fiboSer = (seed1 = 0, seed2 = 1, limit = 10) => {
+  const array = [];
+  if (seed1 < limit)
+    array.push(seed1);
+  if (seed2 < limit)
+    array.push(seed2);
+  let acc1 = seed2;
+  let acc2 = seed1 + seed2;
+  while (acc2 < limit) {
+    array.push(acc2);
+    [acc1, acc2] = [acc2, acc2 + acc1];
+  }
+  return array;
+};
+const geometricSer = (seed = 1, factor = 2, limit = 10, nummax = Number.MAX_SAFE_INTEGER) => {
+  const array = [];
+  if (factor < 1)
+    return array;
+  for (let n = seed; n < limit; n *= factor) {
+    array.push(n);
+    if (array.length >= nummax)
+      return array;
+  }
+  return array;
+};
+const isPrime = (num) => {
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) {
+      return false;
+    }
+  }
+  return true;
+};
+const primeSer = (max = 100, nummax = Number.MAX_SAFE_INTEGER) => {
+  const array = [];
+  for (let n = 2; n < max; n++) {
+    if (isPrime(n))
+      array.push(n);
+    if (array.length >= nummax)
+      return array;
+  }
+  return array;
+};
+const inharmSer = (begin = 1, dist = 1, npart = 1) => {
+  const array = [];
+  for (let i = 1; i <= npart; i++) {
+    array.push(begin * i ** dist);
+  }
+  return array;
+};
+const Series = {
+  x2dx,
+  dx2x,
+  arithSer,
+  fiboSer,
+  geometricSer,
+  isPrime,
+  primeSer,
+  inharmSer
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Series);
 
 
 /***/ }),
@@ -4848,7 +4950,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "permutations": () => (/* binding */ permutations),
 /* harmony export */   "permute": () => (/* binding */ permute),
 /* harmony export */   "combinations": () => (/* binding */ combinations),
-/* harmony export */   "randomCombination": () => (/* binding */ randomCombination)
+/* harmony export */   "randomCombination": () => (/* binding */ randomCombination),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 
@@ -5053,6 +5156,32 @@ const combinations = (array) => {
 const randomCombination = (array, random) => {
   return array.filter(() => random ? !!random.randint(0, 1) : Math.random() < 0.5);
 };
+const Utils = {
+  precisionFactor,
+  gcd,
+  lcm,
+  floorMod,
+  isStringArray,
+  isNumberArray,
+  isObjectArray,
+  isObjectInstanceArray,
+  isObjectArrayLike,
+  isObjectInstanceArrayLike,
+  isObjectIterable,
+  isObjectInstanceIterable,
+  parseRoman,
+  toRoman,
+  getValueFromCurve,
+  nearestFraction,
+  nearestFractions,
+  nearestReciprocal,
+  nearestReciprocals,
+  permutations,
+  permute,
+  combinations,
+  randomCombination
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Utils);
 
 
 /***/ }),
@@ -6943,12 +7072,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Tonality": () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__["default"]),
 /* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"]),
 /* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
-/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_20__["default"]),
-/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_19__["default"]),
-/* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_17__["default"]),
-/* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_16__["default"]),
-/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_18__["default"]),
-/* harmony export */   "Utils": () => (/* reexport module object */ _utils__WEBPACK_IMPORTED_MODULE_15__)
+/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_21__["default"]),
+/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_20__["default"]),
+/* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
+/* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
+/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_19__["default"]),
+/* harmony export */   "Utils": () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_15__["default"]),
+/* harmony export */   "Series": () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"])
 /* harmony export */ });
 /* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Articulation */ "./src/Articulation.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
@@ -6966,11 +7096,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Velocity__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Velocity */ "./src/Velocity.ts");
 /* harmony import */ var _genre_Random__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./genre/Random */ "./src/genre/Random.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
-/* harmony import */ var _track_Segment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./track/Segment */ "./src/track/Segment.ts");
-/* harmony import */ var _track_Sequence__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./track/Sequence */ "./src/track/Sequence.ts");
-/* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
-/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
-/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+/* harmony import */ var _series__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./series */ "./src/series.ts");
+/* harmony import */ var _track_Segment__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./track/Segment */ "./src/track/Segment.ts");
+/* harmony import */ var _track_Sequence__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./track/Sequence */ "./src/track/Sequence.ts");
+/* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
+/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
+/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+
 
 
 

@@ -4,6 +4,7 @@
         "module": "commonjs",
         "removeComments": true,
         "preserveConstEnums": true,
+        "esModuleInterop": true,
         "target": "es2015",
         "sourceMap": true,
         "lib": ["es6", "dom", "dom.iterable"],

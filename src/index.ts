@@ -13,12 +13,14 @@ import TonalChord from "./TonalChord";
 import Tonality from "./Tonality";
 import Velocity from "./Velocity";
 import Random from "./genre/Random";
-import * as Utils from "./utils";
+import Utils from "./utils";
+import Series from "./series";
 import Segment from "./track/Segment";
 import Sequence from "./track/Sequence";
 import Roll from "./track/Roll";
 import TrackChord from "./track/TrackChord";
 import TrackNote from "./track/TrackNote";
+
 /*
 export * as Articulation from "./Articulation";
 export * as Chord from "./Chord";
@@ -56,7 +58,8 @@ export /* default */ {
     Sequence,
     Segment,
     Roll,
-    Utils
+    Utils,
+    Series
 };
 /* eslint-disable no-console */
 /*

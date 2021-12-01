@@ -199,3 +199,30 @@ export const combinations = <T = any>(array: T[]): T[][] => {
 export const randomCombination = <T = any>(array: T[], random?: Random): T[] => {
     return array.filter(() => (random ? !!random.randint(0, 1) : Math.random() < 0.5));
 };
+
+const Utils = {
+    precisionFactor,
+    gcd,
+    lcm,
+    floorMod,
+    isStringArray,
+    isNumberArray,
+    isObjectArray,
+    isObjectInstanceArray,
+    isObjectArrayLike,
+    isObjectInstanceArrayLike,
+    isObjectIterable,
+    isObjectInstanceIterable,
+    parseRoman,
+    toRoman,
+    getValueFromCurve,
+    nearestFraction,
+    nearestFractions,
+    nearestReciprocal,
+    nearestReciprocals,
+    permutations,
+    permute,
+    combinations,
+    randomCombination
+};
+export default Utils;
