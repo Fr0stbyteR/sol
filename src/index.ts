@@ -17,6 +17,7 @@ import Utils from "./utils";
 import Series from "./series";
 import Segment from "./track/Segment";
 import Sequence from "./track/Sequence";
+import Sequences from "./track/Sequences";
 import Roll from "./track/Roll";
 import TrackChord from "./track/TrackChord";
 import TrackNote from "./track/TrackNote";
@@ -56,6 +57,7 @@ export /* default */ {
     TrackNote,
     TrackChord,
     Sequence,
+    Sequences,
     Segment,
     Roll,
     Utils,

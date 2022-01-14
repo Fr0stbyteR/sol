@@ -2045,10 +2045,10 @@ const _Chord = class {
   get enumChord() {
     return _EnumChord__WEBPACK_IMPORTED_MODULE_4__["default"].byChord(this);
   }
-  get imaginaryBase() {
+  get phantomBase() {
     return this.base.clone().div(this.ratio[0]);
   }
-  get imaginaryTop() {
+  get phantomTop() {
     return this.base.clone().mul(this.reciprocal[0]);
   }
   add(p1) {
@@ -2862,9 +2862,7 @@ const _Interval = class {
   }
   fromString(nameIn) {
     const { degree, onset, octave } = _Interval.fromString(nameIn);
-    this.degree = degree;
-    this.onset = onset;
-    this.octave = octave;
+    this.become(degree, onset, octave);
     return this;
   }
   static fromOffset(offsetIn) {
@@ -4579,6 +4577,9 @@ Segment.isSegmentArray = isSegmentArray;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "isSequence": () => (/* binding */ isSequence),
+/* harmony export */   "isSequenceArray": () => (/* binding */ isSequenceArray),
+/* harmony export */   "isSequenceInstanceArrayLike": () => (/* binding */ isSequenceInstanceArrayLike),
+/* harmony export */   "isSequenceInstanceIterable": () => (/* binding */ isSequenceInstanceIterable),
 /* harmony export */   "Sequence": () => (/* binding */ Sequence),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -4586,24 +4587,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
 /* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
-/* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
+/* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
 
 
 
 
-const isSequence = _TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray;
+
+const isSequence = (x) => {
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_3__.isObjectInstanceArray)(x, _TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"]);
+};
+const isSequenceArray = (x) => {
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_3__.isObjectArray)(x, isSequence);
+};
+const isSequenceInstanceArrayLike = (x) => {
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_3__.isObjectInstanceArrayLike)(x, Sequence);
+};
+const isSequenceInstanceIterable = (x) => {
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_3__.isObjectInstanceIterable)(x, Sequence);
+};
 const _Sequence = class extends Array {
   static from(arrayLike, mapfn, thisArg) {
-    if (!((0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordInstanceArrayLike)(arrayLike) || (0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordInstanceIterable)(arrayLike)))
+    if (!((0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordInstanceArrayLike)(arrayLike) || (0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordInstanceIterable)(arrayLike)))
       throw new TypeError("Items from are not TrackChords");
-    if (mapfn)
-      return super.from(arrayLike, mapfn, thisArg);
-    return super.from(arrayLike);
+    const o = mapfn ? super.from(arrayLike, mapfn, thisArg) : super.from(arrayLike);
+    return Object.setPrototypeOf(o, _Sequence.prototype);
   }
   static of(...items) {
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(items))
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordArray)(items))
       throw new TypeError("Items of are not TrackChords");
-    return super.of(...items);
+    const o = super.of(...items);
+    return Object.setPrototypeOf(o, _Sequence.prototype);
+  }
+  static fromArray(arrayIn) {
+    return arrayIn.map((e) => new _Sequence(...e));
   }
   static fromArrays(chordsIn, durationsIn, velocitiesIn, articulationsIn) {
     const seq = new _Sequence();
@@ -4614,10 +4631,10 @@ const _Sequence = class extends Array {
       const dIn = durationsIn == null ? void 0 : durationsIn[i];
       const vIn = velocitiesIn == null ? void 0 : velocitiesIn[i];
       const aIn = articulationsIn == null ? void 0 : articulationsIn[i];
-      if ((0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChord)(cIn))
-        tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"](cIn);
+      if ((0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChord)(cIn))
+        tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"](cIn);
       else
-        tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"](cIn, dIn, o.clone(), aIn);
+        tc = new _TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"](cIn, dIn, o.clone(), aIn);
       tc.setVelocities(vIn);
       o.add(tc.duration);
       seq[i] = tc;
@@ -4630,29 +4647,29 @@ const _Sequence = class extends Array {
     } else {
       super(arrayIn.length + 1);
       const trackChords = [p1, ...arrayIn];
-      if (isSequence(trackChords))
-        super(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(trackChords));
+      if ((0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordArray)(trackChords))
+        super(..._TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"].fromArray(trackChords));
     }
   }
   push(...itemsIn) {
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn))
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordArray)(itemsIn))
       throw new TypeError("Items to push are not TrackChords");
-    return super.push(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+    return super.push(..._TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"].fromArray(itemsIn));
   }
   concat(...itemsIn) {
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn))
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordArray)(itemsIn))
       throw new TypeError("Items to concat are not TrackChords");
-    return super.concat(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+    return super.concat(..._TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"].fromArray(itemsIn));
   }
   unshift(...itemsIn) {
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChordArray)(itemsIn))
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChordArray)(itemsIn))
       throw new TypeError("Items to unshift are not TrackChords");
-    return super.unshift(..._TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+    return super.unshift(..._TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"].fromArray(itemsIn));
   }
   fill(value, start, end) {
-    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_3__.isTrackChord)(value))
+    if (!(0,_TrackChord__WEBPACK_IMPORTED_MODULE_4__.isTrackChord)(value))
       throw new TypeError("Item to fill is not a TrackChord");
-    return super.fill(new _TrackChord__WEBPACK_IMPORTED_MODULE_3__["default"](value), start, end);
+    return super.fill(new _TrackChord__WEBPACK_IMPORTED_MODULE_4__["default"](value), start, end);
   }
   toMidi({ bpm, beats, beatDuration } = new _TimeCode__WEBPACK_IMPORTED_MODULE_2__["default"](4, 4, 60)) {
     const midi = new _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__.Midi();
@@ -4694,7 +4711,127 @@ const _Sequence = class extends Array {
 };
 let Sequence = _Sequence;
 Sequence.isSequence = isSequence;
+Sequence.isSequenceArray = isSequenceArray;
+Sequence.isSequenceInstanceArrayLike = isSequenceInstanceArrayLike;
+Sequence.isSequenceInstanceIterable = isSequenceInstanceIterable;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Sequence);
+
+
+/***/ }),
+
+/***/ "./src/track/Sequences.ts":
+/*!********************************!*\
+  !*** ./src/track/Sequences.ts ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isSequences": () => (/* binding */ isSequences),
+/* harmony export */   "Sequences": () => (/* binding */ Sequences),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
+/* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _TimeCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../TimeCode */ "./src/TimeCode.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
+/* harmony import */ var _Sequence__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Sequence */ "./src/track/Sequence.ts");
+
+
+
+
+const isSequences = (x) => {
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_2__.isObjectInstanceArray)(x, _Sequence__WEBPACK_IMPORTED_MODULE_3__["default"]);
+};
+const _Sequences = class extends Array {
+  static from(arrayLike, mapfn, thisArg) {
+    if (!((0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceInstanceArrayLike)(arrayLike) || (0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceInstanceIterable)(arrayLike)))
+      throw new TypeError("Items from are not Sequences");
+    const o = mapfn ? super.from(arrayLike, mapfn, thisArg) : super.from(arrayLike);
+    return Object.setPrototypeOf(o, _Sequences.prototype);
+  }
+  static of(...items) {
+    if (!(0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceArray)(items))
+      throw new TypeError("Items of are not Sequences");
+    const o = super.of(...items);
+    return Object.setPrototypeOf(o, _Sequences.prototype);
+  }
+  constructor(p1, ...arrayIn) {
+    if (typeof p1 === "number" || typeof p1 === "undefined") {
+      super(p1);
+    } else {
+      super(arrayIn.length + 1);
+      const sequences = [p1, ...arrayIn];
+      if ((0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceArray)(sequences))
+        super(..._Sequence__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(sequences));
+    }
+  }
+  push(...itemsIn) {
+    if (!(0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceArray)(itemsIn))
+      throw new TypeError("Items to push are not Sequences");
+    return super.push(..._Sequence__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+  }
+  concat(...itemsIn) {
+    if (!(0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceArray)(itemsIn))
+      throw new TypeError("Items to concat are not Sequences");
+    return super.concat(..._Sequence__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+  }
+  unshift(...itemsIn) {
+    if (!(0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequenceArray)(itemsIn))
+      throw new TypeError("Items to unshift are not Sequences");
+    return super.unshift(..._Sequence__WEBPACK_IMPORTED_MODULE_3__["default"].fromArray(itemsIn));
+  }
+  fill(value, start, end) {
+    if (!(0,_Sequence__WEBPACK_IMPORTED_MODULE_3__.isSequence)(value))
+      throw new TypeError("Item to fill is not a Sequence");
+    return super.fill(new _Sequence__WEBPACK_IMPORTED_MODULE_3__["default"](...value), start, end);
+  }
+  toMidi({ bpm, beats, beatDuration } = new _TimeCode__WEBPACK_IMPORTED_MODULE_1__["default"](4, 4, 60)) {
+    const midi = new _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__.Midi();
+    midi.header.setTempo(bpm);
+    midi.header.timeSignatures.push({ ticks: 0, measures: 0, timeSignature: [beats, beatDuration] });
+    midi.header.update();
+    this.forEach((sequence) => {
+      const track = midi.addTrack();
+      sequence.forEach((trackChord) => {
+        const ticks = trackChord.offset.getTicks(bpm);
+        const durationTicks = trackChord.duration.getTicks(bpm);
+        trackChord.trackNotes.forEach((trackNote) => {
+          track.addNote({
+            midi: ~~trackNote.pitch.offset,
+            ticks,
+            durationTicks
+          });
+        });
+      });
+    });
+    return midi.toArray();
+  }
+  async toGuidoAR(factory) {
+    factory.openMusic();
+    for (const sequence of this) {
+      factory.openVoice();
+      for (const trackChord of sequence) {
+        factory.openChord();
+        if (!trackChord.trackNotes.length) {
+          factory.openEvent("_");
+          factory.closeEvent();
+        } else {
+          for (const trackNote of trackChord) {
+            trackNote.pitch.openGuidoEvent(factory, trackChord.duration);
+          }
+        }
+        factory.closeChord();
+      }
+      factory.closeVoice();
+    }
+    return factory.closeMusic();
+  }
+};
+let Sequences = _Sequences;
+Sequences.isSequences = isSequences;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Sequences);
 
 
 /***/ }),
@@ -7072,11 +7209,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Tonality": () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__["default"]),
 /* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"]),
 /* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
-/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_21__["default"]),
-/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_20__["default"]),
+/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__["default"]),
+/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__["default"]),
 /* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
+/* harmony export */   "Sequences": () => (/* reexport safe */ _track_Sequences__WEBPACK_IMPORTED_MODULE_19__["default"]),
 /* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
-/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_19__["default"]),
+/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_20__["default"]),
 /* harmony export */   "Utils": () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_15__["default"]),
 /* harmony export */   "Series": () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"])
 /* harmony export */ });
@@ -7099,9 +7237,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _series__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./series */ "./src/series.ts");
 /* harmony import */ var _track_Segment__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./track/Segment */ "./src/track/Segment.ts");
 /* harmony import */ var _track_Sequence__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./track/Sequence */ "./src/track/Sequence.ts");
-/* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
-/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
-/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+/* harmony import */ var _track_Sequences__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./track/Sequences */ "./src/track/Sequences.ts");
+/* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
+/* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
+/* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+
 
 
 

@@ -30,7 +30,6 @@ export const isTrackChordArray = (x: any): x is ITrackChord[] => {
 export const isTrackChordInstanceArrayLike = (x: any): x is ArrayLike<TrackChord> => {
     return isObjectInstanceArrayLike(x, TrackChord);
 };
-
 export const isTrackChordInstanceIterable = (x: any): x is Iterable<TrackChord> => {
     return isObjectInstanceIterable(x, TrackChord);
 };

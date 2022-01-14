@@ -146,9 +146,7 @@ export class Interval implements IInterval, IClonable<Interval>, IComputable<Int
     }
     protected fromString(nameIn: string) {
         const { degree, onset, octave } = Interval.fromString(nameIn);
-        this.degree = degree;
-        this.onset = onset;
-        this.octave = octave;
+        this.become(degree, onset, octave);
         return this;
     }
     static fromOffset(offsetIn: number): IInterval {

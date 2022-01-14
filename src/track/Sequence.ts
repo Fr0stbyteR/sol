@@ -4,26 +4,47 @@ import { IChord } from "../Chord";
 import Duration, { TDurationAbbreviation } from "../Duration";
 import { INote } from "../Note";
 import TimeCode, { ITimeCode } from "../TimeCode";
+import { isObjectArray, isObjectInstanceArray, isObjectInstanceArrayLike, isObjectInstanceIterable } from "../utils";
 import { IVelocity } from "../Velocity";
 import TrackChord, { isTrackChord, isTrackChordArray, isTrackChordInstanceArrayLike, isTrackChordInstanceIterable, ITrackChord } from "./TrackChord";
 import { ITrackNote } from "./TrackNote";
 
 export interface ISequence extends Array<TrackChord> {}
 
-export const isSequence = isTrackChordArray;
+export const isSequence = (x: any): x is ISequence => {
+    return isObjectInstanceArray(x, TrackChord);
+};
+export const isSequenceArray = (x: any): x is ISequence[] => {
+    return isObjectArray(x, isSequence);
+};
+export const isSequenceInstanceArrayLike = (x: any): x is ArrayLike<Sequence> => {
+    return isObjectInstanceArrayLike(x, Sequence);
+};
+export const isSequenceInstanceIterable = (x: any): x is Iterable<Sequence> => {
+    return isObjectInstanceIterable(x, Sequence);
+};
 
 export class Sequence extends Array<TrackChord> {
     static readonly isSequence = isSequence;
+    static readonly isSequenceArray = isSequenceArray;
+    static readonly isSequenceInstanceArrayLike = isSequenceInstanceArrayLike;
+    static readonly isSequenceInstanceIterable = isSequenceInstanceIterable;
+
     static from<T extends TrackChord>(arrayLike: Iterable<T> | ArrayLike<T>): Sequence;
     static from<T extends TrackChord, U>(arrayLike: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[];
     static from<T extends TrackChord, U>(arrayLike: Iterable<T> | ArrayLike<T>, mapfn?: (v: T, k: number) => U, thisArg?: any) {
         if (!(isTrackChordInstanceArrayLike(arrayLike) || isTrackChordInstanceIterable(arrayLike))) throw new TypeError("Items from are not TrackChords");
-        if (mapfn) return super.from<T, U>(arrayLike, mapfn, thisArg);
-        return super.from<T>(arrayLike);
+        const o = mapfn ? super.from<T, U>(arrayLike, mapfn, thisArg) : super.from<T>(arrayLike);
+        return Object.setPrototypeOf(o, Sequence.prototype);
     }
     static of<T>(...items: T[]): T[] {
         if (!isTrackChordArray(items)) throw new TypeError("Items of are not TrackChords");
-        return super.of<T>(...items);
+        const o = super.of<T>(...items);
+        return Object.setPrototypeOf(o, Sequence.prototype);
+    }
+
+    static fromArray(arrayIn: ISequence[]) {
+        return arrayIn.map(e => new Sequence(...e));
     }
 
     static fromArrays(chordsIn: (number | number[] | string | string[] | INote[] | INote | ITrackNote | ITrackNote[] | IChord | ITrackChord)[], durationsIn?: (number | TDurationAbbreviation | Duration)[], velocitiesIn?: (number | number[] | IVelocity | IVelocity[])[], articulationsIn?: IArticulation[]) {
@@ -52,7 +73,7 @@ export class Sequence extends Array<TrackChord> {
         } else {
             super(arrayIn.length + 1);
             const trackChords = [p1, ...arrayIn];
-            if (isSequence(trackChords)) super(...TrackChord.fromArray(trackChords));
+            if (isTrackChordArray(trackChords)) super(...TrackChord.fromArray(trackChords));
         }
     }
     push(...itemsIn: ITrackChord[]) {
