@@ -57,8 +57,9 @@ export class Sequences extends Array<Sequence> {
         midi.header.setTempo(bpm);
         midi.header.timeSignatures.push({ ticks: 0, measures: 0, timeSignature: [beats, beatDuration] });
         midi.header.update();
-        this.forEach((sequence) => {
+        this.forEach((sequence, i) => {
             const track = midi.addTrack();
+            track.channel = i;
             sequence.forEach((trackChord) => {
                 const ticks = trackChord.offset.getTicks(bpm);
                 const durationTicks = trackChord.duration.getTicks(bpm);

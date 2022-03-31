@@ -196,8 +196,42 @@ export const combinations = <T = any>(array: T[]): T[][] => {
     };
     return helper(0, [], []);
 };
+export const combinationsSized = <T = any>(array: T[], size: number, allowDuplicate = false): T[][] => {
+    const { length } = array;
+    if (!size) throw new RangeError("Combination size must be > 0.");
+    if (size > length) throw new RangeError("Combination size is larger than the array length.");
+    const helper = ($: number, current: T[], result: T[][]) => {
+        for (let i = $; i <= length - size; i++) {
+            const next = current.slice().concat(array[i]);
+            if (next.length === size) result.push(next);
+            else helper(allowDuplicate ? i : i + 1, next, result);
+        }
+        return result;
+    };
+    return helper(0, [], []);
+};
 export const randomCombination = <T = any>(array: T[], random?: Random): T[] => {
     return array.filter(() => (random ? !!random.randint(0, 1) : Math.random() < 0.5));
+};
+
+export const randomCombinationSized = <T = any>(array: T[], size: number, allowDuplicate = false, random?: Random): T[] => {
+    const { length } = array;
+    if (!size) throw new RangeError("Combination size must be > 0.");
+    if (size > length) throw new RangeError("Combination size is larger than the array length.");
+    let n = size;
+    const taken: number[] = new Array(array.length).fill(0);
+    while (n--) {
+        const $ = random ? random.randint(0, length) : ~~(Math.random() * length);
+        if (taken[$] && !allowDuplicate) n++;
+        else taken[$]++;
+    }
+    const result: T[] = [];
+    for (let i = 0; i < array.length; i++) {
+        while (taken[i]--) {
+            result.push(array[i]);
+        }
+    }
+    return result;
 };
 
 const Utils = {

@@ -4754,8 +4754,9 @@ const _Sequences = class extends Array {
     midi.header.setTempo(bpm);
     midi.header.timeSignatures.push({ ticks: 0, measures: 0, timeSignature: [beats, beatDuration] });
     midi.header.update();
-    this.forEach((sequence) => {
+    this.forEach((sequence, i) => {
       const track = midi.addTrack();
+      track.channel = i;
       sequence.forEach((trackChord) => {
         const ticks = trackChord.offset.getTicks(bpm);
         const durationTicks = trackChord.duration.getTicks(bpm);
@@ -5046,7 +5047,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "permutations": () => (/* binding */ permutations),
 /* harmony export */   "permute": () => (/* binding */ permute),
 /* harmony export */   "combinations": () => (/* binding */ combinations),
+/* harmony export */   "combinationsSized": () => (/* binding */ combinationsSized),
 /* harmony export */   "randomCombination": () => (/* binding */ randomCombination),
+/* harmony export */   "randomCombinationSized": () => (/* binding */ randomCombinationSized),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
@@ -5249,8 +5252,49 @@ const combinations = (array) => {
   };
   return helper(0, [], []);
 };
+const combinationsSized = (array, size, allowDuplicate = false) => {
+  const { length } = array;
+  if (!size)
+    throw new RangeError("Combination size must be > 0.");
+  if (size > length)
+    throw new RangeError("Combination size is larger than the array length.");
+  const helper = ($, current, result) => {
+    for (let i = $; i <= length - size; i++) {
+      const next = current.slice().concat(array[i]);
+      if (next.length === size)
+        result.push(next);
+      else
+        helper(allowDuplicate ? i : i + 1, next, result);
+    }
+    return result;
+  };
+  return helper(0, [], []);
+};
 const randomCombination = (array, random) => {
   return array.filter(() => random ? !!random.randint(0, 1) : Math.random() < 0.5);
+};
+const randomCombinationSized = (array, size, allowDuplicate = false, random) => {
+  const { length } = array;
+  if (!size)
+    throw new RangeError("Combination size must be > 0.");
+  if (size > length)
+    throw new RangeError("Combination size is larger than the array length.");
+  let n = size;
+  const taken = new Array(array.length).fill(0);
+  while (n--) {
+    const $ = random ? random.randint(0, length) : ~~(Math.random() * length);
+    if (taken[$] && !allowDuplicate)
+      n++;
+    else
+      taken[$]++;
+  }
+  const result = [];
+  for (let i = 0; i < array.length; i++) {
+    while (taken[i]--) {
+      result.push(array[i]);
+    }
+  }
+  return result;
 };
 const Utils = {
   precisionFactor,
