@@ -18,7 +18,7 @@ export const isNote = (x: any): x is INote => {
 export const isNoteArray = (x: any): x is INote[] => {
     return isObjectArray(x, isNote);
 };
-export class Note implements INote, IComputable<Note>, IClonable<Note> {
+export class Note implements INote, IClonable<Note> {
     static readonly REGEX = /^([a-gA-G])([b#x]*)$/;
     static readonly isNote = isNote;
     static readonly isNoteArray = isNoteArray;
@@ -111,36 +111,40 @@ export class Note implements INote, IComputable<Note>, IClonable<Note> {
     }
     add(semitones: number): Note;
     add(interval: string | Interval): Note;
-    add(noteIn: Note): Note
-    add(p1: number | string | Interval | Note) {
+    add(p1: number | string | Interval) {
         if (typeof p1 === "number") return this.fromOffset(this.offset + p1);
-        if (p1 instanceof Note) return this.become(p1);
         let i: Interval;
         if (typeof p1 === "string") i = new Interval(p1);
         else if (p1 instanceof Interval) i = p1;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index + i.degree - 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(newEnumNote.offset - this.enumNote.offset, 12);
         this.enumNote = newEnumNote;
-        return this;
+        return this as Note;
     }
-    static add(a: Note, b: Note) {
+    static add(a: Note, b: number | string | Interval) {
+        if (typeof b === "number") return a.clone().add(b);
         return a.clone().add(b);
     }
     sub(semitones: number): Note;
     sub(interval: string | Interval): Note;
-    sub(noteIn: Note): Note
+    sub(noteIn: Note): number;
     sub(p1: number | string | Interval | Note) {
         if (typeof p1 === "number") return this.fromOffset(this.offset - p1);
-        if (p1 instanceof Note) return this.become(p1);
+        if (p1 instanceof Note) return floorMod(this.offset - p1.offset, 12);
         let i: Interval;
         if (typeof p1 === "string") i = new Interval(p1);
         else if (p1 instanceof Interval) i = p1;
         const newEnumNote = EnumNote.byIndex(this.enumNote.index - i.degree + 1);
         this.alteration += i.offset - 12 * i.octave - floorMod(this.enumNote.offset - newEnumNote.offset, 12);
         this.enumNote = newEnumNote;
-        return this;
+        return this as Note;
     }
-    static sub(a: Note, b: Note) {
+    static sub(a: Note, b: number): Note;
+    static sub(a: Note, b: string | Interval): Note;
+    static sub(a: Note, b: Note): number;
+    static sub(a: Note, b: number | string | Interval | Note) {
+        if (typeof b === "number") return a.clone().sub(b);
+        if (b instanceof Note) return a.clone().sub(b);
         return a.clone().sub(b);
     }
     mul(fIn: number) {

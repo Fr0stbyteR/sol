@@ -3058,8 +3058,6 @@ const _Note = class {
   add(p1) {
     if (typeof p1 === "number")
       return this.fromOffset(this.offset + p1);
-    if (p1 instanceof _Note)
-      return this.become(p1);
     let i;
     if (typeof p1 === "string")
       i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["default"](p1);
@@ -3071,13 +3069,15 @@ const _Note = class {
     return this;
   }
   static add(a, b) {
+    if (typeof b === "number")
+      return a.clone().add(b);
     return a.clone().add(b);
   }
   sub(p1) {
     if (typeof p1 === "number")
       return this.fromOffset(this.offset - p1);
     if (p1 instanceof _Note)
-      return this.become(p1);
+      return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.floorMod)(this.offset - p1.offset, 12);
     let i;
     if (typeof p1 === "string")
       i = new _Interval__WEBPACK_IMPORTED_MODULE_1__["default"](p1);
@@ -3089,6 +3089,10 @@ const _Note = class {
     return this;
   }
   static sub(a, b) {
+    if (typeof b === "number")
+      return a.clone().sub(b);
+    if (b instanceof _Note)
+      return a.clone().sub(b);
     return a.clone().sub(b);
   }
   mul(fIn) {
@@ -3363,36 +3367,40 @@ const _Pitch = class extends _Note__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.octave = octave;
     return this;
   }
-  add(iIn) {
-    if (typeof iIn === "number")
-      return this.fromOffset(this.offset + iIn);
-    if (iIn instanceof _Pitch)
-      return this.mul(1 + iIn.frequency / this.frequency);
+  add(p1) {
+    if (typeof p1 === "number")
+      return this.fromOffset(this.offset + p1);
     let i;
-    if (typeof iIn === "string")
-      i = new _Interval__WEBPACK_IMPORTED_MODULE_2__["default"](iIn);
-    else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_2__["default"])
-      i = iIn;
+    if (typeof p1 === "string")
+      i = new _Interval__WEBPACK_IMPORTED_MODULE_2__["default"](p1);
+    else if (p1 instanceof _Interval__WEBPACK_IMPORTED_MODULE_2__["default"])
+      i = p1;
     this.octave += Math.floor((this.enumNote.index + i.degree - 1) / 7) + i.octave;
     return super.add(i);
   }
   static add(a, b) {
+    if (typeof b === "number")
+      return a.clone().add(b);
     return a.clone().add(b);
   }
-  sub(iIn) {
-    if (typeof iIn === "number")
-      return this.fromOffset(this.offset - iIn);
-    if (iIn instanceof _Pitch)
-      return this.mul(1 - iIn.frequency / this.frequency);
+  sub(p1) {
+    if (typeof p1 === "number")
+      return this.fromOffset(this.offset - p1);
+    if (p1 instanceof _Pitch)
+      return this.offset - p1.offset;
     let i;
-    if (typeof iIn === "string")
-      i = new _Interval__WEBPACK_IMPORTED_MODULE_2__["default"](iIn);
-    else if (iIn instanceof _Interval__WEBPACK_IMPORTED_MODULE_2__["default"])
-      i = iIn;
+    if (typeof p1 === "string")
+      i = new _Interval__WEBPACK_IMPORTED_MODULE_2__["default"](p1);
+    else if (p1 instanceof _Interval__WEBPACK_IMPORTED_MODULE_2__["default"])
+      i = p1;
     this.octave += Math.floor((this.enumNote.index - i.degree + 1) / 7) - i.octave;
     return super.sub(i);
   }
   static sub(a, b) {
+    if (typeof b === "number")
+      return a.clone().sub(b);
+    if (b instanceof _Pitch)
+      return a.clone().sub(b);
     return a.clone().sub(b);
   }
   mul(fIn) {
