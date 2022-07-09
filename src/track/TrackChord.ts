@@ -108,11 +108,23 @@ export class TrackChord implements ITrackChord, IClonable<TrackChord>, Iterable<
         this.trackNotes.forEach((trackNote) => {
             track.addNote({
                 midi: ~~trackNote.pitch.offset,
+                velocity: trackNote.velocity.normalize(),
                 ticks,
                 durationTicks
             });
         });
         return midi.toArray();
+    }
+    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true) {
+        if (this.trackNotes.length) {
+            for (const trackNote of this) {
+                trackNote.pitch.openGuidoEvent(factory, this.duration);
+            }
+        } else {
+            factory.openEvent("_");
+            factory.setDuration(durationIn.numerator, durationIn.denominator);
+            factory.closeEvent();
+        }
     }
 
     * [Symbol.iterator](): Iterator<TrackNote> {

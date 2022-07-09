@@ -4452,6 +4452,7 @@ const _Roll = class extends Array {
       trackChord.trackNotes.forEach((trackNote) => {
         track.addNote({
           midi: ~~trackNote.pitch.offset,
+          velocity: trackNote.velocity.normalize(),
           ticks,
           durationTicks
         });
@@ -4691,6 +4692,7 @@ const _Sequence = class extends Array {
       trackChord.trackNotes.forEach((trackNote) => {
         track.addNote({
           midi: ~~trackNote.pitch.offset,
+          velocity: trackNote.velocity.normalize(),
           ticks,
           durationTicks
         });
@@ -4701,10 +4703,19 @@ const _Sequence = class extends Array {
   async toGuidoAR(factory) {
     factory.openMusic();
     factory.openVoice();
+    const t = new _Duration__WEBPACK_IMPORTED_MODULE_1__["default"](0, 4);
     for (const trackChord of this) {
+      if (!trackChord.offset.equals(t)) {
+        const silenceDuration = trackChord.offset.clone().sub(t);
+        factory.openEvent("_");
+        factory.setDuration(silenceDuration.numerator, silenceDuration.denominator);
+        factory.closeEvent();
+        t.add(silenceDuration);
+      }
       factory.openChord();
       if (!trackChord.trackNotes.length) {
         factory.openEvent("_");
+        factory.setDuration(trackChord.duration.numerator, trackChord.duration.denominator);
         factory.closeEvent();
       } else {
         for (const trackNote of trackChord) {
@@ -4712,6 +4723,7 @@ const _Sequence = class extends Array {
         }
       }
       factory.closeChord();
+      t.add(trackChord.duration);
     }
     factory.closeVoice();
     return factory.closeMusic();
@@ -4809,6 +4821,7 @@ const _Sequences = class extends Array {
         trackChord.trackNotes.forEach((trackNote) => {
           track.addNote({
             midi: ~~trackNote.pitch.offset,
+            velocity: trackNote.velocity.normalize(),
             ticks,
             durationTicks
           });
@@ -4968,11 +4981,23 @@ const _TrackChord = class {
     this.trackNotes.forEach((trackNote) => {
       track.addNote({
         midi: ~~trackNote.pitch.offset,
+        velocity: trackNote.velocity.normalize(),
         ticks,
         durationTicks
       });
     });
     return midi.toArray();
+  }
+  async openGuidoEvent(factory, durationIn, close = true) {
+    if (this.trackNotes.length) {
+      for (const trackNote of this) {
+        trackNote.pitch.openGuidoEvent(factory, this.duration);
+      }
+    } else {
+      factory.openEvent("_");
+      factory.setDuration(durationIn.numerator, durationIn.denominator);
+      factory.closeEvent();
+    }
   }
   *[Symbol.iterator]() {
     for (const trackNote of this.trackNotes) {

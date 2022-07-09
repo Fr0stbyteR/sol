@@ -42,6 +42,7 @@ export class Track implements ITrack {
             trackChord.trackNotes.forEach((trackNote) => {
                 track.addNote({
                     midi: ~~trackNote.pitch.offset,
+                    velocity: trackNote.velocity.normalize(),
                     ticks,
                     durationTicks
                 });

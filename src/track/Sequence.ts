@@ -104,6 +104,7 @@ export class Sequence extends Array<TrackChord> {
             trackChord.trackNotes.forEach((trackNote) => {
                 track.addNote({
                     midi: ~~trackNote.pitch.offset,
+                    velocity: trackNote.velocity.normalize(),
                     ticks,
                     durationTicks
                 });
@@ -114,10 +115,19 @@ export class Sequence extends Array<TrackChord> {
     async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
         factory.openMusic();
         factory.openVoice();
+        const t = new Duration(0, 4);
         for (const trackChord of this) {
+            if (!trackChord.offset.equals(t)) {
+                const silenceDuration = trackChord.offset.clone().sub(t);
+                factory.openEvent("_");
+                factory.setDuration(silenceDuration.numerator, silenceDuration.denominator);
+                factory.closeEvent();
+                t.add(silenceDuration);
+            }
             factory.openChord();
             if (!trackChord.trackNotes.length) {
                 factory.openEvent("_");
+                factory.setDuration(trackChord.duration.numerator, trackChord.duration.denominator);
                 factory.closeEvent();
             } else {
                 for (const trackNote of trackChord) {
@@ -125,6 +135,7 @@ export class Sequence extends Array<TrackChord> {
                 }
             }
             factory.closeChord();
+            t.add(trackChord.duration);
         }
         factory.closeVoice();
         return factory.closeMusic();

@@ -66,6 +66,7 @@ export class Sequences extends Array<Sequence> {
                 trackChord.trackNotes.forEach((trackNote) => {
                     track.addNote({
                         midi: ~~trackNote.pitch.offset,
+                        velocity: trackNote.velocity.normalize(),
                         ticks,
                         durationTicks
                     });
