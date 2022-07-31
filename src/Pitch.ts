@@ -4,6 +4,7 @@ import Interval from "./Interval";
 import Frequency from "./Frequency";
 import { isObjectArray } from "./utils";
 import Duration from "./Duration";
+import { IGuidoWorker } from "./GuidoWorker.types";
 
 export interface IPitch extends INote {
     octave: number;

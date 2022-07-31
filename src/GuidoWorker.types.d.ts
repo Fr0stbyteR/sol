@@ -1,7 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference types="@shren/guidolib"/>
+import { GuidoDate, GuidoLayoutSettings, GuidoPageFormat, GuidoPianoRollAdapter, GuidoReducedProportionalAdapter, GuidoVersion, LimitParams, ParserError } from "@shren/guidolib";
+import { GuidoErrCode, PianoRollType } from "@shren/guidolib/src/enums";
 
-interface IGuidoWorker {
+type $ARHandler = number;
+type $GRHandler = number;
+type $GuidoParser = number;
+type $$PianoRoll = number;
+type $GuidoStream = number;
+type $PianoRoll = number;
+
+export interface IGuidoWorker {
     init(): Promise<void>
     // ------------------------------------------------------------------------
     // Guido Engine interface;
@@ -87,7 +94,7 @@ interface IGuidoWorker {
 
     // ------------------------------------------------------------------------
     // Guido piano roll interface
-    pianoRoll(): GUIDOPianoRollAdapter;
+    pianoRoll(): GuidoPianoRollAdapter;
 
     ar2PianoRoll(type: PianoRollType, ar: $ARHandler): $PianoRoll;
     destroyPianoRoll(pr: $PianoRoll): GuidoErrCode;
@@ -111,7 +118,7 @@ interface IGuidoWorker {
     // ------------------------------------------------------------------------
     // Reduced Proportional representation
     // no relay for the interface
-    reducedProp(): GUIDOReducedProportionalAdapter;
+    reducedProp(): GuidoReducedProportionalAdapter;
 
     // ------------------------------------------------------------------------
     // Guido factory interface

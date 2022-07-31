@@ -2,6 +2,7 @@ import { Midi } from "@tonejs/midi";
 import { IArticulation } from "../Articulation";
 import { IChord } from "../Chord";
 import Duration, { TDurationAbbreviation } from "../Duration";
+import { IGuidoWorker } from "../GuidoWorker.types";
 import { INote } from "../Note";
 import TimeCode, { ITimeCode } from "../TimeCode";
 import { isObjectArray, isObjectInstanceArray, isObjectInstanceArrayLike, isObjectInstanceIterable } from "../utils";

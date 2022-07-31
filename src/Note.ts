@@ -3,6 +3,7 @@ import Interval, { DEGREE_TO_OFFSET } from "./Interval";
 import Frequency from "./Frequency";
 import EnumNote, { IEnumNote, isEnumNote, TEnumNoteValue } from "./EnumNote";
 import Duration from "./Duration";
+import { IGuidoWorker } from "./GuidoWorker.types";
 
 export interface INote {
     enumNote: IEnumNote;
@@ -29,22 +30,22 @@ export class Note implements INote, IClonable<Note> {
     /**
      * Returns C
      */
-    constructor()
+    constructor();
     /**
      * New note
      */
-    constructor(noteIn: EnumNote, alteration?: number)
+    constructor(noteIn: EnumNote, alteration?: number);
     /**
      * Gives a new Note instance (clone)
      */
-    constructor(noteIn: INote)
+    constructor(noteIn: INote);
     /**
      * Parses note string.
      * @example
      * new Note("E##");
      * @throws {SyntaxError} when parse failed
      */
-    constructor(noteIn: string)
+    constructor(noteIn: string);
     /**
      * Creates an instance of Note.
      */

@@ -8,6 +8,7 @@ import Chord, { IChord, isChord } from "../Chord";
 import Pitch from "../Pitch";
 import Velocity, { IVelocity } from "../Velocity";
 import Note, { INote, isNoteArray } from "../Note";
+import { IGuidoWorker } from "../GuidoWorker.types";
 
 export interface ITrackChord {
     duration: IDuration;

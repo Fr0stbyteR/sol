@@ -1,6 +1,7 @@
 import Pitch from "./Pitch";
 import Interval, { IInterval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./utils";
+import { IGuidoWorker } from "./GuidoWorker.types";
 
 export class EnumScale {
     static get MAJOR() { return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
