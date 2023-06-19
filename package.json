@@ -1,6 +1,6 @@
 {
   "name": "@shren/sol",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "a Music Library",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
