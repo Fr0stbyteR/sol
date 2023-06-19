@@ -20,7 +20,7 @@ test("Chord 1 contains", () => {
 });
 
 test("Major Chord", () => {
-    expect(cmaj.enumChord.name()).toBe("MAJ");
+    expect(cmaj.enumChord?.name()).toBe("MAJ");
 });
 
 test("ratio", () => {
@@ -28,7 +28,7 @@ test("ratio", () => {
 });
 
 test("imaginary base", () => {
-    expect(cdom7.imaginaryBase.toString()).toBe("C");
+    expect(cdom7.phantomBase.toString()).toBe("C");
 });
 
 test("reciprocal", () => {
@@ -36,5 +36,5 @@ test("reciprocal", () => {
 });
 
 test("imaginary top", () => {
-    expect(cmin.imaginaryTop.toString()).toBe("G");
+    expect(cmin.phantomTop.toString()).toBe("G");
 });
