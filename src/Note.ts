@@ -1,9 +1,9 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import { floorMod, isObjectArray } from "./utils";
 import Interval, { DEGREE_TO_OFFSET } from "./Interval";
 import Frequency from "./Frequency";
 import EnumNote, { IEnumNote, isEnumNote, TEnumNoteValue } from "./EnumNote";
 import Duration from "./Duration";
-import { IGuidoWorker } from "./GuidoWorker.types";
 
 export interface INote {
     enumNote: IEnumNote;
@@ -200,7 +200,7 @@ export class Note implements INote, IClonable<Note> {
     clone() {
         return new Note(this);
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true, octaveIn = 3) {
+    async openGuidoEvent(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>, durationIn?: Duration, close = true, octaveIn = 3) {
         const { alteration } = this;
         const accidentals = Math.max(-2, Math.min(2, ~~alteration));
         const alterDetune = alteration - accidentals;
@@ -221,7 +221,7 @@ export class Note implements INote, IClonable<Note> {
             }
         }
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>) {
         factory.openMusic();
         factory.openVoice();
         this.openGuidoEvent(factory);

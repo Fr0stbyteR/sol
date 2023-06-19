@@ -1,10 +1,10 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import Note, { INote, isNote } from "./Note";
 import EnumNote, { isEnumNote } from "./EnumNote";
 import Interval from "./Interval";
 import Frequency from "./Frequency";
 import { isObjectArray } from "./utils";
 import Duration from "./Duration";
-import { IGuidoWorker } from "./GuidoWorker.types";
 
 export interface IPitch extends INote {
     octave: number;
@@ -197,7 +197,7 @@ export class Pitch extends Note implements IPitch, IClonable<Pitch> {
     clone(): Pitch {
         return new Pitch(this);
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true) {
+    async openGuidoEvent(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>, durationIn?: Duration, close = true) {
         super.openGuidoEvent(factory, durationIn, close, this.octave);
     }
 

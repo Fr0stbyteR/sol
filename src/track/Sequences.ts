@@ -1,5 +1,5 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import { Midi } from "@tonejs/midi";
-import { IGuidoWorker } from "../GuidoWorker.types";
 import TimeCode, { ITimeCode } from "../TimeCode";
 import { isObjectInstanceArray } from "../utils";
 import Sequence, { ISequence, isSequence, isSequenceArray, isSequenceInstanceArrayLike, isSequenceInstanceIterable } from "./Sequence";
@@ -76,7 +76,7 @@ export class Sequences extends Array<Sequence> {
         });
         return midi.toArray();
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>) {
         factory.openMusic();
         for (const sequence of this) {
             factory.openVoice();

@@ -1,9 +1,9 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import Interval, { IInterval, isIntervalArray } from "./Interval";
 import Note, { isNoteArray, isNote, INote } from "./Note";
 import Pitch, { isPitchArray, isPitch, IPitch } from "./Pitch";
 import { isNumberArray, nearestFractions, nearestReciprocals } from "./utils";
 import EnumChord from "./EnumChord";
-import { IGuidoWorker } from "./GuidoWorker.types";
 
 export interface IChord {
     base: INote | IPitch;
@@ -245,7 +245,7 @@ export class Chord implements IChord, Iterable<Note>, IComputable<Chord>, IClona
     clone() {
         return new Chord(this);
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>) {
         factory.openMusic();
         factory.openVoice();
         factory.openChord();

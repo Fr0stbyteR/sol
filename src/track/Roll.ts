@@ -1,8 +1,8 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import { Midi } from "@tonejs/midi";
 import { IArticulation } from "../Articulation";
 import { IChord } from "../Chord";
 import Duration, { TDurationAbbreviation } from "../Duration";
-import { IGuidoWorker } from "../GuidoWorker.types";
 import { INote } from "../Note";
 import TimeCode, { ITimeCode } from "../TimeCode";
 import { IVelocity } from "../Velocity";
@@ -91,7 +91,7 @@ export class Roll extends Array<TrackChord> {
         });
         return midi.toArray();
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>, spaceFactor = 1) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>, spaceFactor = 1) {
         factory.openMusic();
         factory.openVoice();
         for (let i = 0; i < this.length; i++) {

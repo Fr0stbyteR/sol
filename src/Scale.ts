@@ -1,7 +1,7 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import Pitch from "./Pitch";
 import Interval, { IInterval, isIntervalArray } from "./Interval";
 import { isStringArray, floorMod } from "./utils";
-import { IGuidoWorker } from "./GuidoWorker.types";
 
 export class EnumScale {
     static get MAJOR() { return new Scale("Major", "P1:Tonic", "M2:Supertonic", "M3:Mediant", "P4:Subdominant", "P5:Dominant", "M6:Submediant", "M7:Leading"); }
@@ -114,7 +114,7 @@ export class Scale implements Iterable<Interval>, IScale, IClonable<Scale> {
     toNotes(from = new Pitch(60)) {
         return this.intervals.map(interval => from.clone().add(interval));
     }
-    async toGuidoAR(factory: PromisifiedFunctionMap<IGuidoWorker>) {
+    async toGuidoAR(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>) {
         factory.openMusic();
         factory.openVoice();
         for (const note of this.toNotes()) {

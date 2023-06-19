@@ -1,3 +1,4 @@
+import type { GuidoFactoryAdapter } from "@shren/guidolib";
 import { Midi } from "@tonejs/midi";
 import Duration, { IDuration, isDuration, isDurationAbbreviation, TDurationAbbreviation } from "../Duration";
 import Articulation, { IArticulation, isArticulation } from "../Articulation";
@@ -8,7 +9,6 @@ import Chord, { IChord, isChord } from "../Chord";
 import Pitch from "../Pitch";
 import Velocity, { IVelocity } from "../Velocity";
 import Note, { INote, isNoteArray } from "../Note";
-import { IGuidoWorker } from "../GuidoWorker.types";
 
 export interface ITrackChord {
     duration: IDuration;
@@ -116,7 +116,7 @@ export class TrackChord implements ITrackChord, IClonable<TrackChord>, Iterable<
         });
         return midi.toArray();
     }
-    async openGuidoEvent(factory: PromisifiedFunctionMap<IGuidoWorker>, durationIn?: Duration, close = true) {
+    async openGuidoEvent(factory: PromisifiedFunctionMap<GuidoFactoryAdapter>, durationIn?: Duration, close = true) {
         if (this.trackNotes.length) {
             for (const trackNote of this) {
                 trackNote.pitch.openGuidoEvent(factory, this.duration);
