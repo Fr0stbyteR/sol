@@ -110,7 +110,7 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
     }
 
     toAbsolute(bpmIn: number): this;
-    toAbsolute(timeCodeIn: TimeCode): this
+    toAbsolute(timeCodeIn: TimeCode): this;
     toAbsolute(p1: TimeCode | number) {
         if (this.isAbsolute) return this;
         if (typeof p1 === "number") this.seconds = this.getBeats() * 60 / p1;
@@ -120,7 +120,7 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
     }
 
     toRelative(bpmIn: number): this;
-    toRelative(timeCodeIn: TimeCode): this
+    toRelative(timeCodeIn: TimeCode): this;
     toRelative(p1: TimeCode | number) {
         if (!this.isAbsolute) return this;
         if (typeof p1 === "number") this.numerator = this.seconds * p1 / 60;
@@ -215,6 +215,7 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
 
     private simplify() {
         if (this.numerator === 0) return this;
+        if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator)) return this;
         const f = Math.max(precisionFactor(this.numerator), precisionFactor(this.denominator));
         const $gcd = gcd(this.numerator * f, this.denominator * f) / f;
         if ($gcd !== 1) {

@@ -8,6 +8,7 @@
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.insert = exports.search = void 0;
 /**
  * Return the index of the element at or before the given property
  * @hidden
@@ -78,6 +79,7 @@ exports.insert = insert;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ControlChange = exports.controlChangeIds = exports.controlChangeNames = void 0;
 /**
  * A map of values to control change names
  * @hidden
@@ -128,7 +130,7 @@ var ControlChange = /** @class */ (function () {
         get: function () {
             return privateCCNumberMap.get(this);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(ControlChange.prototype, "name", {
@@ -143,7 +145,7 @@ var ControlChange = /** @class */ (function () {
                 return null;
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(ControlChange.prototype, "time", {
@@ -158,7 +160,7 @@ var ControlChange = /** @class */ (function () {
             var header = privateHeaderMap.get(this);
             this.ticks = header.secondsToTicks(t);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     ControlChange.prototype.toJSON = function () {
@@ -184,6 +186,7 @@ exports.ControlChange = ControlChange;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createControlChanges = void 0;
 var ControlChange_1 = __webpack_require__(/*! ./ControlChange */ "./node_modules/@tonejs/midi/dist/ControlChange.js");
 /**
  * Automatically creates an alias for named control values using Proxies
@@ -224,20 +227,20 @@ exports.createControlChanges = createControlChanges;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.encode = void 0;
 var midi_file_1 = __webpack_require__(/*! midi-file */ "./node_modules/midi-file/index.js");
 var Header_1 = __webpack_require__(/*! ./Header */ "./node_modules/@tonejs/midi/dist/Header.js");
-var array_flatten_1 = __importDefault(__webpack_require__(/*! array-flatten */ "./node_modules/array-flatten/array-flatten.js"));
+var array_flatten_1 = __webpack_require__(/*! array-flatten */ "./node_modules/array-flatten/dist.es2015/index.js");
 function encodeNote(note, channel) {
     return [{
             absoluteTime: note.ticks,
@@ -257,7 +260,7 @@ function encodeNote(note, channel) {
         }];
 }
 function encodeNotes(track) {
-    return array_flatten_1.default(track.notes.map(function (note) { return encodeNote(note, track.channel); }));
+    return (0, array_flatten_1.flatten)(track.notes.map(function (note) { return encodeNote(note, track.channel); }));
 }
 function encodeControlChange(cc, channel) {
     return {
@@ -357,7 +360,7 @@ function encodeText(textEvent) {
     };
 }
 /**
- * Convert the midi object to an array
+ * Convert the MIDI object to an array.
  */
 function encode(midi) {
     var midiData = {
@@ -366,9 +369,9 @@ function encode(midi) {
             numTracks: midi.tracks.length + 1,
             ticksPerBeat: midi.header.ppq,
         },
-        tracks: __spreadArrays([
-            __spreadArrays([
-                // the name data
+        tracks: __spreadArray([
+            __spreadArray(__spreadArray(__spreadArray(__spreadArray([
+                // The name data.
                 {
                     absoluteTime: 0,
                     deltaTime: 0,
@@ -376,17 +379,17 @@ function encode(midi) {
                     text: midi.header.name,
                     type: "trackName",
                 }
-            ], midi.header.keySignatures.map(function (keySig) { return encodeKeySignature(keySig); }), midi.header.meta.map(function (e) { return encodeText(e); }), midi.header.tempos.map(function (tempo) { return encodeTempo(tempo); }), midi.header.timeSignatures.map(function (timeSig) { return encodeTimeSignature(timeSig); }))
+            ], midi.header.keySignatures.map(function (keySig) { return encodeKeySignature(keySig); }), true), midi.header.meta.map(function (e) { return encodeText(e); }), true), midi.header.tempos.map(function (tempo) { return encodeTempo(tempo); }), true), midi.header.timeSignatures.map(function (timeSig) { return encodeTimeSignature(timeSig); }), true)
         ], midi.tracks.map(function (track) {
-            return __spreadArrays([
-                // add the name
+            return __spreadArray(__spreadArray(__spreadArray([
+                // Add the name
                 encodeTrackName(track.name),
                 // the instrument
                 encodeInstrument(track)
-            ], encodeNotes(track), encodeControlChanges(track), encodePitchBends(track));
-        })),
+            ], encodeNotes(track), true), encodeControlChanges(track), true), encodePitchBends(track), true);
+        }), true),
     };
-    // sort and set deltaTime of all of the tracks
+    // Sort and set `deltaTime` of all of the tracks.
     midiData.tracks = midiData.tracks.map(function (track) {
         track = track.sort(function (a, b) { return a.absoluteTime - b.absoluteTime; });
         var lastTime = 0;
@@ -395,7 +398,7 @@ function encode(midi) {
             lastTime = note.absoluteTime;
             delete note.absoluteTime;
         });
-        // end of track
+        // End of track.
         track.push({
             deltaTime: 0,
             meta: true,
@@ -403,8 +406,8 @@ function encode(midi) {
         });
         return track;
     });
-    // return midiData
-    return new Uint8Array(midi_file_1.writeMidi(midiData));
+    // Rreturn `midiData`.
+    return new Uint8Array((0, midi_file_1.writeMidi)(midiData));
 }
 exports.encode = encode;
 //# sourceMappingURL=Encode.js.map
@@ -419,6 +422,7 @@ exports.encode = encode;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Header = exports.keySignatureKeys = void 0;
 var BinarySearch_1 = __webpack_require__(/*! ./BinarySearch */ "./node_modules/@tonejs/midi/dist/BinarySearch.js");
 var privatePPQMap = new WeakMap();
 /**
@@ -441,37 +445,39 @@ exports.keySignatureKeys = [
     "F#",
     "C#",
 ];
-/** The parsed midi file header */
+/**
+ * The parsed MIDI file header.
+ */
 var Header = /** @class */ (function () {
     function Header(midiData) {
-        // look through all the tracks for tempo changes
         var _this = this;
         /**
-         * The array of all the tempo events
+         * The array of all the tempo events.
          */
         this.tempos = [];
         /**
-         * The time signatures
+         * The time signatures.
          */
         this.timeSignatures = [];
         /**
-         * The time signatures
+         * The time signatures.
          */
         this.keySignatures = [];
         /**
-         * Additional meta events
+         * Additional meta events.
          */
         this.meta = [];
         /**
-         * The name of the midi file
+         * The name of the MIDI file;
          */
         this.name = "";
+        // Look through all the tracks for tempo changes.
         privatePPQMap.set(this, 480);
         if (midiData) {
             privatePPQMap.set(this, midiData.header.ticksPerBeat);
-            // check time signature and tempo events from all of the tracks
+            // Check time signature and tempo events from all of the tracks.
             midiData.tracks.forEach(function (track) {
-                return track.forEach(function (event) {
+                track.forEach(function (event) {
                     if (event.meta) {
                         if (event.type === "timeSignature") {
                             _this.timeSignatures.push({
@@ -498,8 +504,10 @@ var Header = /** @class */ (function () {
                     }
                 });
             });
-            // check the first track for other relevant data
+            // Check the first track for other relevant data.
+            var firstTrackCurrentTicks_1 = 0; // Used for absolute times.
             midiData.tracks[0].forEach(function (event) {
+                firstTrackCurrentTicks_1 += event.deltaTime;
                 if (event.meta) {
                     if (event.type === "trackName") {
                         _this.name = event.text;
@@ -510,7 +518,7 @@ var Header = /** @class */ (function () {
                         event.type === "lyrics") {
                         _this.meta.push({
                             text: event.text,
-                            ticks: event.absoluteTime,
+                            ticks: firstTrackCurrentTicks_1,
                             type: event.type,
                         });
                     }
@@ -527,7 +535,7 @@ var Header = /** @class */ (function () {
         var _this = this;
         var currentTime = 0;
         var lastEventBeats = 0;
-        // make sure it's sorted
+        // Make sure it's sorted;
         this.tempos.sort(function (a, b) { return a.ticks - b.ticks; });
         this.tempos.forEach(function (event, index) {
             var lastBPM = index > 0 ? _this.tempos[index - 1].bpm : _this.tempos[0].bpm;
@@ -551,11 +559,11 @@ var Header = /** @class */ (function () {
         });
     };
     /**
-     * Convert ticks into seconds based on the tempo changes
+     * Convert ticks into seconds based on the tempo changes.
      */
     Header.prototype.ticksToSeconds = function (ticks) {
-        // find the relevant position
-        var index = BinarySearch_1.search(this.tempos, ticks);
+        // Find the relevant position.
+        var index = (0, BinarySearch_1.search)(this.tempos, ticks);
         if (index !== -1) {
             var tempo = this.tempos[index];
             var tempoTime = tempo.time;
@@ -563,16 +571,16 @@ var Header = /** @class */ (function () {
             return tempoTime + (60 / tempo.bpm) * elapsedBeats;
         }
         else {
-            // assume 120
+            // Assume 120.
             var beats = ticks / this.ppq;
             return (60 / 120) * beats;
         }
     };
     /**
-     * Convert ticks into measures based off of the time signatures
+     * Convert ticks into measures based off of the time signatures.
      */
     Header.prototype.ticksToMeasures = function (ticks) {
-        var index = BinarySearch_1.search(this.timeSignatures, ticks);
+        var index = (0, BinarySearch_1.search)(this.timeSignatures, ticks);
         if (index !== -1) {
             var timeSigEvent = this.timeSignatures[index];
             var elapsedBeats = (ticks - timeSigEvent.ticks) / this.ppq;
@@ -588,20 +596,20 @@ var Header = /** @class */ (function () {
     };
     Object.defineProperty(Header.prototype, "ppq", {
         /**
-         * The number of ticks per quarter note
+         * The number of ticks per quarter note.
          */
         get: function () {
             return privatePPQMap.get(this);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
-     * Convert seconds to ticks based on the tempo events
+     * Convert seconds to ticks based on the tempo events.
      */
     Header.prototype.secondsToTicks = function (seconds) {
-        // find the relevant position
-        var index = BinarySearch_1.search(this.tempos, seconds, "time");
+        // Find the relevant position.
+        var index = (0, BinarySearch_1.search)(this.tempos, seconds, "time");
         if (index !== -1) {
             var tempo = this.tempos[index];
             var tempoTime = tempo.time;
@@ -610,7 +618,7 @@ var Header = /** @class */ (function () {
             return Math.round(tempo.ticks + elapsedBeats * this.ppq);
         }
         else {
-            // assume 120
+            // Assume 120.
             var beats = seconds / (60 / 120);
             return Math.round(beats * this.ppq);
         }
@@ -634,11 +642,11 @@ var Header = /** @class */ (function () {
         };
     };
     /**
-     * parse a header json object.
+     * Parse a header json object.
      */
     Header.prototype.fromJSON = function (json) {
         this.name = json.name;
-        // clone all the attributes
+        // Clone all the attributes.
         this.tempos = json.tempos.map(function (t) { return Object.assign({}, t); });
         this.timeSignatures = json.timeSignatures.map(function (t) {
             return Object.assign({}, t);
@@ -653,7 +661,7 @@ var Header = /** @class */ (function () {
     /**
      * Update the tempo of the midi to a single tempo. Will remove and replace
      * any other tempos currently set and update all of the event timing.
-     * @param bpm The tempo in beats per second
+     * @param bpm The tempo in beats per second.
      */
     Header.prototype.setTempo = function (bpm) {
         this.tempos = [
@@ -679,13 +687,14 @@ exports.Header = Header;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Instrument = void 0;
 var InstrumentMaps_1 = __webpack_require__(/*! ./InstrumentMaps */ "./node_modules/@tonejs/midi/dist/InstrumentMaps.js");
 /**
  * @hidden
  */
 var privateTrackMap = new WeakMap();
 /**
- * Describes the midi instrument of a track
+ * Describes the MIDI instrument of a track.
  */
 var Instrument = /** @class */ (function () {
     /**
@@ -694,13 +703,14 @@ var Instrument = /** @class */ (function () {
      */
     function Instrument(trackData, track) {
         /**
-         * The instrument number
+         * The instrument number. Defaults to 0.
          */
         this.number = 0;
         privateTrackMap.set(this, track);
         this.number = 0;
         if (trackData) {
             var programChange = trackData.find(function (e) { return e.type === "programChange"; });
+            // Set 'number' from 'programNumber' if exists.
             if (programChange) {
                 this.number = programChange.programNumber;
             }
@@ -708,7 +718,7 @@ var Instrument = /** @class */ (function () {
     }
     Object.defineProperty(Instrument.prototype, "name", {
         /**
-         * The common name of the instrument
+         * The common name of the instrument.
          */
         get: function () {
             if (this.percussion) {
@@ -724,7 +734,7 @@ var Instrument = /** @class */ (function () {
                 this.number = patchNumber;
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Instrument.prototype, "family", {
@@ -739,32 +749,32 @@ var Instrument = /** @class */ (function () {
                 return InstrumentMaps_1.InstrumentFamilyByID[Math.floor(this.number / 8)];
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Instrument.prototype, "percussion", {
         /**
-         * If the instrument is a percussion instrument
+         * If the instrument is a percussion instrument.
          */
         get: function () {
             var track = privateTrackMap.get(this);
             return track.channel === 9;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
-     * Convert it to JSON form
+     * Convert it to JSON form.
      */
     Instrument.prototype.toJSON = function () {
         return {
             family: this.family,
-            name: this.name,
             number: this.number,
+            name: this.name
         };
     };
     /**
-     * Convert from JSON form
+     * Convert from JSON form.
      */
     Instrument.prototype.fromJSON = function (json) {
         this.number = json.number;
@@ -784,6 +794,7 @@ exports.Instrument = Instrument;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DrumKitByPatchID = exports.InstrumentFamilyByID = exports.instrumentByPatchID = void 0;
 exports.instrumentByPatchID = [
     "acoustic grand piano",
     "bright acoustic piano",
@@ -991,12 +1002,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Header = exports.Track = exports.Midi = void 0;
 var midi_file_1 = __webpack_require__(/*! midi-file */ "./node_modules/midi-file/index.js");
-var Encode_1 = __webpack_require__(/*! ./Encode */ "./node_modules/@tonejs/midi/dist/Encode.js");
 var Header_1 = __webpack_require__(/*! ./Header */ "./node_modules/@tonejs/midi/dist/Header.js");
 var Track_1 = __webpack_require__(/*! ./Track */ "./node_modules/@tonejs/midi/dist/Track.js");
+var Encode_1 = __webpack_require__(/*! ./Encode */ "./node_modules/@tonejs/midi/dist/Encode.js");
 /**
- * The main midi parsing class
+ * The main midi parsing class.
  */
 var Midi = /** @class */ (function () {
     /**
@@ -1004,14 +1016,17 @@ var Midi = /** @class */ (function () {
      */
     function Midi(midiArray) {
         var _this = this;
-        // parse the midi data if there is any
+        // Parse the MIDI data if there is any.
         var midiData = null;
         if (midiArray) {
-            if (midiArray instanceof ArrayBuffer) {
-                midiArray = new Uint8Array(midiArray);
-            }
-            midiData = midi_file_1.parseMidi(midiArray);
-            // add the absolute times to each of the tracks
+            // Transform midiArray to ArrayLike<number>
+            // only if it's an ArrayBuffer.
+            var midiArrayLike = midiArray instanceof ArrayBuffer
+                ? new Uint8Array(midiArray)
+                : midiArray;
+            // Parse MIDI data.
+            midiData = (0, midi_file_1.parseMidi)(midiArrayLike);
+            // Add the absolute times to each of the tracks.
             midiData.tracks.forEach(function (track) {
                 var currentTicks = 0;
                 track.forEach(function (event) {
@@ -1019,16 +1034,16 @@ var Midi = /** @class */ (function () {
                     event.absoluteTime = currentTicks;
                 });
             });
-            // ensure at most one instrument per track
+            // Ensure at most one instrument per track.
             midiData.tracks = splitTracks(midiData.tracks);
         }
         this.header = new Header_1.Header(midiData);
         this.tracks = [];
-        // parse the midi data
+        // Parse MIDI data.
         if (midiArray) {
-            // format 0, everything is on the same track
+            // Format 0, everything is on the same track.
             this.tracks = midiData.tracks.map(function (trackData) { return new Track_1.Track(trackData, _this.header); });
-            // if it's format 1 and there are no notes on the first track, remove it
+            // If it's format 1 and there are no notes on the first track, remove it.
             if (midiData.header.format === 1 && this.tracks[0].duration === 0) {
                 this.tracks.shift();
             }
@@ -1036,8 +1051,8 @@ var Midi = /** @class */ (function () {
     }
     /**
      * Download and parse the MIDI file. Returns a promise
-     * which resolves to the generated midi file
-     * @param url The url to fetch
+     * which resolves to the generated MIDI file.
+     * @param url The URL to fetch.
      */
     Midi.fromUrl = function (url) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1052,14 +1067,14 @@ var Midi = /** @class */ (function () {
                     case 2:
                         arrayBuffer = _a.sent();
                         return [2 /*return*/, new Midi(arrayBuffer)];
-                    case 3: throw new Error("could not load " + url);
+                    case 3: throw new Error("Could not load '".concat(url, "'"));
                 }
             });
         });
     };
     Object.defineProperty(Midi.prototype, "name", {
         /**
-         * The name of the midi file, taken from the first track
+         * The name of the midi file, taken from the first track.
          */
         get: function () {
             return this.header.name;
@@ -1067,35 +1082,35 @@ var Midi = /** @class */ (function () {
         set: function (n) {
             this.header.name = n;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Midi.prototype, "duration", {
         /**
-         * The total length of the file in seconds
+         * The total length of the file in seconds.
          */
         get: function () {
-            // get the max of the last note of all the tracks
+            // Get the max of the last note of all the tracks.
             var durations = this.tracks.map(function (t) { return t.duration; });
             return Math.max.apply(Math, durations);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Midi.prototype, "durationTicks", {
         /**
-         * The total length of the file in ticks
+         * The total length of the file in ticks.
          */
         get: function () {
-            // get the max of the last note of all the tracks
+            // Get the max of the last note of all the tracks.
             var durationTicks = this.tracks.map(function (t) { return t.durationTicks; });
             return Math.max.apply(Math, durationTicks);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
-     * Add a track to the midi file
+     * Add a track to the MIDI file.
      */
     Midi.prototype.addTrack = function () {
         var track = new Track_1.Track(undefined, this.header);
@@ -1103,13 +1118,13 @@ var Midi = /** @class */ (function () {
         return track;
     };
     /**
-     * Encode the midi as a Uint8Array.
+     * Encode the MIDI as a Uint8Array.
      */
     Midi.prototype.toArray = function () {
-        return Encode_1.encode(this);
+        return (0, Encode_1.encode)(this);
     };
     /**
-     * Convert the midi object to JSON.
+     * Convert the MIDI object to JSON.
      */
     Midi.prototype.toJSON = function () {
         return {
@@ -1132,7 +1147,7 @@ var Midi = /** @class */ (function () {
         });
     };
     /**
-     * Clone the entire object midi object
+     * Clone the entire object MIDI object.
      */
     Midi.prototype.clone = function () {
         var midi = new Midi();
@@ -1143,9 +1158,9 @@ var Midi = /** @class */ (function () {
 }());
 exports.Midi = Midi;
 var Track_2 = __webpack_require__(/*! ./Track */ "./node_modules/@tonejs/midi/dist/Track.js");
-exports.Track = Track_2.Track;
+Object.defineProperty(exports, "Track", ({ enumerable: true, get: function () { return Track_2.Track; } }));
 var Header_2 = __webpack_require__(/*! ./Header */ "./node_modules/@tonejs/midi/dist/Header.js");
-exports.Header = Header_2.Header;
+Object.defineProperty(exports, "Header", ({ enumerable: true, get: function () { return Header_2.Header; } }));
 /**
  * Given a list of MIDI tracks, make sure that each channel corresponds to at
  * most one channel and at most one instrument. This means splitting up tracks
@@ -1171,7 +1186,7 @@ function splitTracks(tracks) {
                     currentProgram[channel] = event_1.programNumber;
                 }
                 var program = currentProgram[channel];
-                var trackKey = program + " " + channel;
+                var trackKey = "".concat(program, " ").concat(channel);
                 if (trackMap.has(trackKey)) {
                     targetTrack = trackMap.get(trackKey);
                 }
@@ -1200,15 +1215,16 @@ function splitTracks(tracks) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Note = void 0;
 /**
- * Convert a midi note into a pitch
+ * Convert a MIDI note into a pitch.
  */
 function midiToPitch(midi) {
     var octave = Math.floor(midi / 12) - 1;
     return midiToPitchClass(midi) + octave.toString();
 }
 /**
- * Convert a midi note to a pitch class (just the pitch no octave)
+ * Convert a MIDI note to a pitch class (just the pitch no octave).
  */
 function midiToPitchClass(midi) {
     var scaleIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -1216,14 +1232,14 @@ function midiToPitchClass(midi) {
     return scaleIndexToNote[note];
 }
 /**
- * Convert a pitch class to a MIDI note
+ * Convert a pitch class to a MIDI note.
  */
 function pitchClassToMidi(pitch) {
     var scaleIndexToNote = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     return scaleIndexToNote.indexOf(pitch);
 }
 /**
- * Convert a pitch to a midi number
+ * Convert a pitch to a MIDI number.
  */
 // tslint:disable-next-line: only-arrow-functions typedef
 var pitchToMidi = (function () {
@@ -1248,7 +1264,7 @@ var pitchToMidi = (function () {
 }());
 var privateHeaderMap = new WeakMap();
 /**
- * A Note consists of a noteOn and noteOff event
+ * A Note consists of a `noteOn` and `noteOff` event.
  */
 var Note = /** @class */ (function () {
     function Note(noteOn, noteOff, header) {
@@ -1261,7 +1277,7 @@ var Note = /** @class */ (function () {
     }
     Object.defineProperty(Note.prototype, "name", {
         /**
-         * The note name and octave in scientific pitch notation, e.g. "C4"
+         * The note name and octave in scientific pitch notation, e.g. "C4".
          */
         get: function () {
             return midiToPitch(this.midi);
@@ -1269,12 +1285,12 @@ var Note = /** @class */ (function () {
         set: function (n) {
             this.midi = pitchToMidi(n);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Note.prototype, "octave", {
         /**
-         * The notes octave number
+         * The notes octave number.
          */
         get: function () {
             return Math.floor(this.midi / 12) - 1;
@@ -1283,12 +1299,12 @@ var Note = /** @class */ (function () {
             var diff = o - this.octave;
             this.midi += diff * 12;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Note.prototype, "pitch", {
         /**
-         * The pitch class name. e.g. "A"
+         * The pitch class name. e.g. "A".
          */
         get: function () {
             return midiToPitchClass(this.midi);
@@ -1296,12 +1312,12 @@ var Note = /** @class */ (function () {
         set: function (p) {
             this.midi = 12 * (this.octave + 1) + pitchClassToMidi(p);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Note.prototype, "duration", {
         /**
-         * The duration of the segment in seconds
+         * The duration of the segment in seconds.
          */
         get: function () {
             var header = privateHeaderMap.get(this);
@@ -1312,12 +1328,12 @@ var Note = /** @class */ (function () {
             var noteEndTicks = header.secondsToTicks(this.time + d);
             this.durationTicks = noteEndTicks - this.ticks;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Note.prototype, "time", {
         /**
-         * The time of the event in seconds
+         * The time of the event in seconds.
          */
         get: function () {
             var header = privateHeaderMap.get(this);
@@ -1327,20 +1343,20 @@ var Note = /** @class */ (function () {
             var header = privateHeaderMap.get(this);
             this.ticks = header.secondsToTicks(t);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Note.prototype, "bars", {
         /**
          * The number of measures (and partial measures) to this beat.
-         * Takes into account time signature changes
+         * Takes into account time signature changes.
          * @readonly
          */
         get: function () {
             var header = privateHeaderMap.get(this);
             return header.ticksToMeasures(this.ticks);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Note.prototype.toJSON = function () {
@@ -1369,9 +1385,10 @@ exports.Note = Note;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PitchBend = void 0;
 var privateHeaderMap = new WeakMap();
 /**
- * Represents a pitch bend event
+ * Represents a pitch bend event.
  */
 var PitchBend = /** @class */ (function () {
     /**
@@ -1395,7 +1412,7 @@ var PitchBend = /** @class */ (function () {
             var header = privateHeaderMap.get(this);
             this.ticks = header.secondsToTicks(t);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     PitchBend.prototype.toJSON = function () {
@@ -1420,6 +1437,7 @@ exports.PitchBend = PitchBend;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Track = void 0;
 var BinarySearch_1 = __webpack_require__(/*! ./BinarySearch */ "./node_modules/@tonejs/midi/dist/BinarySearch.js");
 var ControlChange_1 = __webpack_require__(/*! ./ControlChange */ "./node_modules/@tonejs/midi/dist/ControlChange.js");
 var ControlChanges_1 = __webpack_require__(/*! ./ControlChanges */ "./node_modules/@tonejs/midi/dist/ControlChanges.js");
@@ -1428,49 +1446,51 @@ var Instrument_1 = __webpack_require__(/*! ./Instrument */ "./node_modules/@tone
 var Note_1 = __webpack_require__(/*! ./Note */ "./node_modules/@tonejs/midi/dist/Note.js");
 var privateHeaderMap = new WeakMap();
 /**
- * A Track is a collection of notes and controlChanges
+ * A Track is a collection of 'notes' and 'controlChanges'.
  */
 var Track = /** @class */ (function () {
     function Track(trackData, header) {
         var _this = this;
         /**
-         * The name of the track
+         * The name of the track.
          */
         this.name = "";
         /**
-         * The track's note events
+         * The track's note events.
          */
         this.notes = [];
         /**
-         * The control change events
+         * The control change events.
          */
-        this.controlChanges = ControlChanges_1.createControlChanges();
+        this.controlChanges = (0, ControlChanges_1.createControlChanges)();
         /**
-         * The pitch bend events
+         * The pitch bend events.
          */
         this.pitchBends = [];
         privateHeaderMap.set(this, header);
         if (trackData) {
+            // Get the name of the track.
             var nameEvent = trackData.find(function (e) { return e.type === "trackName"; });
+            // Set empty name if 'trackName' event isn't found.
             this.name = nameEvent ? nameEvent.text : "";
         }
         this.instrument = new Instrument_1.Instrument(trackData, this);
-        // defaults to 0
+        // Defaults to 0.
         this.channel = 0;
         if (trackData) {
             var noteOns = trackData.filter(function (event) { return event.type === "noteOn"; });
             var noteOffs = trackData.filter(function (event) { return event.type === "noteOff"; });
             var _loop_1 = function () {
                 var currentNote = noteOns.shift();
-                // set the channel based on the note
+                // Set the channel based on the note.
                 this_1.channel = currentNote.channel;
-                // find the corresponding note off
+                // Find the corresponding note off.
                 var offIndex = noteOffs.findIndex(function (note) {
                     return note.noteNumber === currentNote.noteNumber &&
                         note.absoluteTime >= currentNote.absoluteTime;
                 });
                 if (offIndex !== -1) {
-                    // once it's got the note off, add it
+                    // Once it's got the note off, add it.
                     var noteOff = noteOffs.splice(offIndex, 1)[0];
                     this_1.addNote({
                         durationTicks: noteOff.absoluteTime - currentNote.absoluteTime,
@@ -1497,7 +1517,7 @@ var Track = /** @class */ (function () {
             pitchBends.forEach(function (event) {
                 _this.addPitchBend({
                     ticks: event.absoluteTime,
-                    // scale the value between -2^13 to 2^13 to -2 to 2
+                    // Scale the value between -2^13 to 2^13 to -2 to 2.
                     value: event.value / Math.pow(2, 13),
                 });
             });
@@ -1511,8 +1531,8 @@ var Track = /** @class */ (function () {
         }
     }
     /**
-     * Add a note to the notes array
-     * @param props The note properties to add
+     * Add a note to the notes array.
+     * @param props The note properties to add.
      */
     Track.prototype.addNote = function (props) {
         var header = privateHeaderMap.get(this);
@@ -1525,11 +1545,11 @@ var Track = /** @class */ (function () {
             velocity: 0,
         }, header);
         Object.assign(note, props);
-        BinarySearch_1.insert(this.notes, note, "ticks");
+        (0, BinarySearch_1.insert)(this.notes, note, "ticks");
         return this;
     };
     /**
-     * Add a control change to the track
+     * Add a control change to the track.
      * @param props
      */
     Track.prototype.addCC = function (props) {
@@ -1542,22 +1562,22 @@ var Track = /** @class */ (function () {
         if (!Array.isArray(this.controlChanges[cc.number])) {
             this.controlChanges[cc.number] = [];
         }
-        BinarySearch_1.insert(this.controlChanges[cc.number], cc, "ticks");
+        (0, BinarySearch_1.insert)(this.controlChanges[cc.number], cc, "ticks");
         return this;
     };
     /**
-     * Add a control change to the track
+     * Add a control change to the track.
      */
     Track.prototype.addPitchBend = function (props) {
         var header = privateHeaderMap.get(this);
         var pb = new PitchBend_1.PitchBend({}, header);
         Object.assign(pb, props);
-        BinarySearch_1.insert(this.pitchBends, pb, "ticks");
+        (0, BinarySearch_1.insert)(this.pitchBends, pb, "ticks");
         return this;
     };
     Object.defineProperty(Track.prototype, "duration", {
         /**
-         * The end time of the last event in the track
+         * The end time of the last event in the track.
          */
         get: function () {
             if (!this.notes.length) {
@@ -1573,12 +1593,12 @@ var Track = /** @class */ (function () {
             }
             return maxDuration;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Track.prototype, "durationTicks", {
         /**
-         * The end time of the last event in the track in ticks
+         * The end time of the last event in the track in ticks.
          */
         get: function () {
             if (!this.notes.length) {
@@ -1594,11 +1614,11 @@ var Track = /** @class */ (function () {
             }
             return maxDuration;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
-     * Assign the json values to this track
+     * Assign the JSON values to this track.
      */
     Track.prototype.fromJSON = function (json) {
         var _this = this;
@@ -1630,10 +1650,10 @@ var Track = /** @class */ (function () {
         });
     };
     /**
-     * Convert the track into a JSON format
+     * Convert the track into a JSON format.
      */
     Track.prototype.toJSON = function () {
-        // convert all the CCs to JSON
+        // Convert all the CCs to JSON.
         var controlChanges = {};
         for (var i = 0; i < 127; i++) {
             if (this.controlChanges.hasOwnProperty(i)) {
@@ -1662,121 +1682,39 @@ exports.Track = Track;
 
 /***/ }),
 
-/***/ "./node_modules/array-flatten/array-flatten.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/array-flatten/array-flatten.js ***!
-  \*****************************************************/
-/***/ ((module) => {
+/***/ "./node_modules/array-flatten/dist.es2015/index.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/array-flatten/dist.es2015/index.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-
-
-/**
- * Expose `arrayFlatten`.
- */
-module.exports = flatten
-module.exports.from = flattenFrom
-module.exports.depth = flattenDepth
-module.exports.fromDepth = flattenFromDepth
-
-/**
- * Flatten an array.
- *
- * @param  {Array} array
- * @return {Array}
- */
-function flatten (array) {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected value to be an array')
-  }
-
-  return flattenFrom(array)
-}
-
-/**
- * Flatten an array-like structure.
- *
- * @param  {Array} array
- * @return {Array}
- */
-function flattenFrom (array) {
-  return flattenDown(array, [])
-}
-
-/**
- * Flatten an array-like structure with depth.
- *
- * @param  {Array}  array
- * @param  {number} depth
- * @return {Array}
- */
-function flattenDepth (array, depth) {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected value to be an array')
-  }
-
-  return flattenFromDepth(array, depth)
-}
-
-/**
- * Flatten an array-like structure with depth.
- *
- * @param  {Array}  array
- * @param  {number} depth
- * @return {Array}
- */
-function flattenFromDepth (array, depth) {
-  if (typeof depth !== 'number') {
-    throw new TypeError('Expected the depth to be a number')
-  }
-
-  return flattenDownDepth(array, [], depth)
-}
-
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "flatten": () => (/* binding */ flatten)
+/* harmony export */ });
 /**
  * Flatten an array indefinitely.
- *
- * @param  {Array} array
- * @param  {Array} result
- * @return {Array}
  */
-function flattenDown (array, result) {
-  for (var i = 0; i < array.length; i++) {
-    var value = array[i]
-
-    if (Array.isArray(value)) {
-      flattenDown(value, result)
-    } else {
-      result.push(value)
-    }
-  }
-
-  return result
+function flatten(array) {
+    var result = [];
+    $flatten(array, result);
+    return result;
 }
-
 /**
- * Flatten an array with depth.
- *
- * @param  {Array}  array
- * @param  {Array}  result
- * @param  {number} depth
- * @return {Array}
+ * Internal flatten function recursively passes `result`.
  */
-function flattenDownDepth (array, result, depth) {
-  depth--
-
-  for (var i = 0; i < array.length; i++) {
-    var value = array[i]
-
-    if (depth > -1 && Array.isArray(value)) {
-      flattenDownDepth(value, result, depth)
-    } else {
-      result.push(value)
+function $flatten(array, result) {
+    for (var i = 0; i < array.length; i++) {
+        var value = array[i];
+        if (Array.isArray(value)) {
+            $flatten(value, result);
+        }
+        else {
+            result.push(value);
+        }
     }
-  }
-
-  return result
 }
-
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 
@@ -1788,10 +1726,10 @@ function flattenDownDepth (array, result, depth) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isArticulation": () => (/* binding */ isArticulation),
-/* harmony export */   "EnumArticulation": () => (/* binding */ EnumArticulation),
 /* harmony export */   "Articulation": () => (/* binding */ Articulation),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "EnumArticulation": () => (/* binding */ EnumArticulation),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isArticulation": () => (/* binding */ isArticulation)
 /* harmony export */ });
 const isArticulation = (x) => {
   return x instanceof Articulation || typeof x === "object" && x !== null && (typeof x.name === "undefined" || typeof x.name === "string") && typeof x.velocity === "number" && typeof x.length === "number";
@@ -1867,10 +1805,10 @@ Articulation.EnumArticulation = EnumArticulation;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isChord": () => (/* binding */ isChord),
-/* harmony export */   "isChordArray": () => (/* binding */ isChordArray),
 /* harmony export */   "Chord": () => (/* binding */ Chord),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isChord": () => (/* binding */ isChord),
+/* harmony export */   "isChordArray": () => (/* binding */ isChordArray)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
@@ -2155,8 +2093,8 @@ Chord.EnumChord = _EnumChord__WEBPACK_IMPORTED_MODULE_4__["default"];
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isColor": () => (/* binding */ isColor),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isColor": () => (/* binding */ isColor)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 
@@ -2214,10 +2152,10 @@ Color.isColor = isColor;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isDurationAbbreviation": () => (/* binding */ isDurationAbbreviation),
-/* harmony export */   "isDuration": () => (/* binding */ isDuration),
 /* harmony export */   "Duration": () => (/* binding */ Duration),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isDuration": () => (/* binding */ isDuration),
+/* harmony export */   "isDurationAbbreviation": () => (/* binding */ isDurationAbbreviation)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 
@@ -2388,6 +2326,8 @@ const _Duration = class {
   simplify() {
     if (this.numerator === 0)
       return this;
+    if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator))
+      return this;
     const f = Math.max((0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.numerator), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.denominator));
     const $gcd = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator * f, this.denominator * f) / f;
     if ($gcd !== 1) {
@@ -2468,9 +2408,9 @@ Enum.indexes = [];
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isEnumChord": () => (/* binding */ isEnumChord),
 /* harmony export */   "EnumChord": () => (/* binding */ EnumChord),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isEnumChord": () => (/* binding */ isEnumChord)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
@@ -2482,6 +2422,16 @@ const isEnumChord = (x) => {
   return x instanceof EnumChord || typeof x === "object" && x !== null && x.className === "EnumChord" && (0,_Interval__WEBPACK_IMPORTED_MODULE_0__.isIntervalArray)(x.intervals);
 };
 const _EnumChord = class extends _Enum__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  constructor(p1, ...intervalsIn) {
+    super();
+    if (typeof p1 === "string") {
+      this._name = p1;
+      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["default"].fromArray(intervalsIn);
+    } else {
+      this._name = p1._name;
+      this.intervals = p1.intervals.map((i) => i.clone());
+    }
+  }
   static get MAJ() {
     return new _EnumChord("MAJ", "M3", "P5");
   }
@@ -2530,16 +2480,6 @@ const _EnumChord = class extends _Enum__WEBPACK_IMPORTED_MODULE_1__["default"] {
   static get DOM7DIM5() {
     return new _EnumChord("DOM7DIM5", "M3", "d5", "m7");
   }
-  constructor(p1, ...intervalsIn) {
-    super();
-    if (typeof p1 === "string") {
-      this._name = p1;
-      this.intervals = _Interval__WEBPACK_IMPORTED_MODULE_0__["default"].fromArray(intervalsIn);
-    } else {
-      this._name = p1._name;
-      this.intervals = p1.intervals.map((i) => i.clone());
-    }
-  }
   static from(that) {
     return this.byChord(that);
   }
@@ -2582,9 +2522,9 @@ EnumChord.indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", 
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isEnumNote": () => (/* binding */ isEnumNote),
 /* harmony export */   "EnumNote": () => (/* binding */ EnumNote),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isEnumNote": () => (/* binding */ isEnumNote)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -2596,6 +2536,10 @@ const isEnumNote = (x) => {
   return x instanceof EnumNote || typeof x === "object" && x !== null && x.className === "EnumNote" && _Interval__WEBPACK_IMPORTED_MODULE_1__.DEGREE_TO_OFFSET.indexOf(x.offset) !== -1;
 };
 const _EnumNote = class extends _Enum__WEBPACK_IMPORTED_MODULE_2__["default"] {
+  constructor(offsetIn) {
+    super();
+    this.offset = offsetIn;
+  }
   static get C() {
     return new _EnumNote(0);
   }
@@ -2616,10 +2560,6 @@ const _EnumNote = class extends _Enum__WEBPACK_IMPORTED_MODULE_2__["default"] {
   }
   static get B() {
     return new _EnumNote(11);
-  }
-  constructor(offsetIn) {
-    super();
-    this.offset = offsetIn;
   }
   static from(that) {
     return this.byOffset(that.offset);
@@ -2702,10 +2642,10 @@ Frequency.getRatio = (d) => 2 ** (d / 12);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DEGREE_TO_OFFSET": () => (/* binding */ DEGREE_TO_OFFSET),
-/* harmony export */   "isInterval": () => (/* binding */ isInterval),
-/* harmony export */   "isIntervalArray": () => (/* binding */ isIntervalArray),
 /* harmony export */   "Interval": () => (/* binding */ Interval),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isInterval": () => (/* binding */ isInterval),
+/* harmony export */   "isIntervalArray": () => (/* binding */ isIntervalArray)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
@@ -2721,6 +2661,10 @@ const isIntervalArray = (x) => {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.isObjectArray)(x, isInterval);
 };
 const _EnumIntervalProperty = class extends _Enum__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  constructor(abbIn) {
+    super();
+    this.abb = abbIn;
+  }
   static get PERFECT() {
     return new _EnumIntervalProperty("P");
   }
@@ -2741,10 +2685,6 @@ const _EnumIntervalProperty = class extends _Enum__WEBPACK_IMPORTED_MODULE_1__["
     if (name)
       return _EnumIntervalProperty[name];
     throw new SyntaxError(`No such interval property with abbreviation ${abbIn}.`);
-  }
-  constructor(abbIn) {
-    super();
-    this.abb = abbIn;
   }
   get className() {
     return "EnumIntervalProperty";
@@ -2972,10 +2912,10 @@ Interval.EnumIntervalProperty = EnumIntervalProperty;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isNote": () => (/* binding */ isNote),
-/* harmony export */   "isNoteArray": () => (/* binding */ isNoteArray),
 /* harmony export */   "Note": () => (/* binding */ Note),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isNote": () => (/* binding */ isNote),
+/* harmony export */   "isNoteArray": () => (/* binding */ isNoteArray)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -3200,9 +3140,9 @@ Note.EnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__["default"];
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isParam": () => (/* binding */ isParam),
 /* harmony export */   "Param": () => (/* binding */ Param),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isParam": () => (/* binding */ isParam)
 /* harmony export */ });
 const isParam = (x) => {
   return x instanceof Param || typeof x === "object" && x !== null && typeof x.path === "string" && (typeof x.name === "undefined" || x.name === "string") && typeof x.min === "number" && typeof x.max === "number" && typeof x.step === "number" && typeof x.value === "number" && typeof x.init === "number";
@@ -3271,10 +3211,10 @@ Param.isParam = isParam;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isPitch": () => (/* binding */ isPitch),
-/* harmony export */   "isPitchArray": () => (/* binding */ isPitchArray),
 /* harmony export */   "Pitch": () => (/* binding */ Pitch),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isPitch": () => (/* binding */ isPitch),
+/* harmony export */   "isPitchArray": () => (/* binding */ isPitchArray)
 /* harmony export */ });
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _EnumNote__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EnumNote */ "./src/EnumNote.ts");
@@ -3312,12 +3252,12 @@ const isPitchArray = (x) => {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_4__.isObjectArray)(x, isPitchArray);
 };
 const _Pitch = class extends _Note__WEBPACK_IMPORTED_MODULE_0__["default"] {
-  static fromFrequency(f) {
-    return new _Pitch(69 + 12 * (Math.log(f / _Frequency__WEBPACK_IMPORTED_MODULE_3__["default"].A440) / Math.log(2)));
-  }
   constructor(p1, p2 = 4) {
     super();
     this.become(p1, p2);
+  }
+  static fromFrequency(f) {
+    return new _Pitch(69 + 12 * (Math.log(f / _Frequency__WEBPACK_IMPORTED_MODULE_3__["default"].A440) / Math.log(2)));
   }
   become(p1, p2 = 4) {
     if (isPitch(p1)) {
@@ -3481,9 +3421,9 @@ Pitch.isPitchArray = isPitchArray;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EnumScale": () => (/* binding */ EnumScale),
-/* harmony export */   "isScale": () => (/* binding */ isScale),
 /* harmony export */   "Scale": () => (/* binding */ Scale),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isScale": () => (/* binding */ isScale)
 /* harmony export */ });
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -3660,9 +3600,9 @@ Scale.EnumScale = EnumScale;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isTimeCode": () => (/* binding */ isTimeCode),
 /* harmony export */   "TimeCode": () => (/* binding */ TimeCode),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isTimeCode": () => (/* binding */ isTimeCode)
 /* harmony export */ });
 const isTimeCode = (x) => {
   return x instanceof TimeCode || typeof x.beats === "number" && typeof x.beatDuration === "number" && typeof x.bpm === "number";
@@ -3708,10 +3648,10 @@ TimeCode.isTimeCode = isTimeCode;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isTonalChord": () => (/* binding */ isTonalChord),
-/* harmony export */   "isTonalChordArray": () => (/* binding */ isTonalChordArray),
 /* harmony export */   "TonalChord": () => (/* binding */ TonalChord),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isTonalChord": () => (/* binding */ isTonalChord),
+/* harmony export */   "isTonalChordArray": () => (/* binding */ isTonalChordArray)
 /* harmony export */ });
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _EnumChord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EnumChord */ "./src/EnumChord.ts");
@@ -3815,9 +3755,9 @@ TonalChord.isTonalChordArray = isTonalChordArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isTonality": () => (/* binding */ isTonality),
 /* harmony export */   "Tonality": () => (/* binding */ Tonality),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isTonality": () => (/* binding */ isTonality)
 /* harmony export */ });
 /* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
@@ -3929,10 +3869,10 @@ Tonality.isTonality = isTonality;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isVelocity": () => (/* binding */ isVelocity),
 /* harmony export */   "EnumVelocity": () => (/* binding */ EnumVelocity),
 /* harmony export */   "Velocity": () => (/* binding */ Velocity),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isVelocity": () => (/* binding */ isVelocity)
 /* harmony export */ });
 const isVelocity = (x) => {
   return x instanceof Velocity || typeof x === "object" && x !== null && typeof x.velocity === "number";
@@ -4051,10 +3991,10 @@ Velocity.EnumVelocity = EnumVelocity;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isAutomation": () => (/* binding */ isAutomation),
-/* harmony export */   "isAutomationArray": () => (/* binding */ isAutomationArray),
 /* harmony export */   "Automation": () => (/* binding */ Automation),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isAutomation": () => (/* binding */ isAutomation),
+/* harmony export */   "isAutomationArray": () => (/* binding */ isAutomationArray)
 /* harmony export */ });
 /* harmony import */ var _AutomationPoint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutomationPoint */ "./src/effect/AutomationPoint.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
@@ -4138,10 +4078,10 @@ Automation.isAutomationArray = isAutomationArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isAutomationPoint": () => (/* binding */ isAutomationPoint),
-/* harmony export */   "isAutomationPointArray": () => (/* binding */ isAutomationPointArray),
 /* harmony export */   "AutomationPoint": () => (/* binding */ AutomationPoint),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isAutomationPoint": () => (/* binding */ isAutomationPoint),
+/* harmony export */   "isAutomationPointArray": () => (/* binding */ isAutomationPointArray)
 /* harmony export */ });
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
@@ -4231,15 +4171,15 @@ class Random {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "x2dx": () => (/* binding */ x2dx),
-/* harmony export */   "dx2x": () => (/* binding */ dx2x),
 /* harmony export */   "arithSer": () => (/* binding */ arithSer),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "dx2x": () => (/* binding */ dx2x),
 /* harmony export */   "fiboSer": () => (/* binding */ fiboSer),
 /* harmony export */   "geometricSer": () => (/* binding */ geometricSer),
+/* harmony export */   "inharmSer": () => (/* binding */ inharmSer),
 /* harmony export */   "isPrime": () => (/* binding */ isPrime),
 /* harmony export */   "primeSer": () => (/* binding */ primeSer),
-/* harmony export */   "inharmSer": () => (/* binding */ inharmSer),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "x2dx": () => (/* binding */ x2dx)
 /* harmony export */ });
 const x2dx = (array) => {
   const [, ...rest] = array;
@@ -4332,9 +4272,9 @@ const Series = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isRoll": () => (/* binding */ isRoll),
 /* harmony export */   "Roll": () => (/* binding */ Roll),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isRoll": () => (/* binding */ isRoll)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4467,10 +4407,10 @@ Roll.isRoll = isRoll;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isSegment": () => (/* binding */ isSegment),
-/* harmony export */   "isSegmentArray": () => (/* binding */ isSegmentArray),
 /* harmony export */   "Segment": () => (/* binding */ Segment),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isSegment": () => (/* binding */ isSegment),
+/* harmony export */   "isSegmentArray": () => (/* binding */ isSegmentArray)
 /* harmony export */ });
 /* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
 /* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
@@ -4548,12 +4488,12 @@ Segment.isSegmentArray = isSegmentArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Sequence": () => (/* binding */ Sequence),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   "isSequence": () => (/* binding */ isSequence),
 /* harmony export */   "isSequenceArray": () => (/* binding */ isSequenceArray),
 /* harmony export */   "isSequenceInstanceArrayLike": () => (/* binding */ isSequenceInstanceArrayLike),
-/* harmony export */   "isSequenceInstanceIterable": () => (/* binding */ isSequenceInstanceIterable),
-/* harmony export */   "Sequence": () => (/* binding */ Sequence),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "isSequenceInstanceIterable": () => (/* binding */ isSequenceInstanceIterable)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4710,9 +4650,9 @@ Sequence.isSequenceInstanceIterable = isSequenceInstanceIterable;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isSequences": () => (/* binding */ isSequences),
 /* harmony export */   "Sequences": () => (/* binding */ Sequences),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "isSequences": () => (/* binding */ isSequences)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4828,12 +4768,12 @@ Sequences.isSequences = isSequences;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TrackChord": () => (/* binding */ TrackChord),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   "isTrackChord": () => (/* binding */ isTrackChord),
 /* harmony export */   "isTrackChordArray": () => (/* binding */ isTrackChordArray),
 /* harmony export */   "isTrackChordInstanceArrayLike": () => (/* binding */ isTrackChordInstanceArrayLike),
-/* harmony export */   "isTrackChordInstanceIterable": () => (/* binding */ isTrackChordInstanceIterable),
-/* harmony export */   "TrackChord": () => (/* binding */ TrackChord),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "isTrackChordInstanceIterable": () => (/* binding */ isTrackChordInstanceIterable)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4987,9 +4927,9 @@ TrackChord.isTrackChordInstanceIterable = isTrackChordInstanceIterable;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ TrackNote),
 /* harmony export */   "isTrackNote": () => (/* binding */ isTrackNote),
-/* harmony export */   "isTrackNoteArray": () => (/* binding */ isTrackNoteArray),
-/* harmony export */   "default": () => (/* binding */ TrackNote)
+/* harmony export */   "isTrackNoteArray": () => (/* binding */ isTrackNoteArray)
 /* harmony export */ });
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Pitch */ "./src/Pitch.ts");
@@ -5058,32 +4998,32 @@ TrackNote.isTrackNoteArray = isTrackNoteArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "precisionFactor": () => (/* binding */ precisionFactor),
-/* harmony export */   "gcd": () => (/* binding */ gcd),
-/* harmony export */   "lcm": () => (/* binding */ lcm),
+/* harmony export */   "combinations": () => (/* binding */ combinations),
+/* harmony export */   "combinationsSized": () => (/* binding */ combinationsSized),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   "floorMod": () => (/* binding */ floorMod),
-/* harmony export */   "isStringArray": () => (/* binding */ isStringArray),
+/* harmony export */   "gcd": () => (/* binding */ gcd),
+/* harmony export */   "getValueFromCurve": () => (/* binding */ getValueFromCurve),
 /* harmony export */   "isNumberArray": () => (/* binding */ isNumberArray),
 /* harmony export */   "isObjectArray": () => (/* binding */ isObjectArray),
-/* harmony export */   "isObjectInstanceArray": () => (/* binding */ isObjectInstanceArray),
 /* harmony export */   "isObjectArrayLike": () => (/* binding */ isObjectArrayLike),
+/* harmony export */   "isObjectInstanceArray": () => (/* binding */ isObjectInstanceArray),
 /* harmony export */   "isObjectInstanceArrayLike": () => (/* binding */ isObjectInstanceArrayLike),
-/* harmony export */   "isObjectIterable": () => (/* binding */ isObjectIterable),
 /* harmony export */   "isObjectInstanceIterable": () => (/* binding */ isObjectInstanceIterable),
-/* harmony export */   "parseRoman": () => (/* binding */ parseRoman),
-/* harmony export */   "toRoman": () => (/* binding */ toRoman),
-/* harmony export */   "getValueFromCurve": () => (/* binding */ getValueFromCurve),
+/* harmony export */   "isObjectIterable": () => (/* binding */ isObjectIterable),
+/* harmony export */   "isStringArray": () => (/* binding */ isStringArray),
+/* harmony export */   "lcm": () => (/* binding */ lcm),
 /* harmony export */   "nearestFraction": () => (/* binding */ nearestFraction),
 /* harmony export */   "nearestFractions": () => (/* binding */ nearestFractions),
 /* harmony export */   "nearestReciprocal": () => (/* binding */ nearestReciprocal),
 /* harmony export */   "nearestReciprocals": () => (/* binding */ nearestReciprocals),
+/* harmony export */   "parseRoman": () => (/* binding */ parseRoman),
 /* harmony export */   "permutations": () => (/* binding */ permutations),
 /* harmony export */   "permute": () => (/* binding */ permute),
-/* harmony export */   "combinations": () => (/* binding */ combinations),
-/* harmony export */   "combinationsSized": () => (/* binding */ combinationsSized),
+/* harmony export */   "precisionFactor": () => (/* binding */ precisionFactor),
 /* harmony export */   "randomCombination": () => (/* binding */ randomCombination),
 /* harmony export */   "randomCombinationSized": () => (/* binding */ randomCombinationSized),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "toRoman": () => (/* binding */ toRoman)
 /* harmony export */ });
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 
@@ -5518,11 +5458,16 @@ function parseTrack(data) {
             return event
           case 0x58:
             event.type = 'timeSignature'
-            if (length != 4) throw "Expected length for timeSignature event is 4, got " + length
+            if (length != 2 && length != 4) throw "Expected length for timeSignature event is 4 or 2, got " + length
             event.numerator = p.readUInt8()
             event.denominator = (1 << p.readUInt8())
-            event.metronome = p.readUInt8()
-            event.thirtyseconds = p.readUInt8()
+            if (length === 4) {
+              event.metronome = p.readUInt8()
+              event.thirtyseconds = p.readUInt8()
+            } else {
+              event.metronome = 0x24
+              event.thirtyseconds = 0x08
+            }
             return event
           case 0x59:
             event.type = 'keySignature'
@@ -7238,20 +7183,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Note": () => (/* reexport safe */ _Note__WEBPACK_IMPORTED_MODULE_6__["default"]),
 /* harmony export */   "Param": () => (/* reexport safe */ _Param__WEBPACK_IMPORTED_MODULE_7__["default"]),
 /* harmony export */   "Pitch": () => (/* reexport safe */ _Pitch__WEBPACK_IMPORTED_MODULE_8__["default"]),
+/* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
+/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_20__["default"]),
 /* harmony export */   "Scale": () => (/* reexport safe */ _Scale__WEBPACK_IMPORTED_MODULE_9__["default"]),
+/* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
+/* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
+/* harmony export */   "Sequences": () => (/* reexport safe */ _track_Sequences__WEBPACK_IMPORTED_MODULE_19__["default"]),
+/* harmony export */   "Series": () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"]),
 /* harmony export */   "TimeCode": () => (/* reexport safe */ _TimeCode__WEBPACK_IMPORTED_MODULE_10__["default"]),
 /* harmony export */   "TonalChord": () => (/* reexport safe */ _TonalChord__WEBPACK_IMPORTED_MODULE_11__["default"]),
 /* harmony export */   "Tonality": () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__["default"]),
-/* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"]),
-/* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
-/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__["default"]),
 /* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__["default"]),
-/* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
-/* harmony export */   "Sequences": () => (/* reexport safe */ _track_Sequences__WEBPACK_IMPORTED_MODULE_19__["default"]),
-/* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
-/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_20__["default"]),
+/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__["default"]),
 /* harmony export */   "Utils": () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_15__["default"]),
-/* harmony export */   "Series": () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"])
+/* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"])
 /* harmony export */ });
 /* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Articulation */ "./src/Articulation.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
@@ -7276,6 +7221,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
 /* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
 /* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
+Object(function webpackMissingModule() { var e = new Error("Cannot find module './types'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
 
 
 
