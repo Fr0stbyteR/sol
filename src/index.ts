@@ -21,7 +21,7 @@ import Sequences from "./track/Sequences";
 import Roll from "./track/Roll";
 import TrackChord from "./track/TrackChord";
 import TrackNote from "./track/TrackNote";
-import "./types";
+import "./types.d";
 
 /*
 export * as Articulation from "./Articulation";

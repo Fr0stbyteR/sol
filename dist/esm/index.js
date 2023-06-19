@@ -1690,7 +1690,7 @@ exports.Track = Track;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "flatten": () => (/* binding */ flatten)
+/* harmony export */   flatten: () => (/* binding */ flatten)
 /* harmony export */ });
 /**
  * Flatten an array indefinitely.
@@ -1726,10 +1726,10 @@ function $flatten(array, result) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Articulation": () => (/* binding */ Articulation),
-/* harmony export */   "EnumArticulation": () => (/* binding */ EnumArticulation),
+/* harmony export */   Articulation: () => (/* binding */ Articulation),
+/* harmony export */   EnumArticulation: () => (/* binding */ EnumArticulation),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isArticulation": () => (/* binding */ isArticulation)
+/* harmony export */   isArticulation: () => (/* binding */ isArticulation)
 /* harmony export */ });
 const isArticulation = (x) => {
   return x instanceof Articulation || typeof x === "object" && x !== null && (typeof x.name === "undefined" || typeof x.name === "string") && typeof x.velocity === "number" && typeof x.length === "number";
@@ -1805,10 +1805,10 @@ Articulation.EnumArticulation = EnumArticulation;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Chord": () => (/* binding */ Chord),
+/* harmony export */   Chord: () => (/* binding */ Chord),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isChord": () => (/* binding */ isChord),
-/* harmony export */   "isChordArray": () => (/* binding */ isChordArray)
+/* harmony export */   isChord: () => (/* binding */ isChord),
+/* harmony export */   isChordArray: () => (/* binding */ isChordArray)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
@@ -2094,7 +2094,7 @@ Chord.EnumChord = _EnumChord__WEBPACK_IMPORTED_MODULE_4__["default"];
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isColor": () => (/* binding */ isColor)
+/* harmony export */   isColor: () => (/* binding */ isColor)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 
@@ -2152,10 +2152,10 @@ Color.isColor = isColor;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Duration": () => (/* binding */ Duration),
+/* harmony export */   Duration: () => (/* binding */ Duration),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isDuration": () => (/* binding */ isDuration),
-/* harmony export */   "isDurationAbbreviation": () => (/* binding */ isDurationAbbreviation)
+/* harmony export */   isDuration: () => (/* binding */ isDuration),
+/* harmony export */   isDurationAbbreviation: () => (/* binding */ isDurationAbbreviation)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 
@@ -2369,7 +2369,7 @@ Duration.isDuractionAbbreviation = isDurationAbbreviation;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Enum": () => (/* binding */ Enum),
+/* harmony export */   Enum: () => (/* binding */ Enum),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 class Enum {
@@ -2408,9 +2408,9 @@ Enum.indexes = [];
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EnumChord": () => (/* binding */ EnumChord),
+/* harmony export */   EnumChord: () => (/* binding */ EnumChord),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isEnumChord": () => (/* binding */ isEnumChord)
+/* harmony export */   isEnumChord: () => (/* binding */ isEnumChord)
 /* harmony export */ });
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
@@ -2522,9 +2522,9 @@ EnumChord.indexes = ["MAJ", "MIN", "AUG", "DIM", "SUS2", "SUS", "SUS4", "DOM7", 
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EnumNote": () => (/* binding */ EnumNote),
+/* harmony export */   EnumNote: () => (/* binding */ EnumNote),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isEnumNote": () => (/* binding */ isEnumNote)
+/* harmony export */   isEnumNote: () => (/* binding */ isEnumNote)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -2619,7 +2619,7 @@ EnumNote.b = _EnumNote.B;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Frequency": () => (/* binding */ Frequency),
+/* harmony export */   Frequency: () => (/* binding */ Frequency),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 class Frequency {
@@ -2641,11 +2641,11 @@ Frequency.getRatio = (d) => 2 ** (d / 12);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DEGREE_TO_OFFSET": () => (/* binding */ DEGREE_TO_OFFSET),
-/* harmony export */   "Interval": () => (/* binding */ Interval),
+/* harmony export */   DEGREE_TO_OFFSET: () => (/* binding */ DEGREE_TO_OFFSET),
+/* harmony export */   Interval: () => (/* binding */ Interval),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isInterval": () => (/* binding */ isInterval),
-/* harmony export */   "isIntervalArray": () => (/* binding */ isIntervalArray)
+/* harmony export */   isInterval: () => (/* binding */ isInterval),
+/* harmony export */   isIntervalArray: () => (/* binding */ isIntervalArray)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Enum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Enum */ "./src/Enum.ts");
@@ -2912,10 +2912,10 @@ Interval.EnumIntervalProperty = EnumIntervalProperty;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Note": () => (/* binding */ Note),
+/* harmony export */   Note: () => (/* binding */ Note),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isNote": () => (/* binding */ isNote),
-/* harmony export */   "isNoteArray": () => (/* binding */ isNoteArray)
+/* harmony export */   isNote: () => (/* binding */ isNote),
+/* harmony export */   isNoteArray: () => (/* binding */ isNoteArray)
 /* harmony export */ });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -3140,9 +3140,9 @@ Note.EnumNote = _EnumNote__WEBPACK_IMPORTED_MODULE_3__["default"];
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Param": () => (/* binding */ Param),
+/* harmony export */   Param: () => (/* binding */ Param),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isParam": () => (/* binding */ isParam)
+/* harmony export */   isParam: () => (/* binding */ isParam)
 /* harmony export */ });
 const isParam = (x) => {
   return x instanceof Param || typeof x === "object" && x !== null && typeof x.path === "string" && (typeof x.name === "undefined" || x.name === "string") && typeof x.min === "number" && typeof x.max === "number" && typeof x.step === "number" && typeof x.value === "number" && typeof x.init === "number";
@@ -3211,10 +3211,10 @@ Param.isParam = isParam;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Pitch": () => (/* binding */ Pitch),
+/* harmony export */   Pitch: () => (/* binding */ Pitch),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isPitch": () => (/* binding */ isPitch),
-/* harmony export */   "isPitchArray": () => (/* binding */ isPitchArray)
+/* harmony export */   isPitch: () => (/* binding */ isPitch),
+/* harmony export */   isPitchArray: () => (/* binding */ isPitchArray)
 /* harmony export */ });
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
 /* harmony import */ var _EnumNote__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EnumNote */ "./src/EnumNote.ts");
@@ -3420,10 +3420,10 @@ Pitch.isPitchArray = isPitchArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EnumScale": () => (/* binding */ EnumScale),
-/* harmony export */   "Scale": () => (/* binding */ Scale),
+/* harmony export */   EnumScale: () => (/* binding */ EnumScale),
+/* harmony export */   Scale: () => (/* binding */ Scale),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isScale": () => (/* binding */ isScale)
+/* harmony export */   isScale: () => (/* binding */ isScale)
 /* harmony export */ });
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Pitch */ "./src/Pitch.ts");
 /* harmony import */ var _Interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Interval */ "./src/Interval.ts");
@@ -3600,9 +3600,9 @@ Scale.EnumScale = EnumScale;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TimeCode": () => (/* binding */ TimeCode),
+/* harmony export */   TimeCode: () => (/* binding */ TimeCode),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isTimeCode": () => (/* binding */ isTimeCode)
+/* harmony export */   isTimeCode: () => (/* binding */ isTimeCode)
 /* harmony export */ });
 const isTimeCode = (x) => {
   return x instanceof TimeCode || typeof x.beats === "number" && typeof x.beatDuration === "number" && typeof x.bpm === "number";
@@ -3648,10 +3648,10 @@ TimeCode.isTimeCode = isTimeCode;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TonalChord": () => (/* binding */ TonalChord),
+/* harmony export */   TonalChord: () => (/* binding */ TonalChord),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isTonalChord": () => (/* binding */ isTonalChord),
-/* harmony export */   "isTonalChordArray": () => (/* binding */ isTonalChordArray)
+/* harmony export */   isTonalChord: () => (/* binding */ isTonalChord),
+/* harmony export */   isTonalChordArray: () => (/* binding */ isTonalChordArray)
 /* harmony export */ });
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
 /* harmony import */ var _EnumChord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EnumChord */ "./src/EnumChord.ts");
@@ -3755,9 +3755,9 @@ TonalChord.isTonalChordArray = isTonalChordArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Tonality": () => (/* binding */ Tonality),
+/* harmony export */   Tonality: () => (/* binding */ Tonality),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isTonality": () => (/* binding */ isTonality)
+/* harmony export */   isTonality: () => (/* binding */ isTonality)
 /* harmony export */ });
 /* harmony import */ var _Scale__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Scale */ "./src/Scale.ts");
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Note */ "./src/Note.ts");
@@ -3869,10 +3869,10 @@ Tonality.isTonality = isTonality;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "EnumVelocity": () => (/* binding */ EnumVelocity),
-/* harmony export */   "Velocity": () => (/* binding */ Velocity),
+/* harmony export */   EnumVelocity: () => (/* binding */ EnumVelocity),
+/* harmony export */   Velocity: () => (/* binding */ Velocity),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isVelocity": () => (/* binding */ isVelocity)
+/* harmony export */   isVelocity: () => (/* binding */ isVelocity)
 /* harmony export */ });
 const isVelocity = (x) => {
   return x instanceof Velocity || typeof x === "object" && x !== null && typeof x.velocity === "number";
@@ -3991,10 +3991,10 @@ Velocity.EnumVelocity = EnumVelocity;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Automation": () => (/* binding */ Automation),
+/* harmony export */   Automation: () => (/* binding */ Automation),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isAutomation": () => (/* binding */ isAutomation),
-/* harmony export */   "isAutomationArray": () => (/* binding */ isAutomationArray)
+/* harmony export */   isAutomation: () => (/* binding */ isAutomation),
+/* harmony export */   isAutomationArray: () => (/* binding */ isAutomationArray)
 /* harmony export */ });
 /* harmony import */ var _AutomationPoint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutomationPoint */ "./src/effect/AutomationPoint.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
@@ -4078,10 +4078,10 @@ Automation.isAutomationArray = isAutomationArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AutomationPoint": () => (/* binding */ AutomationPoint),
+/* harmony export */   AutomationPoint: () => (/* binding */ AutomationPoint),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isAutomationPoint": () => (/* binding */ isAutomationPoint),
-/* harmony export */   "isAutomationPointArray": () => (/* binding */ isAutomationPointArray)
+/* harmony export */   isAutomationPoint: () => (/* binding */ isAutomationPoint),
+/* harmony export */   isAutomationPointArray: () => (/* binding */ isAutomationPointArray)
 /* harmony export */ });
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Duration */ "./src/Duration.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils */ "./src/utils.ts");
@@ -4132,7 +4132,7 @@ AutomationPoint.isAutomationPointArray = isAutomationPointArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Random": () => (/* binding */ Random),
+/* harmony export */   Random: () => (/* binding */ Random),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var seedrandom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! seedrandom */ "./node_modules/seedrandom/index.js");
@@ -4171,15 +4171,15 @@ class Random {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "arithSer": () => (/* binding */ arithSer),
+/* harmony export */   arithSer: () => (/* binding */ arithSer),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "dx2x": () => (/* binding */ dx2x),
-/* harmony export */   "fiboSer": () => (/* binding */ fiboSer),
-/* harmony export */   "geometricSer": () => (/* binding */ geometricSer),
-/* harmony export */   "inharmSer": () => (/* binding */ inharmSer),
-/* harmony export */   "isPrime": () => (/* binding */ isPrime),
-/* harmony export */   "primeSer": () => (/* binding */ primeSer),
-/* harmony export */   "x2dx": () => (/* binding */ x2dx)
+/* harmony export */   dx2x: () => (/* binding */ dx2x),
+/* harmony export */   fiboSer: () => (/* binding */ fiboSer),
+/* harmony export */   geometricSer: () => (/* binding */ geometricSer),
+/* harmony export */   inharmSer: () => (/* binding */ inharmSer),
+/* harmony export */   isPrime: () => (/* binding */ isPrime),
+/* harmony export */   primeSer: () => (/* binding */ primeSer),
+/* harmony export */   x2dx: () => (/* binding */ x2dx)
 /* harmony export */ });
 const x2dx = (array) => {
   const [, ...rest] = array;
@@ -4272,9 +4272,9 @@ const Series = {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Roll": () => (/* binding */ Roll),
+/* harmony export */   Roll: () => (/* binding */ Roll),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isRoll": () => (/* binding */ isRoll)
+/* harmony export */   isRoll: () => (/* binding */ isRoll)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4407,10 +4407,10 @@ Roll.isRoll = isRoll;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Segment": () => (/* binding */ Segment),
+/* harmony export */   Segment: () => (/* binding */ Segment),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isSegment": () => (/* binding */ isSegment),
-/* harmony export */   "isSegmentArray": () => (/* binding */ isSegmentArray)
+/* harmony export */   isSegment: () => (/* binding */ isSegment),
+/* harmony export */   isSegmentArray: () => (/* binding */ isSegmentArray)
 /* harmony export */ });
 /* harmony import */ var _TrackChord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TrackChord */ "./src/track/TrackChord.ts");
 /* harmony import */ var _effect_Automation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../effect/Automation */ "./src/effect/Automation.ts");
@@ -4488,12 +4488,12 @@ Segment.isSegmentArray = isSegmentArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Sequence": () => (/* binding */ Sequence),
+/* harmony export */   Sequence: () => (/* binding */ Sequence),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isSequence": () => (/* binding */ isSequence),
-/* harmony export */   "isSequenceArray": () => (/* binding */ isSequenceArray),
-/* harmony export */   "isSequenceInstanceArrayLike": () => (/* binding */ isSequenceInstanceArrayLike),
-/* harmony export */   "isSequenceInstanceIterable": () => (/* binding */ isSequenceInstanceIterable)
+/* harmony export */   isSequence: () => (/* binding */ isSequence),
+/* harmony export */   isSequenceArray: () => (/* binding */ isSequenceArray),
+/* harmony export */   isSequenceInstanceArrayLike: () => (/* binding */ isSequenceInstanceArrayLike),
+/* harmony export */   isSequenceInstanceIterable: () => (/* binding */ isSequenceInstanceIterable)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4650,9 +4650,9 @@ Sequence.isSequenceInstanceIterable = isSequenceInstanceIterable;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Sequences": () => (/* binding */ Sequences),
+/* harmony export */   Sequences: () => (/* binding */ Sequences),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isSequences": () => (/* binding */ isSequences)
+/* harmony export */   isSequences: () => (/* binding */ isSequences)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4768,12 +4768,12 @@ Sequences.isSequences = isSequences;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "TrackChord": () => (/* binding */ TrackChord),
+/* harmony export */   TrackChord: () => (/* binding */ TrackChord),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "isTrackChord": () => (/* binding */ isTrackChord),
-/* harmony export */   "isTrackChordArray": () => (/* binding */ isTrackChordArray),
-/* harmony export */   "isTrackChordInstanceArrayLike": () => (/* binding */ isTrackChordInstanceArrayLike),
-/* harmony export */   "isTrackChordInstanceIterable": () => (/* binding */ isTrackChordInstanceIterable)
+/* harmony export */   isTrackChord: () => (/* binding */ isTrackChord),
+/* harmony export */   isTrackChordArray: () => (/* binding */ isTrackChordArray),
+/* harmony export */   isTrackChordInstanceArrayLike: () => (/* binding */ isTrackChordInstanceArrayLike),
+/* harmony export */   isTrackChordInstanceIterable: () => (/* binding */ isTrackChordInstanceIterable)
 /* harmony export */ });
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @tonejs/midi */ "./node_modules/@tonejs/midi/dist/Midi.js");
 /* harmony import */ var _tonejs_midi__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_tonejs_midi__WEBPACK_IMPORTED_MODULE_0__);
@@ -4928,8 +4928,8 @@ TrackChord.isTrackChordInstanceIterable = isTrackChordInstanceIterable;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ TrackNote),
-/* harmony export */   "isTrackNote": () => (/* binding */ isTrackNote),
-/* harmony export */   "isTrackNoteArray": () => (/* binding */ isTrackNoteArray)
+/* harmony export */   isTrackNote: () => (/* binding */ isTrackNote),
+/* harmony export */   isTrackNoteArray: () => (/* binding */ isTrackNoteArray)
 /* harmony export */ });
 /* harmony import */ var _Note__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Note */ "./src/Note.ts");
 /* harmony import */ var _Pitch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Pitch */ "./src/Pitch.ts");
@@ -4990,6 +4990,16 @@ TrackNote.isTrackNoteArray = isTrackNoteArray;
 
 /***/ }),
 
+/***/ "./src/types.d.ts":
+/*!************************!*\
+  !*** ./src/types.d.ts ***!
+  \************************/
+/***/ (() => {
+
+
+
+/***/ }),
+
 /***/ "./src/utils.ts":
 /*!**********************!*\
   !*** ./src/utils.ts ***!
@@ -4998,32 +5008,32 @@ TrackNote.isTrackNoteArray = isTrackNoteArray;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "combinations": () => (/* binding */ combinations),
-/* harmony export */   "combinationsSized": () => (/* binding */ combinationsSized),
+/* harmony export */   combinations: () => (/* binding */ combinations),
+/* harmony export */   combinationsSized: () => (/* binding */ combinationsSized),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "floorMod": () => (/* binding */ floorMod),
-/* harmony export */   "gcd": () => (/* binding */ gcd),
-/* harmony export */   "getValueFromCurve": () => (/* binding */ getValueFromCurve),
-/* harmony export */   "isNumberArray": () => (/* binding */ isNumberArray),
-/* harmony export */   "isObjectArray": () => (/* binding */ isObjectArray),
-/* harmony export */   "isObjectArrayLike": () => (/* binding */ isObjectArrayLike),
-/* harmony export */   "isObjectInstanceArray": () => (/* binding */ isObjectInstanceArray),
-/* harmony export */   "isObjectInstanceArrayLike": () => (/* binding */ isObjectInstanceArrayLike),
-/* harmony export */   "isObjectInstanceIterable": () => (/* binding */ isObjectInstanceIterable),
-/* harmony export */   "isObjectIterable": () => (/* binding */ isObjectIterable),
-/* harmony export */   "isStringArray": () => (/* binding */ isStringArray),
-/* harmony export */   "lcm": () => (/* binding */ lcm),
-/* harmony export */   "nearestFraction": () => (/* binding */ nearestFraction),
-/* harmony export */   "nearestFractions": () => (/* binding */ nearestFractions),
-/* harmony export */   "nearestReciprocal": () => (/* binding */ nearestReciprocal),
-/* harmony export */   "nearestReciprocals": () => (/* binding */ nearestReciprocals),
-/* harmony export */   "parseRoman": () => (/* binding */ parseRoman),
-/* harmony export */   "permutations": () => (/* binding */ permutations),
-/* harmony export */   "permute": () => (/* binding */ permute),
-/* harmony export */   "precisionFactor": () => (/* binding */ precisionFactor),
-/* harmony export */   "randomCombination": () => (/* binding */ randomCombination),
-/* harmony export */   "randomCombinationSized": () => (/* binding */ randomCombinationSized),
-/* harmony export */   "toRoman": () => (/* binding */ toRoman)
+/* harmony export */   floorMod: () => (/* binding */ floorMod),
+/* harmony export */   gcd: () => (/* binding */ gcd),
+/* harmony export */   getValueFromCurve: () => (/* binding */ getValueFromCurve),
+/* harmony export */   isNumberArray: () => (/* binding */ isNumberArray),
+/* harmony export */   isObjectArray: () => (/* binding */ isObjectArray),
+/* harmony export */   isObjectArrayLike: () => (/* binding */ isObjectArrayLike),
+/* harmony export */   isObjectInstanceArray: () => (/* binding */ isObjectInstanceArray),
+/* harmony export */   isObjectInstanceArrayLike: () => (/* binding */ isObjectInstanceArrayLike),
+/* harmony export */   isObjectInstanceIterable: () => (/* binding */ isObjectInstanceIterable),
+/* harmony export */   isObjectIterable: () => (/* binding */ isObjectIterable),
+/* harmony export */   isStringArray: () => (/* binding */ isStringArray),
+/* harmony export */   lcm: () => (/* binding */ lcm),
+/* harmony export */   nearestFraction: () => (/* binding */ nearestFraction),
+/* harmony export */   nearestFractions: () => (/* binding */ nearestFractions),
+/* harmony export */   nearestReciprocal: () => (/* binding */ nearestReciprocal),
+/* harmony export */   nearestReciprocals: () => (/* binding */ nearestReciprocals),
+/* harmony export */   parseRoman: () => (/* binding */ parseRoman),
+/* harmony export */   permutations: () => (/* binding */ permutations),
+/* harmony export */   permute: () => (/* binding */ permute),
+/* harmony export */   precisionFactor: () => (/* binding */ precisionFactor),
+/* harmony export */   randomCombination: () => (/* binding */ randomCombination),
+/* harmony export */   randomCombinationSized: () => (/* binding */ randomCombinationSized),
+/* harmony export */   toRoman: () => (/* binding */ toRoman)
 /* harmony export */ });
 /* harmony import */ var _Frequency__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Frequency */ "./src/Frequency.ts");
 
@@ -7174,29 +7184,29 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Articulation": () => (/* reexport safe */ _Articulation__WEBPACK_IMPORTED_MODULE_0__["default"]),
-/* harmony export */   "Chord": () => (/* reexport safe */ _Chord__WEBPACK_IMPORTED_MODULE_1__["default"]),
-/* harmony export */   "Color": () => (/* reexport safe */ _Color__WEBPACK_IMPORTED_MODULE_2__["default"]),
-/* harmony export */   "Duration": () => (/* reexport safe */ _Duration__WEBPACK_IMPORTED_MODULE_3__["default"]),
-/* harmony export */   "Frequency": () => (/* reexport safe */ _Frequency__WEBPACK_IMPORTED_MODULE_4__["default"]),
-/* harmony export */   "Interval": () => (/* reexport safe */ _Interval__WEBPACK_IMPORTED_MODULE_5__["default"]),
-/* harmony export */   "Note": () => (/* reexport safe */ _Note__WEBPACK_IMPORTED_MODULE_6__["default"]),
-/* harmony export */   "Param": () => (/* reexport safe */ _Param__WEBPACK_IMPORTED_MODULE_7__["default"]),
-/* harmony export */   "Pitch": () => (/* reexport safe */ _Pitch__WEBPACK_IMPORTED_MODULE_8__["default"]),
-/* harmony export */   "Random": () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
-/* harmony export */   "Roll": () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_20__["default"]),
-/* harmony export */   "Scale": () => (/* reexport safe */ _Scale__WEBPACK_IMPORTED_MODULE_9__["default"]),
-/* harmony export */   "Segment": () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
-/* harmony export */   "Sequence": () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
-/* harmony export */   "Sequences": () => (/* reexport safe */ _track_Sequences__WEBPACK_IMPORTED_MODULE_19__["default"]),
-/* harmony export */   "Series": () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"]),
-/* harmony export */   "TimeCode": () => (/* reexport safe */ _TimeCode__WEBPACK_IMPORTED_MODULE_10__["default"]),
-/* harmony export */   "TonalChord": () => (/* reexport safe */ _TonalChord__WEBPACK_IMPORTED_MODULE_11__["default"]),
-/* harmony export */   "Tonality": () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__["default"]),
-/* harmony export */   "TrackChord": () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__["default"]),
-/* harmony export */   "TrackNote": () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__["default"]),
-/* harmony export */   "Utils": () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_15__["default"]),
-/* harmony export */   "Velocity": () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"])
+/* harmony export */   Articulation: () => (/* reexport safe */ _Articulation__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   Chord: () => (/* reexport safe */ _Chord__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   Color: () => (/* reexport safe */ _Color__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   Duration: () => (/* reexport safe */ _Duration__WEBPACK_IMPORTED_MODULE_3__["default"]),
+/* harmony export */   Frequency: () => (/* reexport safe */ _Frequency__WEBPACK_IMPORTED_MODULE_4__["default"]),
+/* harmony export */   Interval: () => (/* reexport safe */ _Interval__WEBPACK_IMPORTED_MODULE_5__["default"]),
+/* harmony export */   Note: () => (/* reexport safe */ _Note__WEBPACK_IMPORTED_MODULE_6__["default"]),
+/* harmony export */   Param: () => (/* reexport safe */ _Param__WEBPACK_IMPORTED_MODULE_7__["default"]),
+/* harmony export */   Pitch: () => (/* reexport safe */ _Pitch__WEBPACK_IMPORTED_MODULE_8__["default"]),
+/* harmony export */   Random: () => (/* reexport safe */ _genre_Random__WEBPACK_IMPORTED_MODULE_14__["default"]),
+/* harmony export */   Roll: () => (/* reexport safe */ _track_Roll__WEBPACK_IMPORTED_MODULE_20__["default"]),
+/* harmony export */   Scale: () => (/* reexport safe */ _Scale__WEBPACK_IMPORTED_MODULE_9__["default"]),
+/* harmony export */   Segment: () => (/* reexport safe */ _track_Segment__WEBPACK_IMPORTED_MODULE_17__["default"]),
+/* harmony export */   Sequence: () => (/* reexport safe */ _track_Sequence__WEBPACK_IMPORTED_MODULE_18__["default"]),
+/* harmony export */   Sequences: () => (/* reexport safe */ _track_Sequences__WEBPACK_IMPORTED_MODULE_19__["default"]),
+/* harmony export */   Series: () => (/* reexport safe */ _series__WEBPACK_IMPORTED_MODULE_16__["default"]),
+/* harmony export */   TimeCode: () => (/* reexport safe */ _TimeCode__WEBPACK_IMPORTED_MODULE_10__["default"]),
+/* harmony export */   TonalChord: () => (/* reexport safe */ _TonalChord__WEBPACK_IMPORTED_MODULE_11__["default"]),
+/* harmony export */   Tonality: () => (/* reexport safe */ _Tonality__WEBPACK_IMPORTED_MODULE_12__["default"]),
+/* harmony export */   TrackChord: () => (/* reexport safe */ _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__["default"]),
+/* harmony export */   TrackNote: () => (/* reexport safe */ _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__["default"]),
+/* harmony export */   Utils: () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_15__["default"]),
+/* harmony export */   Velocity: () => (/* reexport safe */ _Velocity__WEBPACK_IMPORTED_MODULE_13__["default"])
 /* harmony export */ });
 /* harmony import */ var _Articulation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Articulation */ "./src/Articulation.ts");
 /* harmony import */ var _Chord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Chord */ "./src/Chord.ts");
@@ -7221,7 +7231,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _track_Roll__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./track/Roll */ "./src/track/Roll.ts");
 /* harmony import */ var _track_TrackChord__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./track/TrackChord */ "./src/track/TrackChord.ts");
 /* harmony import */ var _track_TrackNote__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./track/TrackNote */ "./src/track/TrackNote.ts");
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './types'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* harmony import */ var _types_d__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./types.d */ "./src/types.d.ts");
+/* harmony import */ var _types_d__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_types_d__WEBPACK_IMPORTED_MODULE_23__);
 
 
 
