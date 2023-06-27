@@ -215,7 +215,14 @@ export class Duration implements IDuration, IComputable<Duration>, IClonable<Dur
 
     private simplify() {
         if (this.numerator === 0) return this;
-        if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator)) return this;
+        if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator)) {
+            const $gcd = gcd(this.numerator, this.denominator);
+            if ($gcd !== 1) {
+                this.denominator /= $gcd;
+                this.numerator /= $gcd;
+            }
+            return this;
+        }
         const f = Math.max(precisionFactor(this.numerator), precisionFactor(this.denominator));
         const $gcd = gcd(this.numerator * f, this.denominator * f) / f;
         if ($gcd !== 1) {

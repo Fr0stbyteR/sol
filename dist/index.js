@@ -2343,8 +2343,14 @@ const _Duration = class {
   simplify() {
     if (this.numerator === 0)
       return this;
-    if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator))
+    if (Number.isInteger(this.numerator) && Number.isInteger(this.denominator)) {
+      const $gcd2 = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator, this.denominator);
+      if ($gcd2 !== 1) {
+        this.denominator /= $gcd2;
+        this.numerator /= $gcd2;
+      }
       return this;
+    }
     const f = Math.max((0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.numerator), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.precisionFactor)(this.denominator));
     const $gcd = (0,_utils__WEBPACK_IMPORTED_MODULE_0__.gcd)(this.numerator * f, this.denominator * f) / f;
     if ($gcd !== 1) {
