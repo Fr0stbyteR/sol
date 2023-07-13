@@ -109,7 +109,7 @@ export class Note implements INote, IClonable<Note> {
             return { enumNote, alteration: initialAlteration };
         }
         const ref = tonality.slice(0, 1).match("[A-G]") ? new Note("C") : new Note("A");
-        const intervalToRef = new Note(tonality).getInterval(ref);
+        const intervalToRef = ref.getInterval(new Note(tonality));
         const noteOnRef = new Note(offsetIn - intervalToRef.offset);
         noteOnRef.add(intervalToRef);
         return { enumNote: noteOnRef.enumNote, alteration: noteOnRef.alteration };

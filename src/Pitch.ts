@@ -54,26 +54,26 @@ export class Pitch extends Note implements IPitch, IClonable<Pitch> {
     /**
      * Creates an instance of Pitch with index
      */
-    constructor(pitchIn: number);
-    constructor(p1?: IPitch | EnumNote | INote | string | number, p2 = 4) {
+    constructor(pitchIn: number, tonality?: string);
+    constructor(p1?: IPitch | EnumNote | INote | string | number, p2?: number | string) {
         super();
         this.become(p1, p2);
     }
-    become(p1?: IPitch | EnumNote | INote | string | number, p2 = 4) {
+    become(p1?: IPitch | EnumNote | INote | string | number, p2?: number | string) {
         if (isPitch(p1)) {
             super.become(p1);
             this.octave = p1.octave;
         } else if (p1 instanceof EnumNote) {
             super.become(p1);
-            this.octave = p2;
+            this.octave = typeof p2 === "number" ? p2 : 4;
         } else if (isNote(p1)) {
             super.become(p1);
-            this.octave = p2;
+            this.octave = typeof p2 === "number" ? p2 : 4;
         } else if (typeof p1 === "string") {
             super.become();
             this.fromString(p1);
         } else if (typeof p1 === "number") {
-            super.become(p1);
+            super.become(p1, typeof p2 === "string" ? p2 : "C");
             this.octave = Math.floor(p1 / 12 - 1);
         } else {
             super.become();
