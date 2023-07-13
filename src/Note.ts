@@ -47,25 +47,30 @@ export class Note implements INote, IClonable<Note> {
      */
     constructor(noteIn: string);
     /**
-     * Creates an instance of Note.
+     * Creates an instance of Note with offset and alteration.
      */
     constructor(offset: number, alteration?: number);
-    constructor(p1?: EnumNote | INote | string | number, p2?: number) {
+    /**
+     * Creates an instance of Note with offset and tonality (predicting alteration).
+     */
+    constructor(offset: number, tonality?: string);
+    constructor(p1?: EnumNote | INote | string | number, p2?: number | string) {
         this.enumNote = EnumNote.C;
         this.alteration = 0;
         this.become(p1, p2);
     }
-    become(p1?: EnumNote | INote | string | number, p2?: number) {
+    become(p1?: EnumNote | INote | string | number, p2?: number | string) {
         if (p1 instanceof EnumNote) {
             this.enumNote = p1;
-            if (p2) this.alteration = p2;
+            if (typeof p2 === "number") this.alteration = p2;
         } else if (isNote(p1)) {
             this.enumNote = EnumNote.from(p1.enumNote);
             this.alteration = p1.alteration;
         } else if (typeof p1 === "string") {
             this.fromString(p1);
         } else if (typeof p1 === "number") {
-            this.fromOffset(p1, p2);
+            if (typeof p2 === "number") this.fromOffset(p1, p2);
+            else this.fromOffsetAndTonality(p1, p2);
         }
         return this;
     }
@@ -98,8 +103,25 @@ export class Note implements INote, IClonable<Note> {
         if (alterationIn) alteration += alterationIn;
         return { enumNote, alteration };
     }
+    static fromOffsetAndTonality(offsetIn: number, tonality?: string) {
+        const { enumNote, alteration: initialAlteration } = this.fromOffset(offsetIn);
+        if (!tonality || !initialAlteration) {
+            return { enumNote, alteration: initialAlteration };
+        }
+        const ref = tonality.slice(0, 1).match("[A-G]") ? new Note("C") : new Note("A");
+        const intervalToRef = new Note(tonality).getInterval(ref);
+        const noteOnRef = new Note(offsetIn - intervalToRef.offset);
+        noteOnRef.add(intervalToRef);
+        return { enumNote: noteOnRef.enumNote, alteration: noteOnRef.alteration };
+    }
     protected fromOffset(offsetIn: number, alterationIn?: number) {
         const { enumNote, alteration } = Note.fromOffset(offsetIn, alterationIn);
+        this.enumNote = enumNote;
+        this.alteration = alteration;
+        return this;
+    }
+    protected fromOffsetAndTonality(offsetIn: number, tonalityIn?: string) {
+        const { enumNote, alteration } = Note.fromOffsetAndTonality(offsetIn, tonalityIn);
         this.enumNote = enumNote;
         this.alteration = alteration;
         return this;

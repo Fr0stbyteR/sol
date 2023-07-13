@@ -35,7 +35,7 @@ export class Tonality implements Iterable<Note>, ITonality, IClonable<Tonality> 
             } catch (e) {
                 throw new Error(`No such tonality: ${p1}.`);
             }
-            this.scale = p1.substr(p1.length - 1).match("[A-G]") ? EnumScale.MAJOR : EnumScale.MINOR;
+            this.scale = p1.slice(0, 1).match("[A-G]") ? EnumScale.MAJOR : EnumScale.MINOR;
         } else {
             this.note = p1;
             this.scale = p2;
