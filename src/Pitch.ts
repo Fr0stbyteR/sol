@@ -55,9 +55,6 @@ export class Pitch extends Note implements IPitch, IClonable<Pitch> {
      * Creates an instance of Pitch with index
      */
     constructor(pitchIn: number);
-    /**
-     * Creates an instance of Pitch with index
-     */
     constructor(p1?: IPitch | EnumNote | INote | string | number, p2 = 4) {
         super();
         this.become(p1, p2);

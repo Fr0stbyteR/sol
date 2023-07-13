@@ -15,3 +15,7 @@ test("Note C * 2", () => {
 test("Note C * 3", () => {
     expect(c.clone().mul(3).toString()).toBe("G");
 });
+
+test("Note alteration prediction", () => {
+    expect(new Note(3, "Eb").toString()).toBe("Eb");
+});

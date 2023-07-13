@@ -88,7 +88,7 @@ export class TonalChord implements ITonalChord {
         s += toRoman(this.degree * (this.chord.equals(EnumChord.MIN) ? -1 : 1));
         if (!this.chord.equals(EnumChord.MAJ) && !this.chord.equals(EnumChord.MIN)) {
             if (this.chord.equals(EnumChord.AUG)) s += "+";
-            else if (this.chord.equals(EnumChord.AUG)) s += "-";
+            else if (this.chord.equals(EnumChord.DIM)) s += "-";
             else s += this.chord.name().toLowerCase();
         }
         return s;
